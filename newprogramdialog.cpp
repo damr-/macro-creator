@@ -30,7 +30,7 @@ void NewProgramDialog::okayClicked()
 
     success = true;
 
-    if(!ui->nameEdit->hasAcceptableInput() || newProgName == startup::progListFileName) {
+    if(!ui->nameEdit->hasAcceptableInput() || newProgName == startup::progListFileName || newProgName == "unnamed") {
         success = false;
         statusText = "'" + newProgName + "' is not valid.";
     }

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>655</width>
-    <height>330</height>
+    <height>350</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,13 +22,13 @@
   <property name="minimumSize">
    <size>
     <width>655</width>
-    <height>330</height>
+    <height>350</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>655</width>
-    <height>330</height>
+    <height>350</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -52,7 +52,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -569,7 +569,7 @@
         </property>
        </item>
       </widget>
-      <widget class="QLineEdit" name="plainTextEdit">
+      <widget class="QLineEdit" name="writeTextEditField">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1085,7 +1085,7 @@
       <property name="title">
        <string/>
       </property>
-      <widget class="QPushButton" name="openPath">
+      <widget class="QPushButton" name="chooseExeButton">
        <property name="geometry">
         <rect>
          <x>205</x>
@@ -1098,7 +1098,7 @@
         <string>...</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="openexe">
+      <widget class="QPushButton" name="addOpenExeCommandButton">
        <property name="geometry">
         <rect>
          <x>305</x>
@@ -1518,7 +1518,7 @@
      </rect>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Undo deletion&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>Undo the last deletion</string>
     </property>
     <property name="text">
      <string/>
@@ -1674,14 +1674,21 @@
      <string>File</string>
     </property>
     <addaction name="actionNew"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionOpen_Recent"/>
     <addaction name="actionSave"/>
     <addaction name="actionExit"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
   <action name="actionNew">
    <property name="text">
-    <string>New/Open</string>
+    <string>New</string>
    </property>
    <property name="toolTip">
     <string>Create new program or open an existing one</string>
@@ -1710,6 +1717,22 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionOpen_Recent">
+   <property name="text">
+    <string>Open Recent</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WidgetWithChildrenShortcut</enum>
    </property>
   </action>
  </widget>

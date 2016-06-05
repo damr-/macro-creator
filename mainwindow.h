@@ -4,8 +4,6 @@
 #include <QMainWindow>
 #include <QList>
 #include <Windows.h>
-#include <map>
-#include <string>
 
 namespace Ui {
 class MainWindow;
@@ -20,12 +18,12 @@ public:
     ~MainWindow();
 
 private slots:
-    //For INSERT+DELETE
+    //For catching the mouse position
     void checkKey();
 
     //Menu Actions
-    void closeThisAndOpenStartup();
-    void saveProgram();
+    void newProgram();
+    void saveProgram();    
 
     //Slots for adding commands
     void addMoveCursorCommand();
@@ -34,8 +32,8 @@ private slots:
     void addScrollCommand();
     void addWriteTextCommand();
     void addShortcutCommand();
+    void chooseExe();
     void addOpenExeCommand();
-    void addOpenPathCommand();
     void addSleepCommand();
     void addKillProcessCommand();
 
@@ -70,14 +68,11 @@ private:
 
     QString progName;
 
-    //delete cmd backups
     QString delBackupText;
     int delBackupPos;
 
-    //cmd list
     QList<QString> commandList;
 
-    //quitbool
     bool unsavedChanges;
 
     void addCommand(QString commandtype, QStringList arguments);
@@ -86,11 +81,7 @@ private:
     void closeEvent(QCloseEvent *event);
 
     void executeCommand(QString cmd);
-    void writeText(std::string text);
-    void pressVK(std::string vk);
 
-    std::map<std::string, BYTE> byteCodes;
-    void defineByteCodes();
     void refreshWindowTitle();
     void setUnsavedChanges(bool newUnsavedChanges);
 };

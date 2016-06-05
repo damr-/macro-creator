@@ -15,12 +15,12 @@
 #include <QProcess>
 #include <QApplication>
 #include <QScrollBar>
-#include <QDebug>
 
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
 #include "startup.h"
 #include "optionsdialog.h"
+#include "keyboardutilities.h"
 
 #pragma comment(lib, "user32.lib")
 
@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Menu Actions
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
-    connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(closeThisAndOpenStartup()));
+    connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newProgram()));
     connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveProgram()));
 
     //"Add Command" Buttons
@@ -52,8 +52,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->text, SIGNAL(clicked()), this, SLOT(addWriteTextCommand()));
     connect(ui->shortcut, SIGNAL(clicked()), this, SLOT(addShortcutCommand()));
     connect(ui->sleep, SIGNAL(clicked()), this, SLOT(addSleepCommand()));
-    connect(ui->openexe, SIGNAL(clicked()), this, SLOT(addOpenExeCommand()));
-    connect(ui->openPath, SIGNAL(clicked()), this, SLOT(addOpenPathCommand()));
+    connect(ui->addOpenExeCommandButton, SIGNAL(clicked()), this, SLOT(addOpenExeCommand()));
+    connect(ui->chooseExeButton, SIGNAL(clicked()), this, SLOT(chooseExe()));
     connect(ui->killProc, SIGNAL(clicked()), this, SLOT(addKillProcessCommand()));
     connect(ui->delCmd, SIGNAL(clicked()), this, SLOT(deleteCommand()));
     connect(ui->delCmdUndo, SIGNAL(clicked()), this, SLOT(deleteUndo()));
@@ -100,17 +100,17 @@ MainWindow::MainWindow(QWidget *parent) :
     //Default delay
     connect(ui->defaultDelayCheckBox, SIGNAL(toggled(bool)), this, SLOT(defaultDelayToggled()));
 
-    //Arrange TextEdit
-    //ui->plainTextEdit->setMaxLength(30);
-    //ui->count->setText("   / " + QString::number(ui->plainTextEdit->maxLength()));
-    connect(ui->plainTextEdit, SIGNAL(textChanged(QString)), this, SLOT(updateWriteTextCount()));
-
-    //Key-Byte-Codes
-    defineByteCodes();
+    //Arrange write text edit
+    connect(ui->writeTextEditField, SIGNAL(textChanged(QString)), this, SLOT(updateWriteTextCount()));
 
     //get and load prog
-    progName = startup::getCurrentProgName();
-    loadCommandListFromFile();
+    //progName = startup::getCurrentProgName();
+    //loadCommandListFromFile();
+    //ui->tabWidget->setCurrentIndex(0);
+    //setUnsavedChanges(false);
+
+    //start with unnamed project
+    progName = "unnamed";
     ui->tabWidget->setCurrentIndex(0);
     setUnsavedChanges(false);
 }
@@ -121,8 +121,8 @@ MainWindow::~MainWindow()
 }
 
 //-------------------------------------------------------
-//--------------------CloseEvent-----------------------
-//---
+//--------------------CloseEvent-------------------------
+//-------------------------------------------------------
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (!unsavedChanges) {
@@ -158,8 +158,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 }
 
 //-------------------------------------------------------
-//--------------------CheckKey-----------------------
-//---
+//--------------------CheckKey---------------------------
+//-------------------------------------------------------
 void MainWindow::checkKey()
 {
     if(GetAsyncKeyState(VK_INSERT))
@@ -169,50 +169,46 @@ void MainWindow::checkKey()
 
         ui->xCoord->setValue(cursorPos.x);
         ui->yCoord->setValue(cursorPos.y);
-    }
-    if(GetAsyncKeyState(VK_DELETE))
-    {
-        POINT cursorPos;
-        GetCursorPos(&cursorPos);
-
         ui->xCoordDrag->setValue(cursorPos.x);
         ui->yCoordDrag->setValue(cursorPos.y);
     }
     if(GetAsyncKeyState(VK_F7))
     {
-        if(ui->botstart->isEnabled()) botStart();
+        if(ui->botstart->isEnabled())
+            botStart();
     }
 }
 
 //-------------------------------------------------------
-//--------------------New/Open Bot-----------------------
-//---
-void MainWindow::closeThisAndOpenStartup()
+//--------------------New Program------------------------
+//-------------------------------------------------------
+void MainWindow::newProgram()
 {
-    startup *s = new startup();
-    if(close()) s->show();
+    MainWindow *m = new MainWindow();
+    if(close())
+        m->show();
 }
 
 //-------------------------------------------------------
 //--------------------Add Command------------------------
-//---
+//-------------------------------------------------------
 void MainWindow::addCommand(QString commandtype, QStringList arguments)
 {
     QString line;
     line.append(commandtype);
     foreach (const QString &element, arguments)
-        line.append(element);
+        line.append("|" + element);
 
-    int above = ui->commandList->currentRow();
+    int aboveRow = ui->commandList->currentRow();
 
     if(ui->addAbove->isChecked())
-        commandList.insert(above, line);
+        commandList.insert(aboveRow, line);
     else commandList.append(line);
 
     fillCommandListWidget();
 
     if(ui->addAbove->isChecked()){
-        ui->commandList->setCurrentRow(above);
+        ui->commandList->setCurrentRow(aboveRow);
         ui->addAbove->setChecked(false);
     }
     else ui->commandList->setCurrentRow(ui->commandList->count() - 1);
@@ -225,30 +221,41 @@ void MainWindow::addCommand(QString commandtype, QStringList arguments)
 //---
 void MainWindow::saveProgram()
 {
-    QString filename = (QDir::currentPath() + "/data/" + progName);
-    QFile file(filename);
-    file.open(QFile::WriteOnly | QFile::Text);
+    if(progName == "unnamed"){
 
-    QTextStream output(&file);
-    QString out;
+    }
+    else {
+        QString filename = (QDir::currentPath() + "/data/" + progName);
+        QFile file(filename);
+        if(!file.open(QFile::WriteOnly | QFile::Text))
+        {
+            ui->statusBar->setStatusTip("Saving program failed!");
+            return;
+        }
 
-    out.append(QString::number(ui->defaultDelayCheckBox->isChecked()) + "|"+
-               QString::number(ui->defaultDelaySpinBox->value()) + "|" +
-               QString::number(ui->loopCheckBox->isChecked()) + "|" +
-               QString::number(ui->loopType->currentIndex()) + "|" +
-               QString::number(ui->loopFrom->value()) + "|" +
-               QString::number(ui->loopTo->value()) + "|" +
-               QString::number(ui->loopAmount->value()) + "\n");
+        QTextStream output(&file);
+        QString out;
 
-    for(int i = 0; i < commandList.size(); ++i)
-    {
-        out.append(commandList.at(i));
-        out.append("\n");
+        out.append(QString::number(ui->defaultDelayCheckBox->isChecked()) + "|"+
+                   QString::number(ui->defaultDelaySpinBox->value()) + "|" +
+                   QString::number(ui->loopCheckBox->isChecked()) + "|" +
+                   QString::number(ui->loopType->currentIndex()) + "|" +
+                   QString::number(ui->loopFrom->value()) + "|" +
+                   QString::number(ui->loopTo->value()) + "|" +
+                   QString::number(ui->loopAmount->value()) + "\n");
+
+        for(int i = 0; i < commandList.size(); ++i)
+        {
+            out.append(commandList.at(i));
+            out.append("\n");
+        }
+
+        output << out;
+        file.close();
     }
 
-    output << out;
-
     setUnsavedChanges(false);
+    ui->statusBar->setStatusTip("Saved program successfully!");
 }
 
 //-------------------------------------------------------
@@ -395,8 +402,8 @@ void MainWindow::optionsChanged(int dummy)
 }
 
 //-------------------------------------------------------
-//-----------------'Command' Buttons---------------------
-//---
+//-----------------Add command Buttons-------------------
+//-------------------------------------------------------
 void MainWindow::addMoveCursorCommand()
 {
     addCommand("mov", (QStringList() << QString::number(ui->xCoord->value()) << QString::number(ui->yCoord->value())));
@@ -420,12 +427,12 @@ void MainWindow::addScrollCommand()
 
 void MainWindow::addWriteTextCommand()
 {
-    addCommand("txt", (QStringList() << QString::number(ui->caseBox->currentIndex()) << ui->plainTextEdit->text()));
+    addCommand("txt", (QStringList() << QString::number(ui->caseBox->currentIndex()) << ui->writeTextEditField->text()));
 }
 
 void MainWindow::updateWriteTextCount()
 {
-    ui->count->setText(QString::number(ui->plainTextEdit->text().length()) + " / " + QString::number(ui->plainTextEdit->maxLength()));
+    ui->count->setText(QString::number(ui->writeTextEditField->text().length()) + " / " + QString::number(ui->writeTextEditField->maxLength()));
 }
 
 void MainWindow::addShortcutCommand()
@@ -456,20 +463,7 @@ void MainWindow::addShortcutCommand()
 void MainWindow::addOpenExeCommand()
 {
     if(ui->exeName->text().length() > 5  && ui->exeName->text().contains(".exe"))
-    {
         addCommand("exe", (QStringList() << ui->exeName->text()));
-    }
-}
-
-void MainWindow::addOpenPathCommand()
-{
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Choose .exe"), QDir::currentPath(), tr("Executable Files (*.exe)"));
-    if(fileName.length() > 1 && fileName.contains(".exe")) {
-        ui->exeName->setText(fileName);
-    }
-    else {
-        ui->exeName->setText("Invalid file.");
-    }
 }
 
 void MainWindow::addSleepCommand()
@@ -496,8 +490,20 @@ void MainWindow::setUnsavedChanges(bool newUnsavedChanges)
 }
 
 //-------------------------------------------------------
-//----------------List Modifications---------------------
-//---
+//-----------------Choose a .exe file--------------------
+//-------------------------------------------------------
+void MainWindow::chooseExe()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Choose .exe"), QDir::currentPath(), tr("Executable Files (*.exe)"));
+    if(fileName.length() > 1 && fileName.contains(".exe"))
+        ui->exeName->setText(fileName);
+    else
+        ui->exeName->setText("Invalid file.");
+}
+
+//-------------------------------------------------------
+//------------Delete the selected command----------------
+//-------------------------------------------------------
 void MainWindow::deleteCommand()
 {
     if(ui->commandList->count() == 0)
@@ -516,6 +522,9 @@ void MainWindow::deleteCommand()
     else ui->commandList->setCurrentRow(delBackupPos);
 }
 
+//-------------------------------------------------------
+//---------------Undo the last deletion------------------
+//-------------------------------------------------------
 void MainWindow::deleteUndo()
 {
     commandList.insert(delBackupPos, delBackupText);
@@ -580,8 +589,8 @@ void MainWindow::moveIt(int dir)
 }
 
 //-------------------------------------------------------
-//--------------Shortcut IdiotProofing-------------------
-//---
+//-----Called when the letterbox editing finished--------
+//-------------------------------------------------------
 void MainWindow::letterBoxEdited()
 {
     QString text = ui->letterBox->text();
@@ -589,7 +598,9 @@ void MainWindow::letterBoxEdited()
     ui->letterBox->setText(text);
 }
 
-
+//-------------------------------------------------------
+//-------Called when the keybox editing finished---------
+//-------------------------------------------------------
 void MainWindow::keyBoxEdited()
 {
     int currentPos = ui->keyBox->currentIndex();
@@ -598,8 +609,8 @@ void MainWindow::keyBoxEdited()
 }
 
 //-------------------------------------------------------
-//--------------------Bot Start--------------------------
-//---
+//------------------Start the bot------------------------
+//-------------------------------------------------------
 void MainWindow::botStart()
 {
     ui->botstart->setEnabled(false);
@@ -682,32 +693,31 @@ void MainWindow::botStart()
 
 //-------------------------------------------------------
 //-----------------Execute Command-----------------------
-//---
+//-------------------------------------------------------
 void MainWindow::executeCommand(QString cmd)
 {
-    QStringList list = cmd.split("|");
+    QStringList command = cmd.split("|");
 
-    if( list[0] == "mov" )
+    if( command[0] == "mov" )
     {
-        SetCursorPos( list[1].toInt(), list[2].toInt() );
+        SetCursorPos( command[1].toInt(), command[2].toInt() );
         Sleep(50);
-        if(list[3] == "1")
+        if(command[3] == "1")
         {
             mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
             mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
             Sleep(50);
         }
     }
-
-    else if( list[0] == "clc" )
+    else if( command[0] == "clc" )
     {
-        if( list[1] == "0" )
+        if( command[1] == "0" )
         {
             mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
             mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
             Sleep(50);
         }
-        else if( list[1] == "1" )
+        else if( command[1] == "1" )
         {
             mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
             mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
@@ -715,171 +725,98 @@ void MainWindow::executeCommand(QString cmd)
             mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
             Sleep(50);
         }
-        else if( list[1] == "2" )
+        else if( command[1] == "2" )
         {
             mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
             mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
             Sleep(50);
         }
-        else if( list[1] == "3" )
+        else if( command[1] == "3" )
         {
             mouse_event(MOUSEEVENTF_MIDDLEDOWN, 0, 0, 0, 0);
             mouse_event(MOUSEEVENTF_MIDDLEUP, 0, 0, 0, 0);
             Sleep(50);
         }
     }
-
-    else if( list[0] == "drg" )
+    else if( command[0] == "drg" )
     {
         mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
         Sleep(10);
-        SetCursorPos(list[1].toInt(), list[2].toInt());
+        SetCursorPos(command[1].toInt(), command[2].toInt());
         Sleep(10);
         mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
         Sleep(50);
     }
-
-    else if( list[0] == "scr" )
+    else if( command[0] == "scr" )
     {
-        int direction;
-        if(list[2] == "0") direction = SCROLLUP;
-        else direction = SCROLLDOWN;
-
-        for(int i = 0; i<=list[1].toInt(); ++i)
+        int direction = command[2] == "0" ? SCROLLUP : SCROLLDOWN;
+        for(int i = 0; i<=command[1].toInt(); ++i)
         {
             mouse_event(MOUSEEVENTF_WHEEL, 0, 0, direction, 0);
             Sleep(50);
         }
     }
-    else if( list[0] == "txt" )
+    else if( command[0] == "txt" )
     {
-        if( list[1] == "0" )
+        if( command[1] == "0" )
         {
             keybd_event(VK_SHIFT, 0xAA, 0, 0);
             Sleep(50);
         }
 
-        writeText(list[2].toStdString());
+        KeyboardUtilities::writeText(command[2].toStdString());
 
-        if( list[1] == "0" )
+        if( command[1] == "0" )
         {
             keybd_event(VK_SHIFT, 0xAA, KEYEVENTF_KEYUP, 0);
             Sleep(50);
         }
     }
-
-    else if( list[0] == "slp" )
+    else if( command[0] == "slp" )
     {
-        int multi;
-
-        if( list[2] == "0") multi = 1000;
-        else if( list[2] == "1") multi = 1;
-
-        Sleep(list[1].toInt() * multi);
+        int multi = command[2] == "0" ? 1000 : 1;
+        Sleep(command[1].toInt() * multi);
     }
-
-    else if( list[0] == "end" )
+    else if( command[0] == "end" )
     {
-        WinExec("taskkill /F /IM " + list[1].toUtf8(), SW_HIDE);
+        WinExec("taskkill /F /IM " + command[1].toUtf8(), SW_HIDE);
         Sleep(50);
     }
-
-    else if( list[0] == "exe" )
+    else if( command[0] == "exe" )
     {
-        WinExec(list[1].toUtf8(), SW_NORMAL);
+        WinExec(command[1].toUtf8(), SW_NORMAL);
         Sleep(50);
     }
-
-    else if( list[0] == "sct" )
+    else if( command[0] == "sct" )
     {
-        for(int i = 0; i < list[6].toInt(); ++i)
+        for(int i = 0; i < command[6].toInt(); ++i)
         {
-            if(list[1] == "1") keybd_event(VK_CONTROL, 0x9D, 0, 0);
-            if(list[2] == "1") keybd_event(VK_MENU, 0xB8, 0, 0);
-            if(list[3] == "1") keybd_event(VK_SHIFT, 0xAA, 0, 0);
+            if(command[1] == "1")
+                keybd_event(VK_CONTROL, 0x9D, 0, 0);
+            if(command[2] == "1")
+                keybd_event(VK_MENU, 0xB8, 0, 0);
+            if(command[3] == "1")
+                keybd_event(VK_SHIFT, 0xAA, 0, 0);
 
-            if(list[4] == "1") {
-                writeText(list[5].toStdString());
-            }
-            else {
-                pressVK(list[5].toStdString());
-            }
+            if(command[4] == "1")
+                KeyboardUtilities::writeText(command[5].toStdString());
+            else
+                KeyboardUtilities::pressVK(command[5].toStdString());
 
-            if(list[1] == "1") keybd_event(VK_CONTROL, 0x9D, KEYEVENTF_KEYUP, 0);
-            if(list[2] == "1") keybd_event(VK_MENU, 0xB8, KEYEVENTF_KEYUP, 0);
-            if(list[3] == "1") keybd_event(VK_SHIFT, 0xAA, KEYEVENTF_KEYUP, 0);
+            if(command[1] == "1")
+                keybd_event(VK_CONTROL, 0x9D, KEYEVENTF_KEYUP, 0);
+            if(command[2] == "1")
+                keybd_event(VK_MENU, 0xB8, KEYEVENTF_KEYUP, 0);
+            if(command[3] == "1")
+                keybd_event(VK_SHIFT, 0xAA, KEYEVENTF_KEYUP, 0);
             Sleep(50);
         }
     }
 }
 
 //-------------------------------------------------------
-//---------------Simulate Textwrite----------------------
-//---
-void MainWindow::writeText(std::string text)
-{
-    for(unsigned int i = 0; i < text.length(); ++i)
-    {
-        keybd_event(VkKeyScan(text[i]), 0, KEYEVENTF_EXTENDEDKEY, 0);
-        keybd_event(VkKeyScan(text[i]), 0, KEYEVENTF_KEYUP, 0);
-        Sleep(50);
-    }
-}
-
-void MainWindow::pressVK(std::string vk)
-{
-    BYTE key = byteCodes.find(vk)->second;
-    keybd_event(key, 0, KEYEVENTF_EXTENDEDKEY, 0);
-    keybd_event(key, 0, KEYEVENTF_KEYUP, 0);
-    Sleep(50);
-}
-
-void MainWindow::defineByteCodes()
-{
-    byteCodes.insert( std::pair<std::string, BYTE>("Backspace", 0x08) );
-    byteCodes.insert( std::pair<std::string, BYTE>("Tab", 0x09) );
-    byteCodes.insert( std::pair<std::string, BYTE>("Return", 0x0D) );
-    byteCodes.insert( std::pair<std::string, BYTE>("Pause", 0x15) );
-    byteCodes.insert( std::pair<std::string, BYTE>("Caps Lock", 0x14) );
-    byteCodes.insert( std::pair<std::string, BYTE>("Escape", 0x1B) );
-    byteCodes.insert( std::pair<std::string, BYTE>("Space", 0x20));
-    byteCodes.insert( std::pair<std::string, BYTE>("Page Up", 0x21));
-    byteCodes.insert( std::pair<std::string, BYTE>("Page Down", 0x22));
-    byteCodes.insert( std::pair<std::string, BYTE>("End", 0x23));
-    byteCodes.insert( std::pair<std::string, BYTE>("Home", 0x24));
-    byteCodes.insert( std::pair<std::string, BYTE>("Arrow Up", 0x26));
-    byteCodes.insert( std::pair<std::string, BYTE>("Arrow Down", 0x28));
-    byteCodes.insert( std::pair<std::string, BYTE>("Arrow Left", 0x25));
-    byteCodes.insert( std::pair<std::string, BYTE>("Arrow Right", 0x27));
-    byteCodes.insert( std::pair<std::string, BYTE>("Delete", 0x2E));
-    byteCodes.insert( std::pair<std::string, BYTE>("Insert", 0x2D));
-    byteCodes.insert( std::pair<std::string, BYTE>("NUM Lock", 0x90));
-    byteCodes.insert( std::pair<std::string, BYTE>("Scroll Lock", 0x91));
-    byteCodes.insert( std::pair<std::string, BYTE>("Window", 0x5B));
-    byteCodes.insert( std::pair<std::string, BYTE>("F1", 0x70));
-    byteCodes.insert( std::pair<std::string, BYTE>("F2", 0x71));
-    byteCodes.insert( std::pair<std::string, BYTE>("F3", 0x72));
-    byteCodes.insert( std::pair<std::string, BYTE>("F4", 0x73));
-    byteCodes.insert( std::pair<std::string, BYTE>("F5", 0x74));
-    byteCodes.insert( std::pair<std::string, BYTE>("F6", 0x75));
-    byteCodes.insert( std::pair<std::string, BYTE>("F7", 0x76));
-    byteCodes.insert( std::pair<std::string, BYTE>("F8", 0x77));
-    byteCodes.insert( std::pair<std::string, BYTE>("F9", 0x78));
-    byteCodes.insert( std::pair<std::string, BYTE>("F10", 0x79));
-    byteCodes.insert( std::pair<std::string, BYTE>("F11", 0x7A));
-    byteCodes.insert( std::pair<std::string, BYTE>("F12", 0x7B));
-    byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD0", 0x60));
-    byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD1", 0x61));
-    byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD2", 0x62));
-    byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD3", 0x63));
-    byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD4", 0x64));
-    byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD5", 0x65));
-    byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD6", 0x66));
-    byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD7", 0x67));
-    byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD8", 0x68));
-    byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD9", 0x69));
-}
-
+//---------Default delay checkbox toggled----------------
+//-------------------------------------------------------
 void MainWindow::defaultDelayToggled()
 {
     if(ui->defaultDelayCheckBox->isChecked())
@@ -887,6 +824,9 @@ void MainWindow::defaultDelayToggled()
     else ui->defaultDelaySpinBox->setEnabled(false);
 }
 
+//-------------------------------------------------------
+//----------------Loop type changed----------------------
+//-------------------------------------------------------
 void MainWindow::loopTypeChanged()
 {
     bool loopAll = ui->loopType->currentIndex() == 0;
@@ -895,12 +835,18 @@ void MainWindow::loopTypeChanged()
     ui->loopAmount->setEnabled(!loopAll);
 }
 
+//-------------------------------------------------------
+//------------Loop from value changed--------------------
+//-------------------------------------------------------
 void MainWindow::loopFromChanged()
 {
     if(ui->loopFrom->value() > ui->loopTo->value())
         ui->loopTo->setValue(ui->loopFrom->value());
 }
 
+//-------------------------------------------------------
+//--------------Loop to value changed--------------------
+//-------------------------------------------------------
 void MainWindow::loopToChanged()
 {
     if(ui->loopTo->value() < ui->loopFrom->value())
