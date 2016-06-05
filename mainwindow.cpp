@@ -1,26 +1,31 @@
+#include <tchar.h>
+#include <string>
 #include <Windows.h>
-#include <QTimer>
-#include <QMessageBox>
-#include <QSettings>
+
+#include <QAction>
+#include <QApplication>
+#include <QCloseEvent>
+#include <QDebug>
 #include <QDir>
 #include <QFileDialog>
 #include <QFile>
-#include <QTextStream>
-#include <QStringList>
 #include <QList>
-#include <QSignalMapper>
-#include <QCloseEvent>
-#include <tchar.h>
-#include <string>
+#include <QMessageBox>
 #include <QProcess>
-#include <QApplication>
 #include <QScrollBar>
+#include <QSettings>
+#include <QSignalMapper>
+#include <QStringList>
+#include <QTextStream>
+#include <QTimer>
 
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
 #include "startup.h"
 #include "optionsdialog.h"
 #include "keyboardutilities.h"
+#include "newcommanddialog.h"
+#include "clickcommandwidget.h"
 
 #pragma comment(lib, "user32.lib")
 
@@ -39,17 +44,24 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(checkKey()));
     timer->start(50);
 
-    //Menu Actions
+    //Menu->File Actions
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newProgram()));
     connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveProgram()));
+    connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openProgram()));
+    connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveProgramAs()));
+
+    //Menu->Edit Actions
+    connect(ui->actionAdd_Command, SIGNAL(triggered()), this, SLOT(addNewCommand()));
+    connect(ui->actionDelete, SIGNAL(triggered()), this, SLOT(deleteSelected()));
+    connect(ui->actionDuplicate, SIGNAL(triggered()), this, SLOT(duplicateSelected()));
 
     //"Add Command" Buttons
     connect(ui->move, SIGNAL(clicked()), this, SLOT(addMoveCursorCommand()));
     connect(ui->click, SIGNAL(clicked()), this, SLOT(addClickCommand()));
     connect(ui->drag, SIGNAL(clicked()), this, SLOT(addDragMouseCommand()));
     connect(ui->scroll, SIGNAL(clicked()), this, SLOT(addScrollCommand()));
-    connect(ui->text, SIGNAL(clicked()), this, SLOT(addWriteTextCommand()));
+    connect(ui->addWriteTextCommandButton, SIGNAL(clicked()), this, SLOT(addWriteTextCommand()));
     connect(ui->shortcut, SIGNAL(clicked()), this, SLOT(addShortcutCommand()));
     connect(ui->sleep, SIGNAL(clicked()), this, SLOT(addSleepCommand()));
     connect(ui->addOpenExeCommandButton, SIGNAL(clicked()), this, SLOT(addOpenExeCommand()));
@@ -57,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->killProc, SIGNAL(clicked()), this, SLOT(addKillProcessCommand()));
     connect(ui->delCmd, SIGNAL(clicked()), this, SLOT(deleteCommand()));
     connect(ui->delCmdUndo, SIGNAL(clicked()), this, SLOT(deleteUndo()));
-    connect(ui->commandList, SIGNAL(currentRowChanged(int)), this, SLOT(moveItem()));
+    connect(ui->commandList, SIGNAL(currentRowChanged(int)), this, SLOT(refreshCommandListControls()));
 
     //Options
     QSignalMapper *optionsMapper = new QSignalMapper(this);
@@ -86,8 +98,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(moveItemMapper, SIGNAL(mapped(int)), this, SLOT(moveIt(int)));
 
     //Shortcut idiotproofing
-    connect(ui->letterBox, SIGNAL(textChanged(QString)), this, SLOT(letterBoxEdited()));    
+    connect(ui->letterBox, SIGNAL(textChanged(QString)), this, SLOT(letterBoxEdited()));
     connect(ui->keyBox, SIGNAL(currentIndexChanged(int)), this, SLOT(keyBoxEdited()));
+
+    //READ KEY BUTTON
+    connect(ui->readKeyButton, SIGNAL(clicked(bool)), this, SLOT(readKeyButtonPressed()));
 
     //Bot start
     connect(ui->botstart, SIGNAL(clicked()), this, SLOT(botStart()));
@@ -103,21 +118,63 @@ MainWindow::MainWindow(QWidget *parent) :
     //Arrange write text edit
     connect(ui->writeTextEditField, SIGNAL(textChanged(QString)), this, SLOT(updateWriteTextCount()));
 
-    //get and load prog
-    //progName = startup::getCurrentProgName();
-    //loadCommandListFromFile();
-    //ui->tabWidget->setCurrentIndex(0);
-    //setUnsavedChanges(false);
+    //setup context menu
+    ui->commandList->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    QList<QAction *> editActions;
+    QList<QMenu*> menuList = ui->menuBar->findChildren<QMenu*>();
+    foreach(QMenu* menu, menuList)
+    {
+        if(menu->title() == "Edit")
+        {
+            foreach (QAction* a, menu->actions())
+            {
+                editActions.append(a);
+            }
+            break;
+        }
+    }
+    contextMenu.addActions(editActions);
+
+    connect(ui->commandList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
+    connect(ui->commandList, SIGNAL(itemSelectionChanged()), this, SLOT(handleSelectionChanged()));
+
+    //react to drag&drop events
+    connect(ui->commandList->model(),
+            SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
+            this,
+            SLOT(handleItemChanged(QModelIndex,int,int,QModelIndex,int)));
+
+    //disable actions by default
+    handleSelectionChanged();
 
     //start with unnamed project
-    progName = "unnamed";
+    programName = "unnamed";
+    programPath = QDir::currentPath();
     ui->tabWidget->setCurrentIndex(0);
     setUnsavedChanges(false);
+    unsavedProgram = true;
+    isListeningForKeyInput = false;
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *e)
+{
+    if(!isListeningForKeyInput)
+        return;
+
+    if(e->key() == Qt::Key_Escape){
+        ui->readKeyButton->setText("click me!");
+        isListeningForKeyInput = false;
+    }
+    else{
+        qDebug() << e->text();
+        ui->readKeyButton->setText(e->text());
+    }
 }
 
 //-------------------------------------------------------
@@ -130,31 +187,47 @@ void MainWindow::closeEvent(QCloseEvent *event)
         return;
     }
 
-    QMessageBox msgbox(this);
-    QPushButton *btn1 = new QPushButton("Save and quit");
-    QPushButton *btn2 = new QPushButton("Quit without saving");
-    QPushButton *btn3 = new QPushButton("Cancel");
+    UnsavedChangesMessageResult result = UnsavedChangesMessageResult::Cancel;
+    QMessageBox* msgbox = showUnsavedChangesWarning(result);
 
-    msgbox.setText(tr("There are unsaved changes which will get lost."));
-    msgbox.setWindowTitle("Warning!");
-
-    QPixmap icon(":/images/warning.png");
-    msgbox.setIconPixmap(icon);
-
-    msgbox.addButton(btn1, QMessageBox::ActionRole);
-    msgbox.addButton(btn2, QMessageBox::ActionRole);
-    msgbox.addButton(btn3, QMessageBox::ActionRole);
-
-    msgbox.exec();
-
-    if(msgbox.clickedButton() == btn3) event->ignore();
+    if(result == UnsavedChangesMessageResult::Cancel)
+        event->ignore();
     else
     {
-        if(msgbox.clickedButton() == btn1)
+        if(result == UnsavedChangesMessageResult::Save)
             saveProgram();
         event->accept();
     }
-    msgbox.close();
+    msgbox->close();
+}
+
+QMessageBox* MainWindow::showUnsavedChangesWarning(UnsavedChangesMessageResult &result)
+{
+    QMessageBox *msgbox = new QMessageBox(this);
+    QPushButton *btn1 = new QPushButton("Save");
+    QPushButton *btn2 = new QPushButton("Don't save");
+    QPushButton *btn3 = new QPushButton("Cancel");
+
+    msgbox->setText(tr("There are unsaved changes which will get lost."));
+    msgbox->setWindowTitle("Warning!");
+
+    QPixmap icon(":/images/warning.png");
+    msgbox->setIconPixmap(icon);
+
+    msgbox->addButton(btn1, QMessageBox::ActionRole);
+    msgbox->addButton(btn2, QMessageBox::ActionRole);
+    msgbox->addButton(btn3, QMessageBox::ActionRole);
+
+    msgbox->exec();
+
+    if(msgbox->clickedButton() == btn1)
+        result = UnsavedChangesMessageResult::Save;
+    if(msgbox->clickedButton() == btn2)
+        result = UnsavedChangesMessageResult::DontSave;
+    if(msgbox->clickedButton() == btn3)
+        result = UnsavedChangesMessageResult::Cancel;
+
+    return msgbox;
 }
 
 //-------------------------------------------------------
@@ -171,22 +244,13 @@ void MainWindow::checkKey()
         ui->yCoord->setValue(cursorPos.y);
         ui->xCoordDrag->setValue(cursorPos.x);
         ui->yCoordDrag->setValue(cursorPos.y);
+        ui->statusBar->showMessage("Cursor position (" + QString::number(cursorPos.x) + "," + QString::number(cursorPos.y) + ") has been saved", 10000);
     }
     if(GetAsyncKeyState(VK_F7))
     {
         if(ui->botstart->isEnabled())
             botStart();
     }
-}
-
-//-------------------------------------------------------
-//--------------------New Program------------------------
-//-------------------------------------------------------
-void MainWindow::newProgram()
-{
-    MainWindow *m = new MainWindow();
-    if(close())
-        m->show();
 }
 
 //-------------------------------------------------------
@@ -217,66 +281,143 @@ void MainWindow::addCommand(QString commandtype, QStringList arguments)
 }
 
 //-------------------------------------------------------
-//--------------------Save Program----------------------
-//---
-void MainWindow::saveProgram()
+//--------------------New Program------------------------
+//-------------------------------------------------------
+void MainWindow::newProgram()
 {
-    if(progName == "unnamed"){
+    MainWindow *m = new MainWindow();
+    if(close())
+        m->show();
+}
 
+//------------------------------------------------------
+//--------------------Open Program----------------------
+//------------------------------------------------------
+void MainWindow::openProgram()
+{
+    QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open a program"), programPath, tr("Program Files (*.myprog)"));
+
+    QString fileName = QFileInfo(fullFilePath).baseName();
+    if(fileName.length() > 0)
+        programName = fileName;
+    else
+    {
+        ui->statusBar->showMessage("Opening aborted", 3000);
+        return;
     }
-    else {
-        QString filename = (QDir::currentPath() + "/data/" + progName);
-        QFile file(filename);
-        if(!file.open(QFile::WriteOnly | QFile::Text))
-        {
-            ui->statusBar->setStatusTip("Saving program failed!");
+
+    if(unsavedChanges){
+        UnsavedChangesMessageResult result = UnsavedChangesMessageResult::Cancel;
+        QMessageBox* msgbox = showUnsavedChangesWarning(result);
+
+        if(result == UnsavedChangesMessageResult::Cancel){
+            ui->statusBar->showMessage("Opening aborted", 3000);
             return;
         }
-
-        QTextStream output(&file);
-        QString out;
-
-        out.append(QString::number(ui->defaultDelayCheckBox->isChecked()) + "|"+
-                   QString::number(ui->defaultDelaySpinBox->value()) + "|" +
-                   QString::number(ui->loopCheckBox->isChecked()) + "|" +
-                   QString::number(ui->loopType->currentIndex()) + "|" +
-                   QString::number(ui->loopFrom->value()) + "|" +
-                   QString::number(ui->loopTo->value()) + "|" +
-                   QString::number(ui->loopAmount->value()) + "\n");
-
-        for(int i = 0; i < commandList.size(); ++i)
-        {
-            out.append(commandList.at(i));
-            out.append("\n");
-        }
-
-        output << out;
-        file.close();
+        if(result == UnsavedChangesMessageResult::Save)
+            saveProgram();
+        msgbox->close();
     }
 
+    loadCommandListFromFile(fullFilePath);
+    ui->statusBar->showMessage("Opened " + fullFilePath);
+    unsavedProgram = false;
     setUnsavedChanges(false);
-    ui->statusBar->setStatusTip("Saved program successfully!");
+    refreshWindowTitle();
+    ui->delCmdUndo->setEnabled(false);
+}
+
+//------------------------------------------------------
+//--------------------Save Program----------------------
+//------------------------------------------------------
+void MainWindow::saveProgram()
+{
+    if(!unsavedProgram && !unsavedChanges)
+    {
+        ui->statusBar->showMessage("No changes to save", 3000);
+        return;
+    }
+
+    QString pathPlusFileName = getFullFilePath(programPath, programName);
+
+    if(unsavedProgram){
+        pathPlusFileName = QFileDialog::getSaveFileName(this, tr("Save the program as..."), programPath, tr("Program Files (*.myprog)"));
+
+        QString fileName = QFileInfo(pathPlusFileName).baseName().trimmed();
+
+        if(fileName.length() > 0)
+            programName = fileName;
+        else
+        {
+            ui->statusBar->showMessage("Saving aborted", 3000);
+            return;
+        }
+        unsavedProgram = false;
+    }
+
+    QFile file(pathPlusFileName);
+    if(!file.open(QFile::WriteOnly | QFile::Text))
+    {
+        qDebug() << file.errorString();
+        ui->statusBar->showMessage("Cannot open the savefile for saving the program!", 3000);
+        return;
+    }
+
+    QTextStream output(&file);
+    QString out;
+
+    out.append(QString::number(ui->defaultDelayCheckBox->isChecked()) + "|"+
+               QString::number(ui->defaultDelaySpinBox->value()) + "|" +
+               QString::number(ui->loopCheckBox->isChecked()) + "|" +
+               QString::number(ui->loopType->currentIndex()) + "|" +
+               QString::number(ui->loopFrom->value()) + "|" +
+               QString::number(ui->loopTo->value()) + "|" +
+               QString::number(ui->loopAmount->value()) + "\n");
+
+    for(int i = 0; i < commandList.size(); ++i)
+    {
+        out.append(commandList.at(i));
+        out.append("\n");
+    }
+
+    output << out;
+    file.close();
+
+    setUnsavedChanges(false);
+    ui->statusBar->showMessage("Saved program to " + pathPlusFileName, 3000);
+}
+
+//-------------------------------------------------------
+//--------------------Save program as--------------------
+//-------------------------------------------------------
+void MainWindow::saveProgramAs()
+{
+    unsavedProgram = true;
+    saveProgram();
 }
 
 //-------------------------------------------------------
 //-------------------Load from File to list--------------
-//---
-void MainWindow::loadCommandListFromFile()
+//-------------------------------------------------------
+void MainWindow::loadCommandListFromFile(QString filename)
 {
     commandList.clear();
 
-    QString filename = (QDir::currentPath() + "/data/" + progName);
     QFile file(filename);
 
     if(!file.exists())
         return;
 
-    file.open(QFile::ReadOnly);
+    if(!file.open(QFile::ReadOnly))
+        return;
 
     QTextStream input(&file);
     QStringList options = input.readLine().split("|");
 
     if(options.size() != 7){
+        QString msg = filename + " is corrupted. Aborted opening it.";
+        ui->statusBar->showMessage(msg);
+        qDebug() << msg << "\n";
         file.close();
         return;
     }
@@ -303,7 +444,7 @@ void MainWindow::loadCommandListFromFile()
 
 //-------------------------------------------------------
 //--------------Load from list to widget-----------------
-//---
+//-------------------------------------------------------
 void MainWindow::fillCommandListWidget()
 {
     ui->commandList->clear();
@@ -383,15 +524,12 @@ void MainWindow::fillCommandListWidget()
 
     if(ui->commandList->count() > 0) {
         ui->commandListTitle->setText("Command List [" + QString::number(ui->commandList->currentRow()) + "/"+ QString::number(commandList.size()) + "]");
-        //ui->loopFrom->setMaximum(ui->commandList->count() - 1);
     }
     else {
         ui->commandListTitle->setText("Command List [0/"+ QString::number(commandList.size()) + "]");
-        //ui->loopFrom->setMaximum(ui->commandList->count());
     }
 
-    //ui->loopTo->setMaximum(ui->commandList->count());
-    moveItem();
+    refreshCommandListControls();
 }
 
 
@@ -399,6 +537,15 @@ void MainWindow::optionsChanged(int dummy)
 {
     dummy = 1;
     setUnsavedChanges(true);
+}
+
+void MainWindow::readKeyButtonPressed()
+{
+    if(isListeningForKeyInput)
+        return;
+
+    isListeningForKeyInput = true;
+    ui->readKeyButton->setText("make the sc!");
 }
 
 //-------------------------------------------------------
@@ -480,7 +627,7 @@ void MainWindow::addKillProcessCommand()
 
 void MainWindow::refreshWindowTitle()
 {
-    setWindowTitle("Personal Macro - " + progName + (unsavedChanges ? "*" : ""));
+    setWindowTitle(programName + (unsavedChanges ? "*" : "") + " - Personal Macro");
 }
 
 void MainWindow::setUnsavedChanges(bool newUnsavedChanges)
@@ -498,7 +645,7 @@ void MainWindow::chooseExe()
     if(fileName.length() > 1 && fileName.contains(".exe"))
         ui->exeName->setText(fileName);
     else
-        ui->exeName->setText("Invalid file.");
+        ui->statusBar->showMessage("invalid or no file", 3000);
 }
 
 //-------------------------------------------------------
@@ -518,8 +665,10 @@ void MainWindow::deleteCommand()
     setUnsavedChanges(true);
     ui->delCmdUndo->setEnabled(true);
 
-    if(delBackupPos == ui->commandList->count()) ui->commandList->setCurrentRow(ui->commandList->count() - 1);
-    else ui->commandList->setCurrentRow(delBackupPos);
+    if(delBackupPos == ui->commandList->count())
+        ui->commandList->setCurrentRow(ui->commandList->count() - 1);
+    else
+        ui->commandList->setCurrentRow(delBackupPos);
 }
 
 //-------------------------------------------------------
@@ -534,7 +683,7 @@ void MainWindow::deleteUndo()
     ui->commandList->setCurrentRow(delBackupPos);
 }
 
-void MainWindow::moveItem()
+void MainWindow::refreshCommandListControls()
 {
     if(ui->commandList->count() > 0)
     {
@@ -589,7 +738,7 @@ void MainWindow::moveIt(int dir)
 }
 
 //-------------------------------------------------------
-//-----Called when the letterbox editing finished--------
+//-------------Letterbox editing finished----------------
 //-------------------------------------------------------
 void MainWindow::letterBoxEdited()
 {
@@ -599,7 +748,7 @@ void MainWindow::letterBoxEdited()
 }
 
 //-------------------------------------------------------
-//-------Called when the keybox editing finished---------
+//---------------Keybox editing finished-----------------
 //-------------------------------------------------------
 void MainWindow::keyBoxEdited()
 {
@@ -851,4 +1000,116 @@ void MainWindow::loopToChanged()
 {
     if(ui->loopTo->value() < ui->loopFrom->value())
         ui->loopFrom->setValue(ui->loopTo->value());
+}
+
+
+//-------------------------------------------------------
+//--------------------NEW METHODS------------------------
+//-------------------------------------------------------
+
+void MainWindow::showContextMenu(const QPoint &pos)
+{
+    QPoint globalPos = ui->commandList->mapToGlobal(pos);
+    contextMenu.exec(globalPos);
+}
+
+void MainWindow::addNewCommand()
+{
+    NewCommandDialog *n = new NewCommandDialog();
+    if(!n->exec())
+        return;
+
+    CommandWidget *itemWidget;
+    int c = -1;
+    if(!n->getResult(c))
+        return;
+
+    return;
+
+    switch(c){
+        case 0:
+            itemWidget = new ClickCommandWidget();
+            break;
+    }
+
+    QListWidgetItem *item = new QListWidgetItem();
+    addItem(item, itemWidget, ui->commandList->count());
+
+    ui->commandList->setCurrentRow(ui->commandList->count() - 1);
+    unselectAll();
+    item->setSelected(true);
+    setUnsavedChanges(true);
+}
+
+void MainWindow::deleteSelected()
+{
+    while(ui->commandList->selectedItems().length() > 0)
+    {
+        QListWidgetItem *item = ui->commandList->selectedItems().at(0);
+        delete item;
+    }
+    setUnsavedChanges(true);
+}
+
+void MainWindow::duplicateSelected()
+{
+    return;
+
+    if(ui->commandList->selectedItems().size() == 0)
+        return;
+
+    QList<QListWidgetItem *> newItems;
+
+    QList<QListWidgetItem *> selectedItems = ui->commandList->selectedItems();
+
+    for (int i = 0; i < selectedItems.size(); ++i)
+    {
+        QListWidgetItem *item = selectedItems.at(i);
+        QListWidgetItem *newItem = item->clone();
+        //addItem(newItem, , ui->commandList->row(item)+1);
+        newItems.append(newItem);
+    }
+
+    ui->commandList->setCurrentRow(ui->commandList->row(newItems.at(0)));
+    unselectAll();
+
+    QListWidgetItem *i;
+    foreach(i, newItems){
+        i->setSelected(true);
+    }
+    setUnsavedChanges(true);
+}
+
+void MainWindow::addItem(QListWidgetItem *item, CommandWidget *itemWidget, int row)
+{
+    ui->commandList->insertItem(row, item);
+    ui->commandList->setItemWidget(item, itemWidget);
+    item->setSizeHint(QSize(0, itemWidget->height()));
+    commandList.insert(row, QString::number(itemWidget->index));
+}
+
+void MainWindow::unselectAll()
+{
+    QList<QListWidgetItem *> selectedItems = ui->commandList->selectedItems();
+    for (int i = 0; i < selectedItems.size(); ++i)
+    {
+        QListWidgetItem *item = selectedItems.at(i);
+        item->setSelected(false);
+    }
+}
+
+void MainWindow::handleSelectionChanged()
+{
+    bool itemSelected = ui->commandList->selectedItems().count() > 0;
+
+    ui->actionDuplicate->setEnabled(itemSelected);
+    ui->actionDelete->setEnabled(itemSelected);
+    ui->actionCopy->setEnabled(itemSelected);
+    ui->actionCut->setEnabled(itemSelected);
+}
+
+void MainWindow::handleItemChanged(QModelIndex,int,int,QModelIndex,int)
+{
+    setUnsavedChanges(true);
+    refreshCommandListControls();
 }

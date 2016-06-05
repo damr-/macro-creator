@@ -1,9 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QList>
 #include <Windows.h>
+
+#include <QAction>
+#include <QList>
+#include <QListWidgetItem>
+#include <QMainWindow>
+#include <QMenu>
+#include <QMessageBox>
+
+#include "commandwidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -16,6 +23,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void keyPressEvent(QKeyEvent* e);
 
 private slots:
     //For catching the mouse position
@@ -23,7 +31,9 @@ private slots:
 
     //Menu Actions
     void newProgram();
-    void saveProgram();    
+    void saveProgram();
+    void saveProgramAs();
+    void openProgram();
 
     //Slots for adding commands
     void addMoveCursorCommand();
@@ -40,7 +50,7 @@ private slots:
     //ListWidget modification
     void deleteCommand();
     void deleteUndo();
-    void moveItem();
+    void refreshCommandListControls();
     void moveIt(int dir);
 
     //Shortcut Finemaker
@@ -63,20 +73,40 @@ private slots:
 
     void optionsChanged(int dummy);
 
+    void readKeyButtonPressed();
+
+    //NEW METHODS
+    void showContextMenu(const QPoint&);
+    void addNewCommand();
+    void deleteSelected();
+    void duplicateSelected();
+    void handleSelectionChanged();
+    void handleItemChanged(QModelIndex, int, int, QModelIndex, int);
+    void addItem(QListWidgetItem *item, CommandWidget *itemWidget, int row);
+    void unselectAll();
+
 private:
     Ui::MainWindow *ui;
 
-    QString progName;
+    QString programName;
+    QString programPath;
 
     QString delBackupText;
     int delBackupPos;
 
     QList<QString> commandList;
 
+    bool unsavedProgram;
+
     bool unsavedChanges;
 
+    //contect menu
+    QMenu contextMenu;
+
+    bool isListeningForKeyInput;
+
     void addCommand(QString commandtype, QStringList arguments);
-    void loadCommandListFromFile();
+    void loadCommandListFromFile(QString pathPlusFilename);
     void fillCommandListWidget();
     void closeEvent(QCloseEvent *event);
 
@@ -84,6 +114,16 @@ private:
 
     void refreshWindowTitle();
     void setUnsavedChanges(bool newUnsavedChanges);
+
+    static QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + ".myprog"; }
+
+    enum UnsavedChangesMessageResult {
+        Save = 0,
+        DontSave = 1,
+        Cancel = 2
+    };
+
+    QMessageBox *showUnsavedChangesWarning(UnsavedChangesMessageResult &result);
 };
 
 #endif // MAINWINDOW_H

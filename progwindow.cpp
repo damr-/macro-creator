@@ -32,14 +32,13 @@ ProgWindow::ProgWindow(QWidget *parent) :
 	connect(ui->actionDelete, SIGNAL(triggered()), this, SLOT(deleteSelected()));
 	connect(ui->actionDuplicate, SIGNAL(triggered()), this, SLOT(duplicateSelected()));
 
-	connect(ui->commandList, SIGNAL(itemSelectionChanged()), this, SLOT(handleSelectionChanged()));
-
 	//Setup context menu
 	contextMenu.addAction("Add Command", this, SLOT(addNew()));
 	contextMenu.addAction("Delete",  this, SLOT(deleteSelected()));
-
 	ui->commandList->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui->commandList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
+
+    connect(ui->commandList, SIGNAL(itemSelectionChanged()), this, SLOT(handleSelectionChanged()));
 
 	unsavedChanges = false;
 }
@@ -65,89 +64,6 @@ void ProgWindow::showOptions()
 void ProgWindow::exitProgram()
 {
 	this->close();
-}
-
-void ProgWindow::closeEvent(QCloseEvent *event)
-{
-	if (!unsavedChanges) {
-		event->accept();
-		return;
-	}
-
-	QMessageBox msgbox(this);
-	QPushButton *saveQuitButton = new QPushButton("Save and quit");
-	QPushButton *noSaveQuitButton = new QPushButton("Quit without saving");
-	QPushButton *cancelButton = new QPushButton("Cancel");
-
-	msgbox.setText(tr("There are unsaved changes which will get lost."));
-	msgbox.setWindowTitle("Warning!");
-	msgbox.setIcon(QMessageBox::Warning);
-
-	msgbox.addButton(saveQuitButton, QMessageBox::ActionRole);
-	msgbox.addButton(noSaveQuitButton, QMessageBox::ActionRole);
-	msgbox.addButton(cancelButton, QMessageBox::ActionRole);
-
-	msgbox.exec();
-
-	if(msgbox.clickedButton() == cancelButton)
-		event->ignore();
-	else {
-		if(msgbox.clickedButton() == saveQuitButton)
-			saveCommandList();
-		event->accept();
-	}
-
-	msgbox.close();
-}
-
-void ProgWindow::saveCommandList()
-{
-    QString filename = (QDir::currentPath() + "/data/" + startup::progName);
-    QFile file(filename);
-	file.open(QFile::WriteOnly | QFile::Text);
-
-    QTextStream output(&file);
-    QString out;
-
-    for(int i = 0; i < commandList.size(); ++i)
-    {
-        out.append(commandList.at(i));
-        out.append("\n");
-    }
-
-    output << out;
-
-    file.close();
-
-    this->setWindowTitle("macomator - " + startup::progName);
-	unsavedChanges = false;
-}
-
-void ProgWindow::loadFromFile()
-{
-    commandList.clear();
-
-    QString filename = (QDir::currentPath() + "/data/" + startup::progName);
-    QFile file(filename);
-    file.open(QFile::ReadOnly);
-
-    QTextStream input(&file);
-    QString line;
-
-    do
-    {
-        line = input.readLine();
-        if(line.length() > 0)
-            commandList.append(line);
-    }while(!line.isNull());
-
-    file.close();
-
-    fillListWidget();
-}
-
-void ProgWindow::fillListWidget()
-{
 }
 
 //\///////////////////////////
