@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>655</width>
-    <height>350</height>
+    <width>660</width>
+    <height>310</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,12 +22,12 @@
   <property name="minimumSize">
    <size>
     <width>655</width>
-    <height>350</height>
+    <height>310</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>655</width>
+    <width>660</width>
     <height>350</height>
    </size>
   </property>
@@ -39,21 +39,536 @@
     <normaloff>:/resources/images/resources/favicon.jpg</normaloff>:/resources/images/resources/favicon.jpg</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
+   <widget class="QLabel" name="commandListTitle">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>0</y>
+      <width>141</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Command List [0/0]</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="delCmd">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>625</x>
+      <y>70</y>
+      <width>30</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delete this command&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="resources.qrc">
+      <normaloff>:/resources/images/resources/images/recycle_bin.png</normaloff>:/resources/images/resources/images/recycle_bin.png</iconset>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="moveup">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>625</x>
+      <y>150</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Move up once&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="resources.qrc">
+      <normaloff>:/resources/images/resources/images/arrow_up.png</normaloff>:/resources/images/resources/images/arrow_up.png</iconset>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="movedown">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>625</x>
+      <y>180</y>
+      <width>31</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Move down once&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="resources.qrc">
+      <normaloff>:/resources/images/resources/images/arrow_down.png</normaloff>:/resources/images/resources/images/arrow_down.png</iconset>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="delCmdUndo">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>625</x>
+      <y>100</y>
+      <width>30</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Undo the last deletion</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="resources.qrc">
+      <normaloff>:/resources/images/resources/images/Undo.png</normaloff>:/resources/images/resources/images/Undo.png</iconset>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="botstart">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>625</x>
+      <y>230</y>
+      <width>31</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Run the bot</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="resources.qrc">
+      <normaloff>:/resources/images/resources/images/i_start.png</normaloff>:/resources/images/resources/images/i_start.png</iconset>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="addAbove">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>625</x>
+      <y>20</y>
+      <width>31</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Add next command above the selected one</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="resources.qrc">
+      <normaloff>:/resources/images/resources/images/Upleft.png</normaloff>:/resources/images/resources/images/Upleft.png</iconset>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="commandList">
+    <property name="geometry">
+     <rect>
+      <x>325</x>
+      <y>20</y>
+      <width>290</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>1680</width>
+      <height>720</height>
+     </size>
+    </property>
+    <property name="sizeIncrement">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">selection-background-color: rgb(159, 181, 255);</string>
+    </property>
+    <property name="autoScrollMargin">
+     <number>1</number>
+    </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
+    <property name="showDropIndicator" stdset="0">
+     <bool>true</bool>
+    </property>
+    <property name="dragEnabled">
+     <bool>true</bool>
+    </property>
+    <property name="dragDropOverwriteMode">
+     <bool>true</bool>
+    </property>
+    <property name="dragDropMode">
+     <enum>QAbstractItemView::InternalMove</enum>
+    </property>
+    <property name="defaultDropAction">
+     <enum>Qt::MoveAction</enum>
+    </property>
+    <property name="alternatingRowColors">
+     <bool>false</bool>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::ExtendedSelection</enum>
+    </property>
+    <property name="uniformItemSizes">
+     <bool>false</bool>
+    </property>
+   </widget>
    <widget class="QTabWidget" name="tabWidget">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>321</width>
+      <x>5</x>
+      <y>5</y>
+      <width>315</width>
       <height>251</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
+    <property name="tabBarAutoHide">
+     <bool>false</bool>
+    </property>
+    <widget class="QWidget" name="tab_5">
+     <attribute name="title">
+      <string>Menu</string>
+     </attribute>
+     <widget class="QComboBox" name="commandSelectBox">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>291</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="currentText">
+       <string/>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+      </property>
+      <property name="frame">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_7">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>130</y>
+        <width>291</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Options</string>
+      </property>
+      <widget class="QLabel" name="loopAmountLabel">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>65</y>
+         <width>31</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>times</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="toLabel">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>65</y>
+         <width>21</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>to</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="defaultDelayCheckBox">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>101</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Default delay</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="loopTo">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>65</y>
+         <width>51</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="minimum">
+        <number>2</number>
+       </property>
+       <property name="value">
+        <number>2</number>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="loopAmount">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>205</x>
+         <y>65</y>
+         <width>51</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>9999</number>
+       </property>
+       <property name="value">
+        <number>1</number>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="loopCheckBox">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>43</y>
+         <width>51</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Loop</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="loopFrom">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>59</x>
+         <y>65</y>
+         <width>51</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="defaultDelaySpinBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>20</y>
+         <width>71</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>10000</number>
+       </property>
+       <property name="value">
+        <number>250</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="forLabel">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>65</y>
+         <width>21</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>for</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="msLabel">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>20</y>
+         <width>80</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Milliseconds</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="loopType">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>43</y>
+         <width>51</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>all</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>from</string>
+        </property>
+       </item>
+      </widget>
+      <widget class="QLabel" name="indexLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>65</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>index</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QPushButton" name="addCommandButton">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>100</y>
+        <width>30</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add command&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="resources.qrc">
+        <normaloff>:/resources/images/resources/images/plus.png</normaloff>:/resources/images/resources/images/plus.png</iconset>
+      </property>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_11">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>251</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Settings</string>
+      </property>
+     </widget>
+     <zorder>groupBox_7</zorder>
+     <zorder>commandSelectBox</zorder>
+     <zorder>addCommandButton</zorder>
+     <zorder>groupBox_11</zorder>
+    </widget>
     <widget class="QWidget" name="tab">
      <attribute name="title">
       <string>Mouse Control</string>
@@ -61,7 +576,7 @@
      <widget class="QGroupBox" name="groupBox_2">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>60</y>
         <width>300</width>
         <height>40</height>
@@ -160,7 +675,7 @@
      <widget class="QGroupBox" name="groupBox">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>10</y>
         <width>300</width>
         <height>40</height>
@@ -276,7 +791,7 @@
      <widget class="QGroupBox" name="groupBox_4">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>180</y>
         <width>300</width>
         <height>40</height>
@@ -381,7 +896,7 @@
      <widget class="QGroupBox" name="groupBox_3">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>110</y>
         <width>300</width>
         <height>60</height>
@@ -499,7 +1014,7 @@
      <widget class="QGroupBox" name="groupBox_5">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>10</y>
         <width>300</width>
         <height>71</height>
@@ -605,7 +1120,7 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>89</y>
         <width>300</width>
         <height>121</height>
@@ -1103,7 +1618,7 @@
      <widget class="QGroupBox" name="groupBox_9">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>10</y>
         <width>300</width>
         <height>41</height>
@@ -1178,7 +1693,7 @@
      <widget class="QGroupBox" name="groupBox_8">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>70</y>
         <width>300</width>
         <height>41</height>
@@ -1237,543 +1752,106 @@
        </property>
       </widget>
      </widget>
-    </widget>
-    <widget class="QWidget" name="tab_4">
-     <attribute name="title">
-      <string>Options</string>
-     </attribute>
-     <widget class="QSpinBox" name="defaultDelaySpinBox">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
+     <widget class="QGroupBox" name="groupBox_10">
       <property name="geometry">
        <rect>
-        <x>100</x>
-        <y>10</y>
-        <width>71</width>
-        <height>21</height>
+        <x>5</x>
+        <y>130</y>
+        <width>300</width>
+        <height>40</height>
        </rect>
       </property>
-      <property name="minimum">
-       <number>1</number>
+      <property name="title">
+       <string/>
       </property>
-      <property name="maximum">
-       <number>10000</number>
-      </property>
-      <property name="value">
-       <number>250</number>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="defaultDelayCheckBox">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>101</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Default delay</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="msLabel">
-      <property name="geometry">
-       <rect>
-        <x>180</x>
-        <y>12</y>
-        <width>80</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Milliseconds</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="loopCheckBox">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>51</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Loop</string>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="loopType">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>40</y>
-        <width>51</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <item>
-       <property name="text">
-        <string>all</string>
+      <widget class="QLabel" name="waitForLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
        </property>
-      </item>
-      <item>
        <property name="text">
-        <string>from</string>
+        <string>Wait for</string>
        </property>
-      </item>
-     </widget>
-     <widget class="QLabel" name="toLabel">
-      <property name="geometry">
-       <rect>
-        <x>120</x>
-        <y>70</y>
-        <width>21</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>to</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-     <widget class="QSpinBox" name="loopFrom">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>69</x>
-        <y>70</y>
-        <width>51</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="minimum">
-       <number>1</number>
-      </property>
-     </widget>
-     <widget class="QSpinBox" name="loopTo">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>140</x>
-        <y>70</y>
-        <width>51</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="minimum">
-       <number>2</number>
-      </property>
-      <property name="value">
-       <number>2</number>
-      </property>
-     </widget>
-     <widget class="QSpinBox" name="loopAmount">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>215</x>
-        <y>70</y>
-        <width>51</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="minimum">
-       <number>1</number>
-      </property>
-      <property name="maximum">
-       <number>9999</number>
-      </property>
-      <property name="value">
-       <number>1</number>
-      </property>
-     </widget>
-     <widget class="QLabel" name="timesLabel">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>70</y>
-        <width>41</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>times</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="forLabel">
-      <property name="geometry">
-       <rect>
-        <x>200</x>
-        <y>70</y>
-        <width>21</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>for</string>
-      </property>
+      </widget>
+      <widget class="QSpinBox" name="waitTime">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>10</y>
+         <width>71</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="addWaitCommand">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>5</y>
+         <width>30</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add command&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/resources/images/resources/images/plus.png</normaloff>:/resources/images/resources/images/plus.png</iconset>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="sleepComboBox">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>10</y>
+         <width>111</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>Seconds</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Milliseconds</string>
+        </property>
+       </item>
+      </widget>
      </widget>
     </widget>
    </widget>
-   <widget class="QLabel" name="commandListTitle">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>0</y>
-      <width>141</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Command List [0/0]</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="commandList_OLD">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>20</y>
-      <width>255</width>
-      <height>281</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-     </font>
-    </property>
-    <property name="autoScrollMargin">
-     <number>1</number>
-    </property>
-    <property name="editTriggers">
-     <set>QAbstractItemView::NoEditTriggers</set>
-    </property>
-    <property name="showDropIndicator" stdset="0">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="delCmd">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>70</y>
-      <width>30</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delete this command&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources.qrc">
-      <normaloff>:/resources/images/resources/images/recycle_bin.png</normaloff>:/resources/images/resources/images/recycle_bin.png</iconset>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="moveup">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>150</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Move up once&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources.qrc">
-      <normaloff>:/resources/images/resources/images/arrow_up.png</normaloff>:/resources/images/resources/images/arrow_up.png</iconset>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="movedown">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>180</y>
-      <width>31</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Move down once&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources.qrc">
-      <normaloff>:/resources/images/resources/images/arrow_down.png</normaloff>:/resources/images/resources/images/arrow_down.png</iconset>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="delCmdUndo">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>100</y>
-      <width>30</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Undo the last deletion</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources.qrc">
-      <normaloff>:/resources/images/resources/images/Undo.png</normaloff>:/resources/images/resources/images/Undo.png</iconset>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="botstart">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>270</y>
-      <width>31</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Run the bot</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources.qrc">
-      <normaloff>:/resources/images/resources/images/i_start.png</normaloff>:/resources/images/resources/images/i_start.png</iconset>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="addAbove">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>20</y>
-      <width>31</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Add next command above the selected one</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources.qrc">
-      <normaloff>:/resources/images/resources/images/Upleft.png</normaloff>:/resources/images/resources/images/Upleft.png</iconset>
-    </property>
-    <property name="checkable">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_10">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>260</y>
-      <width>300</width>
-      <height>40</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string/>
-    </property>
-    <widget class="QLabel" name="label_18">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>41</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Wait for</string>
-     </property>
-    </widget>
-    <widget class="QSpinBox" name="sleepTime">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>10</y>
-       <width>71</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>1000</number>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="sleep">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>5</y>
-       <width>30</width>
-       <height>30</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add command&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="resources.qrc">
-       <normaloff>:/resources/images/resources/images/plus.png</normaloff>:/resources/images/resources/images/plus.png</iconset>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="sleepComboBox">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>10</y>
-       <width>111</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>Seconds</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Milliseconds</string>
-      </property>
-     </item>
-    </widget>
-   </widget>
-   <widget class="QListWidget" name="commandList">
-    <property name="geometry">
-     <rect>
-      <x>319</x>
-      <y>20</y>
-      <width>301</width>
-      <height>281</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>0</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>1680</width>
-      <height>720</height>
-     </size>
-    </property>
-    <property name="sizeIncrement">
-     <size>
-      <width>0</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">selection-background-color: rgb(159, 181, 255);</string>
-    </property>
-    <property name="autoScrollMargin">
-     <number>1</number>
-    </property>
-    <property name="editTriggers">
-     <set>QAbstractItemView::NoEditTriggers</set>
-    </property>
-    <property name="showDropIndicator" stdset="0">
-     <bool>true</bool>
-    </property>
-    <property name="dragEnabled">
-     <bool>true</bool>
-    </property>
-    <property name="dragDropOverwriteMode">
-     <bool>true</bool>
-    </property>
-    <property name="dragDropMode">
-     <enum>QAbstractItemView::InternalMove</enum>
-    </property>
-    <property name="defaultDropAction">
-     <enum>Qt::MoveAction</enum>
-    </property>
-    <property name="alternatingRowColors">
-     <bool>false</bool>
-    </property>
-    <property name="selectionMode">
-     <enum>QAbstractItemView::ExtendedSelection</enum>
-    </property>
-    <property name="uniformItemSizes">
-     <bool>false</bool>
-    </property>
-   </widget>
+   <zorder>delCmd</zorder>
+   <zorder>moveup</zorder>
+   <zorder>movedown</zorder>
+   <zorder>delCmdUndo</zorder>
+   <zorder>botstart</zorder>
+   <zorder>addAbove</zorder>
+   <zorder>commandList</zorder>
+   <zorder>tabWidget</zorder>
+   <zorder>commandListTitle</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>655</width>
+     <width>660</width>
      <height>21</height>
     </rect>
    </property>
@@ -1792,8 +1870,6 @@
     <property name="title">
      <string>Edit</string>
     </property>
-    <addaction name="actionAdd_Command"/>
-    <addaction name="separator"/>
     <addaction name="actionCut"/>
     <addaction name="actionCopy"/>
     <addaction name="actionPaste"/>

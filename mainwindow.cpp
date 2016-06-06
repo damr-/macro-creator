@@ -19,13 +19,14 @@
 #include <QTextStream>
 #include <QTimer>
 
+#include "commands.h"
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
 #include "startup.h"
 #include "optionsdialog.h"
 #include "keyboardutilities.h"
 #include "newcommanddialog.h"
-#include "clickcommandwidget.h"
+#include "commandlistitem.h"
 
 #pragma comment(lib, "user32.lib")
 
@@ -52,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveProgramAs()));
 
     //Menu->Edit Actions
-    connect(ui->actionAdd_Command, SIGNAL(triggered()), this, SLOT(addNewCommand()));
+    //connect(ui->actionAdd_Command, SIGNAL(triggered()), this, SLOT(addNewCommand()));
     connect(ui->actionDelete, SIGNAL(triggered()), this, SLOT(deleteSelected()));
     connect(ui->actionDuplicate, SIGNAL(triggered()), this, SLOT(duplicateSelected()));
 
@@ -63,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->scroll, SIGNAL(clicked()), this, SLOT(addScrollCommand()));
     connect(ui->addWriteTextCommandButton, SIGNAL(clicked()), this, SLOT(addWriteTextCommand()));
     connect(ui->shortcut, SIGNAL(clicked()), this, SLOT(addShortcutCommand()));
-    connect(ui->sleep, SIGNAL(clicked()), this, SLOT(addSleepCommand()));
+    connect(ui->addWaitCommand, SIGNAL(clicked()), this, SLOT(addWaitCommand()));
     connect(ui->addOpenExeCommandButton, SIGNAL(clicked()), this, SLOT(addOpenExeCommand()));
     connect(ui->chooseExeButton, SIGNAL(clicked()), this, SLOT(chooseExe()));
     connect(ui->killProc, SIGNAL(clicked()), this, SLOT(addKillProcessCommand()));
@@ -95,7 +96,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->movedown, SIGNAL(clicked()), moveItemMapper, SLOT(map()));
     moveItemMapper -> setMapping (ui->moveup, -1) ;
     moveItemMapper -> setMapping (ui->movedown, 1) ;
-    connect(moveItemMapper, SIGNAL(mapped(int)), this, SLOT(moveIt(int)));
+    connect(moveItemMapper, SIGNAL(mapped(int)), this, SLOT(moveItem(int)));
 
     //Shortcut idiotproofing
     connect(ui->letterBox, SIGNAL(textChanged(QString)), this, SLOT(letterBoxEdited()));
@@ -155,6 +156,17 @@ MainWindow::MainWindow(QWidget *parent) :
     setUnsavedChanges(false);
     unsavedProgram = true;
     isListeningForKeyInput = false;
+
+    connect(ui->addCommandButton, SIGNAL(clicked()), this, SLOT(addNewCommand()));
+    connect(ui->commandSelectBox, SIGNAL(currentIndexChanged(int)), this, SLOT(commandSelectionChanged()));
+
+    //fill command select box
+    foreach(QString name, Commands::commandNames())
+    {
+        ui->commandSelectBox->addItem(name);
+    }
+
+
 }
 
 MainWindow::~MainWindow()
@@ -320,7 +332,7 @@ void MainWindow::openProgram()
     }
 
     loadCommandListFromFile(fullFilePath);
-    ui->statusBar->showMessage("Opened " + fullFilePath);
+    ui->statusBar->showMessage("Opened " + fullFilePath, 3000);
     unsavedProgram = false;
     setUnsavedChanges(false);
     refreshWindowTitle();
@@ -482,18 +494,12 @@ void MainWindow::fillCommandListWidget()
         }
 
         else if( list[0] == "txt" ) {
-            QString item;
-            item.append("Write '" + list[2] + "' ");
-            if( list[1] == "0" ) item.append("upper-case");
-            else if ( list[1] == "1" )item.append("lower-case");
+            QString item = "Write '" + list[2] + "' " + (list[1] == "0" ? "upper-case" : "lower-case");
             ui->commandList->addItem(item);
         }
 
         else if( list[0] == "slp" ) {
-            QString item;
-            item.append("Sleep for " + list[1]);
-            if( list[2] == "0") item.append(" Seconds");
-            else if( list[2] == "1") item.append(" Milliseconds");
+            QString item = "Sleep for " + list[1] + (list[2] == "0" ? " Seconds" : " Milliseconds");
             ui->commandList->addItem(item);
         }
 
@@ -613,9 +619,9 @@ void MainWindow::addOpenExeCommand()
         addCommand("exe", (QStringList() << ui->exeName->text()));
 }
 
-void MainWindow::addSleepCommand()
+void MainWindow::addWaitCommand()
 {
-    addCommand("slp",  (QStringList() << QString::number(ui->sleepTime->value()) << QString::number(ui->sleepComboBox->currentIndex())));
+    addCommand("slp",  (QStringList() << QString::number(ui->waitTime->value()) << QString::number(ui->sleepComboBox->currentIndex())));
 }
 
 void MainWindow::addKillProcessCommand()
@@ -720,13 +726,13 @@ void MainWindow::refreshCommandListControls()
     }
 }
 
-void MainWindow::moveIt(int dir)
+void MainWindow::moveItem(int direction)
 {
     QScrollBar *vb = ui->commandList->verticalScrollBar();
     int oldValue = vb->value();
 
     int curIndex = ui->commandList->currentRow();
-    int newIndex = curIndex + dir;
+    int newIndex = curIndex + direction;
 
     commandList.swap(curIndex, newIndex);
     fillCommandListWidget();
@@ -1015,24 +1021,19 @@ void MainWindow::showContextMenu(const QPoint &pos)
 
 void MainWindow::addNewCommand()
 {
-    NewCommandDialog *n = new NewCommandDialog();
-    if(!n->exec())
-        return;
+    //NewCommandDialog *n = new NewCommandDialog();
+    //if(!n->exec())
+    //    return;
 
-    CommandWidget *itemWidget;
-    int c = -1;
-    if(!n->getResult(c))
-        return;
+//    int commandIndex;
+//    if(!n->getResult(commandIndex))
+//        return;
 
-    return;
+    int commandIndex = ui->commandSelectBox->currentIndex();;
 
-    switch(c){
-        case 0:
-            itemWidget = new ClickCommandWidget();
-            break;
-    }
-
-    QListWidgetItem *item = new QListWidgetItem();
+    CommandWidget *itemWidget = Commands::getNewCommandWidget(commandIndex);
+    CommandListItem *item = new CommandListItem();
+    item->commandIndex = commandIndex;
     addItem(item, itemWidget, ui->commandList->count());
 
     ui->commandList->setCurrentRow(ui->commandList->count() - 1);
@@ -1053,20 +1054,27 @@ void MainWindow::deleteSelected()
 
 void MainWindow::duplicateSelected()
 {
-    return;
-
     if(ui->commandList->selectedItems().size() == 0)
         return;
 
-    QList<QListWidgetItem *> newItems;
-
     QList<QListWidgetItem *> selectedItems = ui->commandList->selectedItems();
 
+    QList<CommandListItem *> newItems;
     for (int i = 0; i < selectedItems.size(); ++i)
     {
-        QListWidgetItem *item = selectedItems.at(i);
-        QListWidgetItem *newItem = item->clone();
-        //addItem(newItem, , ui->commandList->row(item)+1);
+        CommandListItem *item = (CommandListItem *)selectedItems.at(i);
+        CommandListItem *newItem = new CommandListItem();
+
+        //create new widget
+        CommandWidget *newWidget = Commands::getNewCommandWidget(item->commandIndex);
+
+        //copy widget values to new one
+        ((CommandWidget*)ui->commandList->itemWidget(item))->CopyTo(newWidget);
+
+        //copy list item command index to new item
+        newItem->commandIndex = item->commandIndex;
+
+        addItem(newItem, newWidget, ui->commandList->row(item)+1);
         newItems.append(newItem);
     }
 
@@ -1080,7 +1088,7 @@ void MainWindow::duplicateSelected()
     setUnsavedChanges(true);
 }
 
-void MainWindow::addItem(QListWidgetItem *item, CommandWidget *itemWidget, int row)
+void MainWindow::addItem(CommandListItem *item, CommandWidget *itemWidget, int row)
 {
     ui->commandList->insertItem(row, item);
     ui->commandList->setItemWidget(item, itemWidget);
@@ -1096,6 +1104,11 @@ void MainWindow::unselectAll()
         QListWidgetItem *item = selectedItems.at(i);
         item->setSelected(false);
     }
+}
+
+void MainWindow::commandSelectionChanged()
+{
+
 }
 
 void MainWindow::handleSelectionChanged()

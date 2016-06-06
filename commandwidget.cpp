@@ -13,5 +13,10 @@ CommandWidget::CommandWidget(QWidget *parent) :
 
 CommandWidget::~CommandWidget()
 {
-	delete ui;
+    delete ui;
+}
+
+void CommandWidget::CopyTo(CommandWidget *other)
+{
+    other = NULL;
 }

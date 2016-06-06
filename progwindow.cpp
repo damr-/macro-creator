@@ -23,7 +23,7 @@ ProgWindow::ProgWindow(QWidget *parent) :
 
 	//Setup File actions
 	connect(ui->actionNew_Open, SIGNAL(triggered()), this, SLOT(newOpenProgram()));
-	connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveCommandList()));
+    //connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveCommandList()));
 	connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(showOptions()));
 	connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(exitProgram()));
 

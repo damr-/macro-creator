@@ -24,7 +24,6 @@ public:
 private slots:
 	//main menu actions
     void newOpenProgram();
-    void saveCommandList();
 	void showOptions();
 	void exitProgram();
 
@@ -40,7 +39,7 @@ private slots:
 private:
     Ui::ProgWindow *ui;
 
-    void closeEvent(QCloseEvent *event);
+    //void closeEvent(QCloseEvent *event);
     void loadFromFile();
     void fillListWidget();
 

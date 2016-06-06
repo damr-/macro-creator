@@ -15,6 +15,7 @@ class CommandWidget : public QWidget
 		explicit CommandWidget(QWidget *parent = 0);
 		static int index;
 		~CommandWidget();
+        virtual void CopyTo(CommandWidget *other);
 
 	private:
 		Ui::CommandWidget *ui;

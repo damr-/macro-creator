@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Add a new command</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/resources/images/resources/favicon.jpg</normaloff>:/resources/images/resources/favicon.jpg</iconset>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
@@ -32,40 +36,60 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QScrollArea" name="scrollArea">
+  <widget class="QComboBox" name="commandSelectBox">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
-     <width>361</width>
-     <height>221</height>
+     <y>20</y>
+     <width>191</width>
+     <height>31</height>
     </rect>
    </property>
-   <property name="frameShape">
-    <enum>QFrame::Box</enum>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
    </property>
-   <property name="frameShadow">
-    <enum>QFrame::Raised</enum>
+   <property name="currentText">
+    <string/>
    </property>
-   <property name="lineWidth">
-    <number>2</number>
+   <property name="currentIndex">
+    <number>-1</number>
    </property>
-   <property name="widgetResizable">
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+   <property name="frame">
     <bool>true</bool>
    </property>
-   <widget class="QWidget" name="scrollAreaWidgetContents">
+  </widget>
+  <widget class="QGroupBox" name="commandSettings">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>70</y>
+     <width>371</width>
+     <height>181</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Settings</string>
+   </property>
+   <widget class="QWidget" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>353</width>
-      <height>213</height>
+      <x>10</x>
+      <y>20</y>
+      <width>351</width>
+      <height>141</height>
      </rect>
     </property>
    </widget>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

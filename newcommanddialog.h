@@ -19,6 +19,7 @@ class NewCommandDialog : public QDialog
 
 	private slots:
 		void okayClicked();
+        void commandSelectionChanged();
 
 	private:
 		Ui::NewCommandDialog *ui;

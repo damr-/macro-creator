@@ -1,8 +1,6 @@
 #include "clickcommandwidget.h"
 #include "ui_clickcommandwidget.h"
 
-#include <QDebug>
-
 ClickCommandWidget::ClickCommandWidget(QWidget *parent) :
 	CommandWidget(parent),
 	ui(new Ui::ClickCommandWidget)
@@ -11,13 +9,26 @@ ClickCommandWidget::ClickCommandWidget(QWidget *parent) :
 
 	int max = ui->clickAmountSpinBox->maximum();
 	int min = ui->clickAmountSpinBox->minimum();
-
-	int val = qrand() % ((max + 1) - min) + min;
-
-	ui->clickAmountSpinBox->setValue(val);
+    SetClickAmount(qrand() % ((max + 1) - min) + min);
 }
 
 ClickCommandWidget::~ClickCommandWidget()
 {
-	delete ui;
+    delete ui;
+}
+
+void ClickCommandWidget::SetClickAmount(int amount)
+{
+    ui->clickAmountSpinBox->setValue(amount);
+}
+
+void ClickCommandWidget::CopyTo(CommandWidget *other)
+{
+    ClickCommandWidget* widget = (ClickCommandWidget*)other;
+    widget->SetClickAmount(clickAmount());
+}
+
+int ClickCommandWidget::clickAmount()
+{
+    return ui->clickAmountSpinBox->value();
 }

@@ -10,6 +10,7 @@
 #include <QMenu>
 #include <QMessageBox>
 
+#include "commandlistitem.h"
 #include "commandwidget.h"
 
 namespace Ui {
@@ -44,14 +45,14 @@ private slots:
     void addShortcutCommand();
     void chooseExe();
     void addOpenExeCommand();
-    void addSleepCommand();
+    void addWaitCommand();
     void addKillProcessCommand();
 
     //ListWidget modification
     void deleteCommand();
     void deleteUndo();
     void refreshCommandListControls();
-    void moveIt(int dir);
+    void moveItem(int direction);
 
     //Shortcut Finemaker
     void letterBoxEdited();
@@ -82,8 +83,10 @@ private slots:
     void duplicateSelected();
     void handleSelectionChanged();
     void handleItemChanged(QModelIndex, int, int, QModelIndex, int);
-    void addItem(QListWidgetItem *item, CommandWidget *itemWidget, int row);
+    void addItem(CommandListItem *item, CommandWidget *itemWidget, int row);
     void unselectAll();
+
+    void commandSelectionChanged();
 
 private:
     Ui::MainWindow *ui;

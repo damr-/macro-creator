@@ -15,7 +15,10 @@ SOURCES += main.cpp \
         clickcommandwidget.cpp \
         newprogramdialog.cpp \
         newcommanddialog.cpp \
-        progwindow.cpp
+        progwindow.cpp \
+    setcursorposcommandwidget.cpp \
+    commandlistitem.cpp \
+    waitcommandwidget.cpp
 
 HEADERS  += mainwindow.h \
     startup.h \
@@ -25,7 +28,11 @@ HEADERS  += mainwindow.h \
     newprogramdialog.h \
     newcommanddialog.h \
     keyboardutilities.h \
-    progwindow.h
+    progwindow.h \
+    commands.h \
+    setcursorposcommandwidget.h \
+    commandlistitem.h \
+    waitcommandwidget.h
 
 FORMS    += mainwindow.ui \
     startup.ui \
@@ -34,7 +41,9 @@ FORMS    += mainwindow.ui \
     clickcommandwidget.ui \
     newprogramdialog.ui \
     newcommanddialog.ui \
-    progwindow.ui
+    progwindow.ui \
+    setcursorposcommandwidget.ui \
+    waitcommandwidget.ui
 
 RESOURCES += \
     resources.qrc
