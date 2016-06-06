@@ -6,7 +6,6 @@
 class CommandListItem : public QListWidgetItem
 {
 public:
-    CommandListItem();
     int commandIndex = -1;
 };
 

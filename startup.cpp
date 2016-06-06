@@ -1,17 +1,14 @@
-#include <QSignalMapper>
-#include <QFile>
-#include <QTextStream>
-#include <QDir>
-#include <QStringList>
-#include <QApplication>
-
 #include "startup.h"
 #include "ui_startup.h"
+
+#include <QDir>
+#include <QFile>
+#include <QTextStream>
+#include <QStringList>
+
 #include "mainwindow.h"
 #include "newprogramdialog.h"
 #include "progwindow.h"
-
-#include <QDebug>
 
 QString startup::progListFileName = "proglist";
 QString startup::progListDirectory = (QDir::currentPath() + "/data/" + startup::progListFileName);

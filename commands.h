@@ -2,15 +2,16 @@
 #define COMMANDS_H
 
 #include <QString>
-#include <QList>
+#include <QStringList>
 
-#include "clickcommandwidget.h"
-#include "setcursorposcommandwidget.h"
-#include "waitcommandwidget.h"
+#include "commandwidget.h"
 
 class Commands
 {
 public:
+    Commands();
+    static void ExecuteCommand(QString command);
+    static CommandWidget* GetNewCommandWidget(int commandIndex);
     const static QList<QString> commandNames()
     {
         return {
@@ -18,20 +19,6 @@ public:
             "Set cursor position",
             "Wait"
         };
-    }
-
-    static CommandWidget* getNewCommandWidget(int commandIndex)
-    {
-        switch(commandIndex){
-            case 0:
-                return new ClickCommandWidget();
-            case 1:
-                return new SetCursorPosCommandWidget();
-            case 2:
-                return new WaitCommandWidget();
-            default:
-                return new CommandWidget();
-        }
     }
 
 };

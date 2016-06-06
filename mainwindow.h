@@ -88,6 +88,9 @@ private slots:
 
     void commandSelectionChanged();
 
+    //called when the setting of a command has changed
+    void handleCommandChanged();
+
 private:
     Ui::MainWindow *ui;
 

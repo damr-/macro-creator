@@ -9,16 +9,25 @@ class CommandWidget;
 
 class CommandWidget : public QWidget
 {
-		Q_OBJECT
+    Q_OBJECT
 
 	public:
-		explicit CommandWidget(QWidget *parent = 0);
-		static int index;
+        explicit CommandWidget(QWidget *parent = 0);
 		~CommandWidget();
+
+        static int index;
+
         virtual void CopyTo(CommandWidget *other);
+        virtual QString GetCommandString();
+
+    protected slots:
+        void emitCommandChangedSignal();
+
+    signals:
+        void commandChanged();
 
 	private:
-		Ui::CommandWidget *ui;
+        Ui::CommandWidget *ui;
 };
 
 #endif // COMMANDWIDGET_H

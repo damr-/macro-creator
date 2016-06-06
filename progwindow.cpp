@@ -1,9 +1,5 @@
 #include "progwindow.h"
 #include "ui_progwindow.h"
-#include "startup.h"
-#include "optionsdialog.h"
-#include "newcommanddialog.h"
-#include "clickcommandwidget.h"
 
 #include <QSettings>
 #include <QMessageBox>
@@ -11,6 +7,11 @@
 #include <QDir>
 #include <QTextStream>
 #include <QDebug>
+
+#include "startup.h"
+#include "optionsdialog.h"
+#include "newcommanddialog.h"
+#include "clickcommandwidget.h"
 
 const QString ProgWindow::settingsFileName = "settings.ini";
 
@@ -157,7 +158,6 @@ void ProgWindow::unselectAll()
 void ProgWindow::handleSelectionChanged()
 {
 	bool itemSelected = ui->commandList->selectedItems().count() > 0;
-
 	ui->actionDuplicate->setEnabled(itemSelected);
 	ui->actionDelete->setEnabled(itemSelected);
 }

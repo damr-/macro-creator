@@ -23,15 +23,20 @@ void WaitCommandWidget::SetWaitSettings(int amount, int type)
 void WaitCommandWidget::CopyTo(CommandWidget *other)
 {
     WaitCommandWidget *widget = (WaitCommandWidget*) other;
-    widget->SetWaitSettings(amount(), type());
+    widget->SetWaitSettings(getAmount(), getWaitType());
 }
 
-int WaitCommandWidget::amount()
+QString WaitCommandWidget::GetCommandString()
+{
+    return "wat|" + QString::number(getAmount()) + "|" + QString::number(getWaitType());
+}
+
+int WaitCommandWidget::getAmount()
 {
     return ui->waitTime->value();
 }
 
-int WaitCommandWidget::type()
+int WaitCommandWidget::getWaitType()
 {
     return ui->waitTimeType->currentIndex();
 }

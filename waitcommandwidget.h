@@ -14,10 +14,11 @@ class WaitCommandWidget : public CommandWidget
     public:
         explicit WaitCommandWidget(QWidget *parent = 0);
         ~WaitCommandWidget();
+        int getAmount();
+        int getWaitType();
+        void SetWaitSettings(int getAmount, int getWaitType);
         void CopyTo(CommandWidget *other);
-        int amount();
-        int type();
-        void SetWaitSettings(int amount, int type);
+        QString GetCommandString();
 
     private:
         Ui::WaitCommandWidget *ui;

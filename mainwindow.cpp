@@ -1,37 +1,24 @@
-#include <tchar.h>
-#include <string>
-#include <Windows.h>
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDebug>
-#include <QDir>
-#include <QFileDialog>
 #include <QFile>
+#include <QFileDialog>
+#include <QFileInfo>
 #include <QList>
 #include <QMessageBox>
-#include <QProcess>
 #include <QScrollBar>
-#include <QSettings>
 #include <QSignalMapper>
 #include <QStringList>
-#include <QTextStream>
 #include <QTimer>
 
 #include "commands.h"
-#include "ui_mainwindow.h"
-#include "mainwindow.h"
-#include "startup.h"
-#include "optionsdialog.h"
-#include "keyboardutilities.h"
-#include "newcommanddialog.h"
 #include "commandlistitem.h"
 
 #pragma comment(lib, "user32.lib")
-
-#define SCROLLUP 120
-#define SCROLLDOWN -120
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -157,6 +144,8 @@ MainWindow::MainWindow(QWidget *parent) :
     unsavedProgram = true;
     isListeningForKeyInput = false;
 
+    ui->actionSave_As->setEnabled(false);
+
     connect(ui->addCommandButton, SIGNAL(clicked()), this, SLOT(addNewCommand()));
     connect(ui->commandSelectBox, SIGNAL(currentIndexChanged(int)), this, SLOT(commandSelectionChanged()));
 
@@ -165,8 +154,6 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         ui->commandSelectBox->addItem(name);
     }
-
-
 }
 
 MainWindow::~MainWindow()
@@ -307,16 +294,16 @@ void MainWindow::newProgram()
 //------------------------------------------------------
 void MainWindow::openProgram()
 {
-    QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open a program"), programPath, tr("Program Files (*.myprog)"));
+    QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open program"), programPath, tr("Program Files (*.myprog)"));
 
     QString fileName = QFileInfo(fullFilePath).baseName();
-    if(fileName.length() > 0)
-        programName = fileName;
-    else
+    if(fileName.length() == 0)
     {
         ui->statusBar->showMessage("Opening aborted", 3000);
         return;
     }
+
+    programName = fileName;
 
     if(unsavedChanges){
         UnsavedChangesMessageResult result = UnsavedChangesMessageResult::Cancel;
@@ -337,6 +324,7 @@ void MainWindow::openProgram()
     setUnsavedChanges(false);
     refreshWindowTitle();
     ui->delCmdUndo->setEnabled(false);
+    ui->actionSave_As->setEnabled(true);
 }
 
 //------------------------------------------------------
@@ -355,7 +343,7 @@ void MainWindow::saveProgram()
     if(unsavedProgram){
         pathPlusFileName = QFileDialog::getSaveFileName(this, tr("Save the program as..."), programPath, tr("Program Files (*.myprog)"));
 
-        QString fileName = QFileInfo(pathPlusFileName).baseName().trimmed();
+        QString fileName = QFileInfo(pathPlusFileName).baseName();
 
         if(fileName.length() > 0)
             programName = fileName;
@@ -555,7 +543,7 @@ void MainWindow::readKeyButtonPressed()
 }
 
 //-------------------------------------------------------
-//-----------------Add command Buttons-------------------
+//---------------------Add commands----------------------
 //-------------------------------------------------------
 void MainWindow::addMoveCursorCommand()
 {
@@ -631,11 +619,18 @@ void MainWindow::addKillProcessCommand()
         addCommand("end", (QStringList() << ui->killProcName->text()));
 }
 
+
+//-------------------------------------------------------
+//----------------Refresh window title------------------
+//-------------------------------------------------------
 void MainWindow::refreshWindowTitle()
 {
     setWindowTitle(programName + (unsavedChanges ? "*" : "") + " - Personal Macro");
 }
 
+//-------------------------------------------------------
+//------------Update unsaved changes status--------------
+//-------------------------------------------------------
 void MainWindow::setUnsavedChanges(bool newUnsavedChanges)
 {
     unsavedChanges = newUnsavedChanges;
@@ -689,6 +684,9 @@ void MainWindow::deleteUndo()
     ui->commandList->setCurrentRow(delBackupPos);
 }
 
+//-------------------------------------------------------
+//----------Refresh right hand side controls-------------
+//-------------------------------------------------------
 void MainWindow::refreshCommandListControls()
 {
     if(ui->commandList->count() > 0)
@@ -726,6 +724,9 @@ void MainWindow::refreshCommandListControls()
     }
 }
 
+//-------------------------------------------------------
+//----------------------Move item------------------------
+//-------------------------------------------------------
 void MainWindow::moveItem(int direction)
 {
     QScrollBar *vb = ui->commandList->verticalScrollBar();
@@ -797,8 +798,10 @@ void MainWindow::botStart()
     {
         for(int i = 0; i < commandList.size(); ++i)
         {
-            if(GetAsyncKeyState(VK_F7)) paused = false;
-            if(GetAsyncKeyState(VK_F8)) paused = true;
+            if(GetAsyncKeyState(VK_F7))
+                paused = false;
+            if(GetAsyncKeyState(VK_F8))
+                paused = true;
             if(GetAsyncKeyState(VK_F9)) {
                 loop = false;
                 partLoop = false;
@@ -826,7 +829,7 @@ void MainWindow::botStart()
                     --times;
                 }
 
-                executeCommand(commandList.at(i));
+                Commands::ExecuteCommand(commandList.at(i));
                 if(ui->defaultDelayCheckBox->isChecked())
                     Sleep(ui->defaultDelaySpinBox->value());
                 qApp->processEvents();
@@ -844,129 +847,6 @@ void MainWindow::botStart()
     refreshWindowTitle();
     showNormal();
     ui->botstart->setEnabled(true);
-}
-
-//-------------------------------------------------------
-//-----------------Execute Command-----------------------
-//-------------------------------------------------------
-void MainWindow::executeCommand(QString cmd)
-{
-    QStringList command = cmd.split("|");
-
-    if( command[0] == "mov" )
-    {
-        SetCursorPos( command[1].toInt(), command[2].toInt() );
-        Sleep(50);
-        if(command[3] == "1")
-        {
-            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            Sleep(50);
-        }
-    }
-    else if( command[0] == "clc" )
-    {
-        if( command[1] == "0" )
-        {
-            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            Sleep(50);
-        }
-        else if( command[1] == "1" )
-        {
-            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            Sleep(50);
-        }
-        else if( command[1] == "2" )
-        {
-            mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
-            mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
-            Sleep(50);
-        }
-        else if( command[1] == "3" )
-        {
-            mouse_event(MOUSEEVENTF_MIDDLEDOWN, 0, 0, 0, 0);
-            mouse_event(MOUSEEVENTF_MIDDLEUP, 0, 0, 0, 0);
-            Sleep(50);
-        }
-    }
-    else if( command[0] == "drg" )
-    {
-        mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-        Sleep(10);
-        SetCursorPos(command[1].toInt(), command[2].toInt());
-        Sleep(10);
-        mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-        Sleep(50);
-    }
-    else if( command[0] == "scr" )
-    {
-        int direction = command[2] == "0" ? SCROLLUP : SCROLLDOWN;
-        for(int i = 0; i<=command[1].toInt(); ++i)
-        {
-            mouse_event(MOUSEEVENTF_WHEEL, 0, 0, direction, 0);
-            Sleep(50);
-        }
-    }
-    else if( command[0] == "txt" )
-    {
-        if( command[1] == "0" )
-        {
-            keybd_event(VK_SHIFT, 0xAA, 0, 0);
-            Sleep(50);
-        }
-
-        KeyboardUtilities::writeText(command[2].toStdString());
-
-        if( command[1] == "0" )
-        {
-            keybd_event(VK_SHIFT, 0xAA, KEYEVENTF_KEYUP, 0);
-            Sleep(50);
-        }
-    }
-    else if( command[0] == "slp" )
-    {
-        int multi = command[2] == "0" ? 1000 : 1;
-        Sleep(command[1].toInt() * multi);
-    }
-    else if( command[0] == "end" )
-    {
-        WinExec("taskkill /F /IM " + command[1].toUtf8(), SW_HIDE);
-        Sleep(50);
-    }
-    else if( command[0] == "exe" )
-    {
-        WinExec(command[1].toUtf8(), SW_NORMAL);
-        Sleep(50);
-    }
-    else if( command[0] == "sct" )
-    {
-        for(int i = 0; i < command[6].toInt(); ++i)
-        {
-            if(command[1] == "1")
-                keybd_event(VK_CONTROL, 0x9D, 0, 0);
-            if(command[2] == "1")
-                keybd_event(VK_MENU, 0xB8, 0, 0);
-            if(command[3] == "1")
-                keybd_event(VK_SHIFT, 0xAA, 0, 0);
-
-            if(command[4] == "1")
-                KeyboardUtilities::writeText(command[5].toStdString());
-            else
-                KeyboardUtilities::pressVK(command[5].toStdString());
-
-            if(command[1] == "1")
-                keybd_event(VK_CONTROL, 0x9D, KEYEVENTF_KEYUP, 0);
-            if(command[2] == "1")
-                keybd_event(VK_MENU, 0xB8, KEYEVENTF_KEYUP, 0);
-            if(command[3] == "1")
-                keybd_event(VK_SHIFT, 0xAA, KEYEVENTF_KEYUP, 0);
-            Sleep(50);
-        }
-    }
 }
 
 //-------------------------------------------------------
@@ -1021,25 +901,19 @@ void MainWindow::showContextMenu(const QPoint &pos)
 
 void MainWindow::addNewCommand()
 {
-    //NewCommandDialog *n = new NewCommandDialog();
-    //if(!n->exec())
-    //    return;
-
-//    int commandIndex;
-//    if(!n->getResult(commandIndex))
-//        return;
-
     int commandIndex = ui->commandSelectBox->currentIndex();;
 
-    CommandWidget *itemWidget = Commands::getNewCommandWidget(commandIndex);
+    CommandWidget *itemWidget = Commands::GetNewCommandWidget(commandIndex);
     CommandListItem *item = new CommandListItem();
     item->commandIndex = commandIndex;
     addItem(item, itemWidget, ui->commandList->count());
 
     ui->commandList->setCurrentRow(ui->commandList->count() - 1);
     unselectAll();
-    item->setSelected(true);
+    item->setSelected(true);    
     setUnsavedChanges(true);
+
+    connect(itemWidget, SIGNAL(commandChanged()), this, SLOT(handleCommandChanged()));
 }
 
 void MainWindow::deleteSelected()
@@ -1066,7 +940,7 @@ void MainWindow::duplicateSelected()
         CommandListItem *newItem = new CommandListItem();
 
         //create new widget
-        CommandWidget *newWidget = Commands::getNewCommandWidget(item->commandIndex);
+        CommandWidget *newWidget = Commands::GetNewCommandWidget(item->commandIndex);
 
         //copy widget values to new one
         ((CommandWidget*)ui->commandList->itemWidget(item))->CopyTo(newWidget);
@@ -1082,20 +956,27 @@ void MainWindow::duplicateSelected()
     unselectAll();
 
     QListWidgetItem *i;
-    foreach(i, newItems){
+    foreach(i, newItems)
+    {
         i->setSelected(true);
     }
     setUnsavedChanges(true);
 }
 
+//-------------------------------------------------------
+//-------------Add item with widget at row---------------
+//-------------------------------------------------------
 void MainWindow::addItem(CommandListItem *item, CommandWidget *itemWidget, int row)
 {
     ui->commandList->insertItem(row, item);
     ui->commandList->setItemWidget(item, itemWidget);
     item->setSizeHint(QSize(0, itemWidget->height()));
-    commandList.insert(row, QString::number(itemWidget->index));
+    commandList.insert(row, itemWidget->GetCommandString());
 }
 
+//-------------------------------------------------------
+//--------------------Unselect all-----------------------
+//-------------------------------------------------------
 void MainWindow::unselectAll()
 {
     QList<QListWidgetItem *> selectedItems = ui->commandList->selectedItems();
@@ -1109,6 +990,11 @@ void MainWindow::unselectAll()
 void MainWindow::commandSelectionChanged()
 {
 
+}
+
+void MainWindow::handleCommandChanged()
+{
+    setUnsavedChanges(true);
 }
 
 void MainWindow::handleSelectionChanged()

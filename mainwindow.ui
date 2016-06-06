@@ -550,6 +550,9 @@
        <iconset resource="resources.qrc">
         <normaloff>:/resources/images/resources/images/plus.png</normaloff>:/resources/images/resources/images/plus.png</iconset>
       </property>
+      <property name="shortcut">
+       <string>Return</string>
+      </property>
      </widget>
      <widget class="QGroupBox" name="groupBox_11">
       <property name="geometry">

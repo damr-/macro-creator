@@ -28,6 +28,11 @@ void SetCursorPosCommandWidget::CopyTo(CommandWidget *other)
     widget->SetCoordinates(GetX(), GetY());
 }
 
+QString SetCursorPosCommandWidget::GetCommandString()
+{
+    return "pos|" + QString::number(GetX()) + "|" + QString::number(GetY());
+}
+
 int SetCursorPosCommandWidget::GetX()
 {
     return ui->xCoord->value();

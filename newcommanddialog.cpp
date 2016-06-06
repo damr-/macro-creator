@@ -1,12 +1,12 @@
 #include "newcommanddialog.h"
 #include "ui_newcommanddialog.h"
-#include "clickcommandwidget.h"
-#include "commandwidget.h"
 
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include <QDebug>
 
+#include "clickcommandwidget.h"
+#include "commandwidget.h"
 #include "commands.h"
 
 NewCommandDialog::NewCommandDialog(QWidget *parent) :

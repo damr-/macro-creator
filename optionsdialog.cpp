@@ -1,7 +1,6 @@
 #include "optionsdialog.h"
 #include "ui_optionsdialog.h"
-#include <qdir.h>
-#include <qsettings.h>
+
 #include <QPushButton>
 
 #include "mainwindow.h"

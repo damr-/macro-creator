@@ -14,10 +14,11 @@ class SetCursorPosCommandWidget : public CommandWidget
     public:
         explicit SetCursorPosCommandWidget(QWidget *parent = 0);
         ~SetCursorPosCommandWidget();
-        void CopyTo(CommandWidget *other);
         int GetX();
         int GetY();
         void SetCoordinates(int x, int y);
+        void CopyTo(CommandWidget *other);
+        QString GetCommandString();
 
     private:
         Ui::SetCursorPosCommandWidget *ui;

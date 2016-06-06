@@ -1,10 +1,12 @@
 #include "newprogramdialog.h"
 #include "ui_newprogramdialog.h"
-#include "startup.h"
+
 #include <QFile>
 #include <QTextStream>
 #include <QPushButton>
 #include <QDialogButtonBox>
+
+#include "startup.h"
 
 QRegExp nameRX("[A-Za-z]+[A-Za-z0-9_]*");
 
