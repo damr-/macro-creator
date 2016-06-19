@@ -4,15 +4,18 @@
 #include <QString>
 #include <QStringList>
 
-#include "commandwidget.h"
+enum CommandType
+{
+    Click,
+    SetCursorPosition,
+    Wait,
+};
 
 class Commands
 {
 public:
-    Commands();
     static void ExecuteCommand(QString command);
-    static CommandWidget* GetNewCommandWidget(int commandIndex);
-    const static QList<QString> commandNames()
+    const static QStringList commandNames()
     {
         return {
             "Click",
@@ -20,6 +23,7 @@ public:
             "Wait"
         };
     }
+    static int getCommandTypeIndex(CommandType commandType) { return (int)commandType; }
 
 };
 

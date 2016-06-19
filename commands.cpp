@@ -3,32 +3,10 @@
 #include <Windows.h>
 #include <QProcess>
 
-#include "clickcommandwidget.h"
 #include "keyboardutilities.h"
-#include "setcursorposcommandwidget.h"
-#include "waitcommandwidget.h"
 
 #define SCROLLUP 120
 #define SCROLLDOWN -120
-
-Commands::Commands()
-{
-
-}
-
-CommandWidget* Commands::GetNewCommandWidget(int commandIndex)
-{
-    switch(commandIndex){
-        case 0:
-            return new ClickCommandWidget();
-        case 1:
-            return new SetCursorPosCommandWidget();
-        case 2:
-            return new WaitCommandWidget();
-        default:
-            return new CommandWidget();
-    }
-}
 
 void Commands::ExecuteCommand(QString command)
 {
@@ -36,7 +14,7 @@ void Commands::ExecuteCommand(QString command)
 
     if( commandList[0] == "mov" )
     {
-        SetCursorPos( commandList[1].toInt(), commandList[2].toInt() );
+        SetCursorPos(commandList[1].toInt(), commandList[2].toInt());
         Sleep(50);
         if(commandList[3] == "1")
         {

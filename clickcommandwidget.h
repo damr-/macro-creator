@@ -36,8 +36,8 @@ class ClickCommandWidget : public CommandWidget
 
         int clickAmount();
         ClickType clickType();
-        bool doubleClick();
         void SetClickAmount(int amount);       
+        void SetClickType(ClickType clickType);
 
     private slots:
         void clickAmountChanged(int amount);

@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>660</width>
+    <width>623</width>
     <height>310</height>
    </rect>
   </property>
@@ -21,7 +21,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>655</width>
+    <width>623</width>
     <height>310</height>
    </size>
   </property>
@@ -58,147 +58,6 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="delCmd">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>625</x>
-      <y>70</y>
-      <width>30</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delete this command&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources.qrc">
-      <normaloff>:/resources/images/resources/images/recycle_bin.png</normaloff>:/resources/images/resources/images/recycle_bin.png</iconset>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="moveup">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>625</x>
-      <y>150</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Move up once&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources.qrc">
-      <normaloff>:/resources/images/resources/images/arrow_up.png</normaloff>:/resources/images/resources/images/arrow_up.png</iconset>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="movedown">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>625</x>
-      <y>180</y>
-      <width>31</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Move down once&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources.qrc">
-      <normaloff>:/resources/images/resources/images/arrow_down.png</normaloff>:/resources/images/resources/images/arrow_down.png</iconset>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="delCmdUndo">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>625</x>
-      <y>100</y>
-      <width>30</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Undo the last deletion</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources.qrc">
-      <normaloff>:/resources/images/resources/images/Undo.png</normaloff>:/resources/images/resources/images/Undo.png</iconset>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="botstart">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>625</x>
-      <y>230</y>
-      <width>31</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Run the bot</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources.qrc">
-      <normaloff>:/resources/images/resources/images/i_start.png</normaloff>:/resources/images/resources/images/i_start.png</iconset>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="addAbove">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>625</x>
-      <y>20</y>
-      <width>31</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Add next command above the selected one</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources.qrc">
-      <normaloff>:/resources/images/resources/images/Upleft.png</normaloff>:/resources/images/resources/images/Upleft.png</iconset>
-    </property>
-    <property name="checkable">
-     <bool>false</bool>
     </property>
    </widget>
    <widget class="QListWidget" name="commandList">
@@ -285,6 +144,9 @@
       <height>251</height>
      </rect>
     </property>
+    <property name="tabPosition">
+     <enum>QTabWidget::North</enum>
+    </property>
     <property name="currentIndex">
      <number>0</number>
     </property>
@@ -299,7 +161,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>20</y>
+        <y>10</y>
         <width>291</width>
         <height>31</height>
        </rect>
@@ -558,9 +420,9 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>60</y>
+        <y>55</y>
         <width>251</width>
-        <height>71</height>
+        <height>76</height>
        </rect>
       </property>
       <property name="title">
@@ -1839,12 +1701,6 @@
      </widget>
     </widget>
    </widget>
-   <zorder>delCmd</zorder>
-   <zorder>moveup</zorder>
-   <zorder>movedown</zorder>
-   <zorder>delCmdUndo</zorder>
-   <zorder>botstart</zorder>
-   <zorder>addAbove</zorder>
    <zorder>commandList</zorder>
    <zorder>tabWidget</zorder>
    <zorder>commandListTitle</zorder>
@@ -1854,7 +1710,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>660</width>
+     <width>623</width>
      <height>21</height>
     </rect>
    </property>
@@ -1985,14 +1841,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
-   </property>
-  </action>
-  <action name="actionAdd_Command">
-   <property name="text">
-    <string>Add Command</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+N</string>
    </property>
   </action>
  </widget>

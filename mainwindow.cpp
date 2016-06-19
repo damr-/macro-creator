@@ -16,7 +16,9 @@
 #include <QTimer>
 
 #include "commands.h"
-#include "commandlistitem.h"
+#include "clickcommandwidget.h"
+#include "setcursorposcommandwidget.h"
+#include "waitcommandwidget.h"
 
 #pragma comment(lib, "user32.lib")
 
@@ -40,24 +42,23 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveProgramAs()));
 
     //Menu->Edit Actions
-    //connect(ui->actionAdd_Command, SIGNAL(triggered()), this, SLOT(addNewCommand()));
     connect(ui->actionDelete, SIGNAL(triggered()), this, SLOT(deleteSelected()));
     connect(ui->actionDuplicate, SIGNAL(triggered()), this, SLOT(duplicateSelected()));
 
     //"Add Command" Buttons
-    connect(ui->move, SIGNAL(clicked()), this, SLOT(addMoveCursorCommand()));
-    connect(ui->click, SIGNAL(clicked()), this, SLOT(addClickCommand()));
-    connect(ui->drag, SIGNAL(clicked()), this, SLOT(addDragMouseCommand()));
-    connect(ui->scroll, SIGNAL(clicked()), this, SLOT(addScrollCommand()));
-    connect(ui->addWriteTextCommandButton, SIGNAL(clicked()), this, SLOT(addWriteTextCommand()));
-    connect(ui->shortcut, SIGNAL(clicked()), this, SLOT(addShortcutCommand()));
-    connect(ui->addWaitCommand, SIGNAL(clicked()), this, SLOT(addWaitCommand()));
-    connect(ui->addOpenExeCommandButton, SIGNAL(clicked()), this, SLOT(addOpenExeCommand()));
-    connect(ui->chooseExeButton, SIGNAL(clicked()), this, SLOT(chooseExe()));
-    connect(ui->killProc, SIGNAL(clicked()), this, SLOT(addKillProcessCommand()));
-    connect(ui->delCmd, SIGNAL(clicked()), this, SLOT(deleteCommand()));
-    connect(ui->delCmdUndo, SIGNAL(clicked()), this, SLOT(deleteUndo()));
-    connect(ui->commandList, SIGNAL(currentRowChanged(int)), this, SLOT(refreshCommandListControls()));
+//    connect(ui->move, SIGNAL(clicked()), this, SLOT(addMoveCursorCommand()));
+//    connect(ui->click, SIGNAL(clicked()), this, SLOT(addClickCommand()));
+//    connect(ui->drag, SIGNAL(clicked()), this, SLOT(addDragMouseCommand()));
+//    connect(ui->scroll, SIGNAL(clicked()), this, SLOT(addScrollCommand()));
+//    connect(ui->addWriteTextCommandButton, SIGNAL(clicked()), this, SLOT(addWriteTextCommand()));
+//    connect(ui->shortcut, SIGNAL(clicked()), this, SLOT(addShortcutCommand()));
+//    connect(ui->addWaitCommand, SIGNAL(clicked()), this, SLOT(addWaitCommand()));
+//    connect(ui->addOpenExeCommandButton, SIGNAL(clicked()), this, SLOT(addOpenExeCommand()));
+//    connect(ui->chooseExeButton, SIGNAL(clicked()), this, SLOT(chooseExe()));
+//    connect(ui->killProc, SIGNAL(clicked()), this, SLOT(addKillProcessCommand()));
+//    connect(ui->delCmd, SIGNAL(clicked()), this, SLOT(deleteCommand()));
+//    connect(ui->delCmdUndo, SIGNAL(clicked()), this, SLOT(deleteUndo()));
+//    connect(ui->commandList, SIGNAL(currentRowChanged(int)), this, SLOT(refreshCommandListControls()));
 
     //Options
     QSignalMapper *optionsMapper = new QSignalMapper(this);
@@ -77,23 +78,15 @@ MainWindow::MainWindow(QWidget *parent) :
     optionsMapper->setMapping(ui->loopAmount, 0);
     connect(optionsMapper, SIGNAL(mapped(int)), this, SLOT(optionsChanged(int)));
 
-    //List modifications
-    QSignalMapper *moveItemMapper = new QSignalMapper(this);
-    connect(ui->moveup, SIGNAL(clicked()), moveItemMapper, SLOT(map()));
-    connect(ui->movedown, SIGNAL(clicked()), moveItemMapper, SLOT(map()));
-    moveItemMapper -> setMapping (ui->moveup, -1) ;
-    moveItemMapper -> setMapping (ui->movedown, 1) ;
-    connect(moveItemMapper, SIGNAL(mapped(int)), this, SLOT(moveItem(int)));
-
     //Shortcut idiotproofing
-    connect(ui->letterBox, SIGNAL(textChanged(QString)), this, SLOT(letterBoxEdited()));
-    connect(ui->keyBox, SIGNAL(currentIndexChanged(int)), this, SLOT(keyBoxEdited()));
+    //connect(ui->letterBox, SIGNAL(textChanged(QString)), this, SLOT(letterBoxEdited()));
+    //connect(ui->keyBox, SIGNAL(currentIndexChanged(int)), this, SLOT(keyBoxEdited()));
 
-    //READ KEY BUTTON
+    //read key button
     connect(ui->readKeyButton, SIGNAL(clicked(bool)), this, SLOT(readKeyButtonPressed()));
 
-    //Bot start
-    connect(ui->botstart, SIGNAL(clicked()), this, SLOT(botStart()));
+    //start program button
+    //connect(ui->startProgramButton, SIGNAL(clicked()), this, SLOT(startProgram()));
 
     //Loop signals
     connect(ui->loopType, SIGNAL(currentIndexChanged(int)), this, SLOT(loopTypeChanged()));
@@ -247,37 +240,37 @@ void MainWindow::checkKey()
     }
     if(GetAsyncKeyState(VK_F7))
     {
-        if(ui->botstart->isEnabled())
-            botStart();
+        //if(ui->startProgramButton->isEnabled())
+        startProgram();
     }
 }
 
 //-------------------------------------------------------
 //--------------------Add Command------------------------
 //-------------------------------------------------------
-void MainWindow::addCommand(QString commandtype, QStringList arguments)
-{
-    QString line;
-    line.append(commandtype);
-    foreach (const QString &element, arguments)
-        line.append("|" + element);
+//void MainWindow::addCommand(QString commandtype, QStringList arguments)
+//{
+//    QString line;
+//    line.append(commandtype);
+//    foreach (const QString &element, arguments)
+//        line.append("|" + element);
 
-    int aboveRow = ui->commandList->currentRow();
+//    int aboveRow = ui->commandList->currentRow();
 
-    if(ui->addAbove->isChecked())
-        commandList.insert(aboveRow, line);
-    else commandList.append(line);
+//    if(ui->addAbove->isChecked())
+//        commandListStrings.insert(aboveRow, line);
+//    else commandListStrings.append(line);
 
-    fillCommandListWidget();
+//    fillCommandListWidget();
 
-    if(ui->addAbove->isChecked()){
-        ui->commandList->setCurrentRow(aboveRow);
-        ui->addAbove->setChecked(false);
-    }
-    else ui->commandList->setCurrentRow(ui->commandList->count() - 1);
+//    if(ui->addAbove->isChecked()){
+//        ui->commandList->setCurrentRow(aboveRow);
+//        ui->addAbove->setChecked(false);
+//    }
+//    else ui->commandList->setCurrentRow(ui->commandList->count() - 1);
 
-    setUnsavedChanges(true);
-}
+//    setUnsavedChanges(true);
+//}
 
 //-------------------------------------------------------
 //--------------------New Program------------------------
@@ -323,7 +316,6 @@ void MainWindow::openProgram()
     unsavedProgram = false;
     setUnsavedChanges(false);
     refreshWindowTitle();
-    ui->delCmdUndo->setEnabled(false);
     ui->actionSave_As->setEnabled(true);
 }
 
@@ -359,7 +351,7 @@ void MainWindow::saveProgram()
     if(!file.open(QFile::WriteOnly | QFile::Text))
     {
         qDebug() << file.errorString();
-        ui->statusBar->showMessage("Cannot open the savefile for saving the program!", 3000);
+        ui->statusBar->showMessage("Unable to open the file!", 3000);
         return;
     }
 
@@ -374,9 +366,9 @@ void MainWindow::saveProgram()
                QString::number(ui->loopTo->value()) + "|" +
                QString::number(ui->loopAmount->value()) + "\n");
 
-    for(int i = 0; i < commandList.size(); ++i)
+    for(int i = 0; i < ui->commandList->count(); ++i)
     {
-        out.append(commandList.at(i));
+        out.append(getCommandString(i));
         out.append("\n");
     }
 
@@ -401,7 +393,7 @@ void MainWindow::saveProgramAs()
 //-------------------------------------------------------
 void MainWindow::loadCommandListFromFile(QString filename)
 {
-    commandList.clear();
+    ui->commandList->clear();
 
     QFile file(filename);
 
@@ -415,9 +407,9 @@ void MainWindow::loadCommandListFromFile(QString filename)
     QStringList options = input.readLine().split("|");
 
     if(options.size() != 7){
-        QString msg = filename + " is corrupted. Aborted opening it.";
+        QString msg = filename + " is corrupted. Aborted opening process.";
         ui->statusBar->showMessage(msg);
-        qDebug() << msg << "\n";
+        qDebug() << msg;
         file.close();
         return;
     }
@@ -430,100 +422,119 @@ void MainWindow::loadCommandListFromFile(QString filename)
     ui->loopTo->setValue(options[5].toInt());
     ui->loopAmount->setValue(options[6].toInt());
 
+    QStringList commandListStrings;
+
     QString line;
     do
     {
         line = input.readLine().trimmed();
         if(line.length() > 0)
-            commandList.append(line);
+            commandListStrings.append(line);
     }while(!line.isNull());
 
-    fillCommandListWidget();
+    fillCommandListWidget(commandListStrings);
     file.close();
 }
 
 //-------------------------------------------------------
 //--------------Load from list to widget-----------------
 //-------------------------------------------------------
-void MainWindow::fillCommandListWidget()
+void MainWindow::fillCommandListWidget(QStringList commandListStrings)
 {
     ui->commandList->clear();
 
-    for(int i = 0; i < commandList.size(); ++i)
+    for(int i = 0; i < commandListStrings.size(); ++i)
     {
-        QStringList list = commandList.at(i).split("|");
+        QStringList list = commandListStrings.at(i).split("|");
 
-        if( list[0] == "mov" ) {
-            ui->commandList->addItem("Move cursor to (" + list[1] + "," + list[2] + ")");
+        int commandTypeIndex = list[0].toInt();
+
+        //create list item
+        QListWidgetItem *newItem = new QListWidgetItem();
+
+        //create new widget
+        CommandWidget *newWidget = CommandWidget::GetNewCommandWidget(commandTypeIndex);
+
+        newWidget->commandType = (CommandType)commandTypeIndex;
+
+        switch(commandTypeIndex){
+        case 0:
+//            QString item;
+//            item.append("Make a ");
+//            if( list[1] == "0" ) item.append("Left Mouse Button");
+//            else if( list[1] == "1" ) item.append("Double Left Mouse Button");
+//            else if( list[1] == "2" ) item.append("Right Mouse Button");
+//            else if( list[1] == "3" ) item.append("Middle Mouse Button");
+//            item.append(" click");
+//            ui->commandList->addItem(item);
+
+            ((ClickCommandWidget*)newWidget)->SetClickAmount(list[1].toInt());
+            ((ClickCommandWidget*)newWidget)->SetClickType((ClickType)list[2].toInt());
+            addItem(newItem, newWidget, i);
+            break;
+
+        case 1:
+            ((SetCursorPosCommandWidget*)newWidget)->SetCoordinates(list[1].toInt(), list[2].toInt());
+            addItem(newItem, newWidget, i);
+            break;
         }
 
-        else if( list[0] == "clc" ) {
-            QString item;
-            item.append("Make a ");
-            if( list[1] == "0" ) item.append("Left Mouse Button");
-            else if( list[1] == "1" ) item.append("Double Left Mouse Button");
-            else if( list[1] == "2" ) item.append("Right Mouse Button");
-            else if( list[1] == "3" ) item.append("Middle Mouse Button");
-            item.append(" click");
-            ui->commandList->addItem(item);
-        }
+//        else if( list[0] == "drg" ) {
+//            ui->commandList->addItem("Drag to (" + list[1] + "," + list[2] + ")");
+//        }
 
-        else if( list[0] == "drg" ) {
-            ui->commandList->addItem("Drag to (" + list[1] + "," + list[2] + ")");
-        }
+//        else if( list[0] == "scr" ) {
+//            QString item;
+//            item.append("Scroll ");
+//            if( list[2] == "0") item.append("up ");
+//            else if ( list[2] == "1" ) item.append("down ");
+//            item.append(list[1] + " times");
+//            ui->commandList->addItem(item);
+//        }
 
-        else if( list[0] == "scr" ) {
-            QString item;
-            item.append("Scroll ");
-            if( list[2] == "0") item.append("up ");
-            else if ( list[2] == "1" ) item.append("down ");
-            item.append(list[1] + " times");
-            ui->commandList->addItem(item);
-        }
+//        else if( list[0] == "txt" ) {
+//            QString item = "Write '" + list[2] + "' " + (list[1] == "0" ? "upper-case" : "lower-case");
+//            ui->commandList->addItem(item);
+//        }
 
-        else if( list[0] == "txt" ) {
-            QString item = "Write '" + list[2] + "' " + (list[1] == "0" ? "upper-case" : "lower-case");
-            ui->commandList->addItem(item);
-        }
+//        else if( list[0] == "slp" ) {
+//            QString item = "Sleep for " + list[1] + (list[2] == "0" ? " Seconds" : " Milliseconds");
+//            ui->commandList->addItem(item);
+//        }
 
-        else if( list[0] == "slp" ) {
-            QString item = "Sleep for " + list[1] + (list[2] == "0" ? " Seconds" : " Milliseconds");
-            ui->commandList->addItem(item);
-        }
+//        else if( list[0] == "end" ) {
+//            ui->commandList->addItem("End process '" + list[1] + "'");
+//        }
 
-        else if( list[0] == "end" ) {
-            ui->commandList->addItem("End process '" + list[1] + "'");
-        }
+//        else if( list[0] == "exe" ) {
+//            QString item;
+//            item.append("Open '" + list[1] + "'");
+//            ui->commandList->addItem(item);
+//        }
 
-        else if( list[0] == "exe" ) {
-            QString item;
-            item.append("Open '" + list[1] + "'");
-            ui->commandList->addItem(item);
-        }
+//        else if( list[0] == "sct" ) {
+//            QString item;
+//            item.append("Press '");
+//            if(list[1] == "1") item.append("CTRL + ");
+//            if(list[2] == "1") item.append("ALT + ");
+//            if(list[3] == "1") item.append("SHIFT + ");
+//            item.append(list[5]);
+//            item.append("' " + list[6] + " times");
 
-        else if( list[0] == "sct" ) {
-            QString item;
-            item.append("Press '");
-            if(list[1] == "1") item.append("CTRL + ");
-            if(list[2] == "1") item.append("ALT + ");
-            if(list[3] == "1") item.append("SHIFT + ");
-            item.append(list[5]);
-            item.append("' " + list[6] + " times");
-
-            ui->commandList->addItem(item);
-        }
+//            ui->commandList->addItem(item);
+//        }
     }
 
     ui->commandList->setCurrentRow(ui->commandList->count() - 1);
 
     if(ui->commandList->count() > 0) {
-        ui->commandListTitle->setText("Command List [" + QString::number(ui->commandList->currentRow()) + "/"+ QString::number(commandList.size()) + "]");
+        ui->commandListTitle->setText("Command List [" + QString::number(ui->commandList->currentRow()) + "/"+ QString::number(commandListStrings.size()) + "]");
     }
     else {
-        ui->commandListTitle->setText("Command List [0/"+ QString::number(commandList.size()) + "]");
+        ui->commandListTitle->setText("Command List [0/"+ QString::number(commandListStrings.size()) + "]");
     }
 
-    refreshCommandListControls();
+    //refreshCommandListControls();
 }
 
 
@@ -542,234 +553,130 @@ void MainWindow::readKeyButtonPressed()
     ui->readKeyButton->setText("make the sc!");
 }
 
-//-------------------------------------------------------
-//---------------------Add commands----------------------
-//-------------------------------------------------------
-void MainWindow::addMoveCursorCommand()
-{
-    addCommand("mov", (QStringList() << QString::number(ui->xCoord->value()) << QString::number(ui->yCoord->value())));
-}
-
-void MainWindow::addClickCommand()
-{
-    addCommand("clc", (QStringList() << QString::number(ui->clickBox->currentIndex())));
-}
-
-void MainWindow::addDragMouseCommand()
-{
-    addCommand("drg", (QStringList() << QString::number(ui->xCoordDrag->value()) << QString::number(ui->yCoordDrag->value())));
-}
-
-void MainWindow::addScrollCommand()
-{
-    int scrollDir = ui->scrollDir->currentText() == "up" ? 0 : 1;
-    addCommand("scr", (QStringList() << QString::number((ui->scrollAmount->value())) << QString::number(scrollDir)));
-}
-
-void MainWindow::addWriteTextCommand()
-{
-    addCommand("txt", (QStringList() << QString::number(ui->caseBox->currentIndex()) << ui->writeTextEditField->text()));
-}
-
 void MainWindow::updateWriteTextCount()
 {
     ui->count->setText(QString::number(ui->writeTextEditField->text().length()) + " / " + QString::number(ui->writeTextEditField->maxLength()));
 }
 
-void MainWindow::addShortcutCommand()
-{
-    int ctrl = 0, alt = 0, shift = 0;
-    QString key;
-    int letter;
-
-    if(ui->CTRLcheck->isChecked()) ctrl = 1;
-    if(ui->ALTcheck->isChecked()) alt = 1;
-    if(ui->SHIFTcheck->isChecked()) shift = 1;
-
-    if(ui->letterBox->text().length() == 1 && ui->letterBox->text() != " ") {
-        letter = 1;
-        key = ui->letterBox->text();
-    }
-    else if(ui->keyBox->currentIndex() != 0) {
-        letter = 0;
-        key = ui->keyBox->currentText();
-    }
-    else
-        return;
-
-    addCommand("sct", (QStringList() << QString::number(ctrl) << QString::number(alt) << QString::number(shift) << QString::number(letter) <<
-                       key << QString::number(ui->amount->value())));
-}
-
-void MainWindow::addOpenExeCommand()
-{
-    if(ui->exeName->text().length() > 5  && ui->exeName->text().contains(".exe"))
-        addCommand("exe", (QStringList() << ui->exeName->text()));
-}
-
-void MainWindow::addWaitCommand()
-{
-    addCommand("slp",  (QStringList() << QString::number(ui->waitTime->value()) << QString::number(ui->sleepComboBox->currentIndex())));
-}
-
-void MainWindow::addKillProcessCommand()
-{
-    QString name = ui->killProcName->text().trimmed();
-    if(name.length() > 4 && name.contains(".exe") && !name.contains(" "))
-        addCommand("end", (QStringList() << ui->killProcName->text()));
-}
-
-
-//-------------------------------------------------------
-//----------------Refresh window title------------------
-//-------------------------------------------------------
 void MainWindow::refreshWindowTitle()
 {
     setWindowTitle(programName + (unsavedChanges ? "*" : "") + " - Personal Macro");
 }
 
-//-------------------------------------------------------
-//------------Update unsaved changes status--------------
-//-------------------------------------------------------
 void MainWindow::setUnsavedChanges(bool newUnsavedChanges)
 {
     unsavedChanges = newUnsavedChanges;
     refreshWindowTitle();
 }
 
+QString MainWindow::getCommandString(int commandIndex)
+{
+    QListWidgetItem* item = ui->commandList->item(commandIndex);
+    QWidget* itemWidget = ui->commandList->itemWidget(item);
+    return ((CommandWidget*)itemWidget)->GetCommandString();
+}
+
 //-------------------------------------------------------
 //-----------------Choose a .exe file--------------------
 //-------------------------------------------------------
-void MainWindow::chooseExe()
-{
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Choose .exe"), QDir::currentPath(), tr("Executable Files (*.exe)"));
-    if(fileName.length() > 1 && fileName.contains(".exe"))
-        ui->exeName->setText(fileName);
-    else
-        ui->statusBar->showMessage("invalid or no file", 3000);
-}
+//void MainWindow::chooseExe()
+//{
+//    QString fileName = QFileDialog::getOpenFileName(this, tr("Choose .exe"), QDir::currentPath(), tr("Executable Files (*.exe)"));
+//    if(fileName.length() > 1 && fileName.contains(".exe"))
+//        ui->exeName->setText(fileName);
+//    else
+//        ui->statusBar->showMessage("invalid or no file", 3000);
+//}
 
 //-------------------------------------------------------
 //------------Delete the selected command----------------
 //-------------------------------------------------------
-void MainWindow::deleteCommand()
-{
-    if(ui->commandList->count() == 0)
-        return;
+//void MainWindow::deleteCommand()
+//{
+//    if(ui->commandList->count() == 0)
+//        return;
 
-    delBackupPos = ui->commandList->currentRow();
-    delBackupText = commandList.at(delBackupPos);
+//    delBackupPos = ui->commandList->currentRow();
+//    delBackupText = commandListStrings.at(delBackupPos);
 
-    commandList.removeAt(delBackupPos);
-    fillCommandListWidget();
+//    commandListStrings.removeAt(delBackupPos);
+//    fillCommandListWidget();
 
-    setUnsavedChanges(true);
-    ui->delCmdUndo->setEnabled(true);
+//    setUnsavedChanges(true);
+//    ui->delCmdUndo->setEnabled(true);
 
-    if(delBackupPos == ui->commandList->count())
-        ui->commandList->setCurrentRow(ui->commandList->count() - 1);
-    else
-        ui->commandList->setCurrentRow(delBackupPos);
-}
+//    if(delBackupPos == ui->commandList->count())
+//        ui->commandList->setCurrentRow(ui->commandList->count() - 1);
+//    else
+//        ui->commandList->setCurrentRow(delBackupPos);
+//}
 
 //-------------------------------------------------------
 //---------------Undo the last deletion------------------
 //-------------------------------------------------------
-void MainWindow::deleteUndo()
-{
-    commandList.insert(delBackupPos, delBackupText);
-    fillCommandListWidget();
-    setUnsavedChanges(true);
-    ui->delCmdUndo->setEnabled(false);
-    ui->commandList->setCurrentRow(delBackupPos);
-}
+//void MainWindow::deleteUndo()
+//{
+//    commandListStrings.insert(delBackupPos, delBackupText);
+//    fillCommandListWidget();
+//    setUnsavedChanges(true);
+//    ui->delCmdUndo->setEnabled(false);
+//    ui->commandList->setCurrentRow(delBackupPos);
+//}
 
 //-------------------------------------------------------
 //----------Refresh right hand side controls-------------
 //-------------------------------------------------------
-void MainWindow::refreshCommandListControls()
-{
-    if(ui->commandList->count() > 0)
-    {
-        ui->delCmd->setEnabled(true);
-        ui->botstart->setEnabled(true);
-        ui->addAbove->setEnabled(true);
-        ui->addAbove->setCheckable(true);
+//void MainWindow::refreshCommandListControls()
+//{
+//    if(ui->commandList->count() > 0)
+//    {
+//        ui->delCmd->setEnabled(true);
+//        ui->startProgramButton->setEnabled(true);
+//        ui->addAbove->setEnabled(true);
+//        ui->addAbove->setCheckable(true);
 
-        if(ui->commandList->count() > 1) {
-            if(ui->commandList->currentRow() == 0) {
-                ui->movedown->setEnabled(true);
-                ui->moveup->setEnabled(false);
-            }
-            else if(ui->commandList->currentRow() == ui->commandList->count()-1) {
-                ui->moveup->setEnabled(true);
-                ui->movedown->setEnabled(false);
-            }
-            else {
-                ui->moveup->setEnabled(true);
-                ui->movedown->setEnabled(true);
-            }
-        }
-        ui->commandListTitle->setText("Command List [" + QString::number(ui->commandList->currentRow()+1) + "/"+ QString::number(commandList.size()) + "]");
-    }
-    else
-    {
-        ui->delCmd->setEnabled(false);
-        ui->botstart->setEnabled(false);
-        ui->addAbove->setEnabled(false);
-        ui->addAbove->setCheckable(false);
-        ui->movedown->setEnabled(false);
-        ui->moveup->setEnabled(false);
-        ui->commandListTitle->setText("Command List [0/"+ QString::number(commandList.size()) + "]");
-    }
-}
-
-//-------------------------------------------------------
-//----------------------Move item------------------------
-//-------------------------------------------------------
-void MainWindow::moveItem(int direction)
-{
-    QScrollBar *vb = ui->commandList->verticalScrollBar();
-    int oldValue = vb->value();
-
-    int curIndex = ui->commandList->currentRow();
-    int newIndex = curIndex + direction;
-
-    commandList.swap(curIndex, newIndex);
-    fillCommandListWidget();
-
-    setUnsavedChanges(true);
-
-    ui->commandList->setCurrentRow(newIndex);
-    vb->setValue(oldValue);
-}
+//        ui->commandListTitle->setText("Command List [" + QString::number(ui->commandList->currentRow()+1) + "/"+ QString::number(commandListStrings.size()) + "]");
+//    }
+//    else
+//    {
+//        ui->delCmd->setEnabled(false);
+//        ui->startProgramButton->setEnabled(false);
+//        ui->addAbove->setEnabled(false);
+//        ui->addAbove->setCheckable(false);
+//        ui->commandListTitle->setText("Command List [0/"+ QString::number(commandListStrings.size()) + "]");
+//    }
+//}
 
 //-------------------------------------------------------
 //-------------Letterbox editing finished----------------
 //-------------------------------------------------------
-void MainWindow::letterBoxEdited()
-{
-    QString text = ui->letterBox->text();
-    ui->keyBox->setCurrentIndex(0);
-    ui->letterBox->setText(text);
-}
+//void MainWindow::letterBoxEdited()
+//{
+//    ui->keyBox->setCurrentIndex(0);
+//    QString text = ui->letterBox->text();
+//    ui->letterBox->setText(text);
+//}
 
 //-------------------------------------------------------
 //---------------Keybox editing finished-----------------
 //-------------------------------------------------------
-void MainWindow::keyBoxEdited()
-{
-    int currentPos = ui->keyBox->currentIndex();
-    ui->letterBox->setText("");
-    ui->keyBox->setCurrentIndex(currentPos);
-}
+//void MainWindow::keyBoxEdited()
+//{
+//    int currentPos = ui->keyBox->currentIndex();
+//    ui->letterBox->setText("");
+//    ui->keyBox->setCurrentIndex(currentPos);
+//}
 
 //-------------------------------------------------------
-//------------------Start the bot------------------------
+//----------------Start the program----------------------
 //-------------------------------------------------------
-void MainWindow::botStart()
+void MainWindow::startProgram()
 {
-    ui->botstart->setEnabled(false);
+    if(isProgramRunning)
+        return;
+
+    isProgramRunning = true;
+    //ui->startProgramButton->setEnabled(false);
     showMinimized();
 
     bool loop = false, partLoop = false, paused = false;
@@ -784,7 +691,7 @@ void MainWindow::botStart()
             times = ui->loopAmount->value();
             if(start > ui->commandList->count() || stop > ui->commandList->count())
             {
-                ui->botstart->setEnabled(true);
+                //ui->startProgramButton->setEnabled(true);
                 refreshWindowTitle();
                 showNormal();
                 return;
@@ -796,7 +703,7 @@ void MainWindow::botStart()
 
     do
     {
-        for(int i = 0; i < commandList.size(); ++i)
+        for(int i = 0; i < ui->commandList->count(); ++i)
         {
             if(GetAsyncKeyState(VK_F7))
                 paused = false;
@@ -813,14 +720,14 @@ void MainWindow::botStart()
                 if(ui->loopCheckBox->isChecked())
                 {
                     if(ui->loopCheckBox->isChecked())
-                        setWindowTitle("Bot looping w/ delay");
-                    else setWindowTitle("Bot running w/ delay");
+                        setWindowTitle("Program looping w/ delay");
+                    else setWindowTitle("Program running w/ delay");
                 }
                 else
                 {
                     if(ui->loopCheckBox->isChecked())
-                        setWindowTitle("Bot looping w/o delay");
-                    else setWindowTitle("Bot running w/o delay");
+                        setWindowTitle("Program looping w/o delay");
+                    else setWindowTitle("Program running w/o delay");
                 }
 
                 if(i == stop && partLoop == true && times > 0)
@@ -829,7 +736,7 @@ void MainWindow::botStart()
                     --times;
                 }
 
-                Commands::ExecuteCommand(commandList.at(i));
+                Commands::ExecuteCommand(getCommandString(i));
                 if(ui->defaultDelayCheckBox->isChecked())
                     Sleep(ui->defaultDelaySpinBox->value());
                 qApp->processEvents();
@@ -837,7 +744,7 @@ void MainWindow::botStart()
             else
             {
                 --i;
-                setWindowTitle("Bot paused");
+                setWindowTitle("Program paused");
                 qApp->processEvents();
                 Sleep(50);
             }
@@ -846,7 +753,8 @@ void MainWindow::botStart()
 
     refreshWindowTitle();
     showNormal();
-    ui->botstart->setEnabled(true);
+    //ui->startProgramButton->setEnabled(true);
+    isProgramRunning = false;
 }
 
 //-------------------------------------------------------
@@ -888,32 +796,32 @@ void MainWindow::loopToChanged()
         ui->loopFrom->setValue(ui->loopTo->value());
 }
 
-
 //-------------------------------------------------------
-//--------------------NEW METHODS------------------------
+//-------------------Context menu------------------------
 //-------------------------------------------------------
-
 void MainWindow::showContextMenu(const QPoint &pos)
 {
     QPoint globalPos = ui->commandList->mapToGlobal(pos);
     contextMenu.exec(globalPos);
 }
 
+//-------------------------------------------------------
+//-----------------Add new command-----------------------
+//-------------------------------------------------------
 void MainWindow::addNewCommand()
 {
-    int commandIndex = ui->commandSelectBox->currentIndex();;
+    int currentCommandIndex = ui->commandSelectBox->currentIndex();
 
-    CommandWidget *itemWidget = Commands::GetNewCommandWidget(commandIndex);
-    CommandListItem *item = new CommandListItem();
-    item->commandIndex = commandIndex;
+    CommandWidget *itemWidget = CommandWidget::GetNewCommandWidget(currentCommandIndex);
+    QListWidgetItem *item = new QListWidgetItem();
+    //item->commandIndex = commandIndex;
+    itemWidget->commandType = (CommandType)currentCommandIndex;
     addItem(item, itemWidget, ui->commandList->count());
 
     ui->commandList->setCurrentRow(ui->commandList->count() - 1);
     unselectAll();
     item->setSelected(true);    
     setUnsavedChanges(true);
-
-    connect(itemWidget, SIGNAL(commandChanged()), this, SLOT(handleCommandChanged()));
 }
 
 void MainWindow::deleteSelected()
@@ -933,20 +841,23 @@ void MainWindow::duplicateSelected()
 
     QList<QListWidgetItem *> selectedItems = ui->commandList->selectedItems();
 
-    QList<CommandListItem *> newItems;
+    QList<QListWidgetItem *> newItems;
     for (int i = 0; i < selectedItems.size(); ++i)
     {
-        CommandListItem *item = (CommandListItem *)selectedItems.at(i);
-        CommandListItem *newItem = new CommandListItem();
+        QListWidgetItem *item = (QListWidgetItem *)selectedItems.at(i);
+        QListWidgetItem *newItem = new QListWidgetItem();
+
+        CommandWidget *selectedItemWidget = (CommandWidget*)ui->commandList->itemWidget(item);
+        CommandType selectedItemCommandType = selectedItemWidget->commandType;
 
         //create new widget
-        CommandWidget *newWidget = Commands::GetNewCommandWidget(item->commandIndex);
+        CommandWidget *newWidget = CommandWidget::GetNewCommandWidget((int)selectedItemCommandType);
 
         //copy widget values to new one
-        ((CommandWidget*)ui->commandList->itemWidget(item))->CopyTo(newWidget);
+        selectedItemWidget->CopyTo(newWidget);
 
         //copy list item command index to new item
-        newItem->commandIndex = item->commandIndex;
+        newWidget->commandType = selectedItemCommandType;
 
         addItem(newItem, newWidget, ui->commandList->row(item)+1);
         newItems.append(newItem);
@@ -966,12 +877,12 @@ void MainWindow::duplicateSelected()
 //-------------------------------------------------------
 //-------------Add item with widget at row---------------
 //-------------------------------------------------------
-void MainWindow::addItem(CommandListItem *item, CommandWidget *itemWidget, int row)
+void MainWindow::addItem(QListWidgetItem *item, CommandWidget *itemWidget, int row)
 {
     ui->commandList->insertItem(row, item);
     ui->commandList->setItemWidget(item, itemWidget);
     item->setSizeHint(QSize(0, itemWidget->height()));
-    commandList.insert(row, itemWidget->GetCommandString());
+    connect(itemWidget, SIGNAL(commandChanged()), this, SLOT(handleCommandChanged()));
 }
 
 //-------------------------------------------------------
@@ -1007,8 +918,8 @@ void MainWindow::handleSelectionChanged()
     ui->actionCut->setEnabled(itemSelected);
 }
 
-void MainWindow::handleItemChanged(QModelIndex,int,int,QModelIndex,int)
+void MainWindow::handleItemChanged(QModelIndex, int, int, QModelIndex, int)
 {
     setUnsavedChanges(true);
-    refreshCommandListControls();
+    //refreshCommandListControls();
 }

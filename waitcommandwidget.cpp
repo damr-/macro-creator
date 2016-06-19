@@ -1,12 +1,16 @@
 #include "waitcommandwidget.h"
 #include "ui_waitcommandwidget.h"
 
+#include "commands.h"
+
 WaitCommandWidget::WaitCommandWidget(QWidget *parent) :
     CommandWidget(parent),
     ui(new Ui::WaitCommandWidget)
 {
     ui->setupUi(this);
     SetWaitSettings(qrand() % (100 + 1), qrand() % (2));
+
+    commandType = CommandType::Wait;
 }
 
 WaitCommandWidget::~WaitCommandWidget()
@@ -28,7 +32,7 @@ void WaitCommandWidget::CopyTo(CommandWidget *other)
 
 QString WaitCommandWidget::GetCommandString()
 {
-    return "wat|" + QString::number(getAmount()) + "|" + QString::number(getWaitType());
+    return QString::number((int)CommandType::Wait) + "|" + QString::number(getAmount()) + "|" + QString::number(getWaitType());
 }
 
 int WaitCommandWidget::getAmount()

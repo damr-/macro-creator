@@ -1,6 +1,8 @@
 #include "setcursorposcommandwidget.h"
 #include "ui_setcursorposcommandwidget.h"
 
+#include "commands.h"
+
 SetCursorPosCommandWidget::SetCursorPosCommandWidget(QWidget *parent) :
     CommandWidget(parent),
     ui(new Ui::SetCursorPosCommandWidget)
@@ -9,6 +11,8 @@ SetCursorPosCommandWidget::SetCursorPosCommandWidget(QWidget *parent) :
     int x = qrand() % (1920 + 1);
     int y = qrand() % (1920 + 1);
     SetCoordinates(x, y);
+
+    commandType = CommandType::SetCursorPosition;
 }
 
 SetCursorPosCommandWidget::~SetCursorPosCommandWidget()
@@ -30,7 +34,7 @@ void SetCursorPosCommandWidget::CopyTo(CommandWidget *other)
 
 QString SetCursorPosCommandWidget::GetCommandString()
 {
-    return "pos|" + QString::number(GetX()) + "|" + QString::number(GetY());
+    return QString::number((int)CommandType::SetCursorPosition) +  "|" + QString::number(GetX()) + "|" + QString::number(GetY());
 }
 
 int SetCursorPosCommandWidget::GetX()

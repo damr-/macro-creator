@@ -10,7 +10,6 @@
 #include <QMenu>
 #include <QMessageBox>
 
-#include "commandlistitem.h"
 #include "commandwidget.h"
 
 namespace Ui {
@@ -37,29 +36,28 @@ private slots:
     void openProgram();
 
     //Slots for adding commands
-    void addMoveCursorCommand();
-    void addClickCommand();
-    void addDragMouseCommand();
-    void addScrollCommand();
-    void addWriteTextCommand();
-    void addShortcutCommand();
-    void chooseExe();
-    void addOpenExeCommand();
-    void addWaitCommand();
-    void addKillProcessCommand();
+//    void addMoveCursorCommand();
+//    void addClickCommand();
+//    void addDragMouseCommand();
+//    void addScrollCommand();
+//    void addWriteTextCommand();
+//    void addShortcutCommand();
+//    void chooseExe();
+//    void addOpenExeCommand();
+//    void addWaitCommand();
+//    void addKillProcessCommand();
 
     //ListWidget modification
-    void deleteCommand();
-    void deleteUndo();
-    void refreshCommandListControls();
-    void moveItem(int direction);
+//    void deleteCommand();
+//    void deleteUndo();
+//    void refreshCommandListControls();
 
     //Shortcut Finemaker
-    void letterBoxEdited();
-    void keyBoxEdited();
+//    void letterBoxEdited();
+//    void keyBoxEdited();
 
     //Bot Actions
-    void botStart();
+    void startProgram();
 
     //Loop
     void loopTypeChanged();
@@ -83,7 +81,7 @@ private slots:
     void duplicateSelected();
     void handleSelectionChanged();
     void handleItemChanged(QModelIndex, int, int, QModelIndex, int);
-    void addItem(CommandListItem *item, CommandWidget *itemWidget, int row);
+    void addItem(QListWidgetItem *item, CommandWidget *itemWidget, int row);
     void unselectAll();
 
     void commandSelectionChanged();
@@ -100,26 +98,27 @@ private:
     QString delBackupText;
     int delBackupPos;
 
-    QList<QString> commandList;
-
     bool unsavedProgram;
 
     bool unsavedChanges;
 
-    //contect menu
+    bool isProgramRunning;
+
     QMenu contextMenu;
 
     bool isListeningForKeyInput;
 
     void addCommand(QString commandtype, QStringList arguments);
     void loadCommandListFromFile(QString pathPlusFilename);
-    void fillCommandListWidget();
+    void fillCommandListWidget(QStringList commandListStrings);
     void closeEvent(QCloseEvent *event);
 
     void executeCommand(QString cmd);
 
     void refreshWindowTitle();
     void setUnsavedChanges(bool newUnsavedChanges);
+
+    QString getCommandString(int commandIndex);
 
     static QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + ".myprog"; }
 

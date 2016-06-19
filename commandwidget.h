@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include "commands.h"
+
 namespace Ui {
 class CommandWidget;
 }
@@ -13,12 +15,13 @@ class CommandWidget : public QWidget
 
 	public:
         explicit CommandWidget(QWidget *parent = 0);
-		~CommandWidget();
+        ~CommandWidget();
 
-        static int index;
+        CommandType commandType;
 
         virtual void CopyTo(CommandWidget *other);
         virtual QString GetCommandString();
+        static CommandWidget* GetNewCommandWidget(int commandIndex);
 
     protected slots:
         void emitCommandChangedSignal();

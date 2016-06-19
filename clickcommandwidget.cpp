@@ -1,7 +1,7 @@
 #include "clickcommandwidget.h"
 #include "ui_clickcommandwidget.h"
 
-#include <QDebug>
+#include "commands.h"
 
 ClickCommandWidget::ClickCommandWidget(QWidget *parent) :
 	CommandWidget(parent),
@@ -23,6 +23,8 @@ ClickCommandWidget::ClickCommandWidget(QWidget *parent) :
 
     connect(ui->clickAmountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
     connect(ui->clickTypeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCommandChangedSignal()));
+
+    commandType = CommandType::Click;
 }
 
 ClickCommandWidget::~ClickCommandWidget()
@@ -33,6 +35,11 @@ ClickCommandWidget::~ClickCommandWidget()
 void ClickCommandWidget::SetClickAmount(int amount)
 {
     ui->clickAmountSpinBox->setValue(amount);
+}
+
+void ClickCommandWidget::SetClickType(ClickType clickType)
+{
+    ui->clickTypeBox->setCurrentIndex((int)clickType);
 }
 
 void ClickCommandWidget::clickAmountChanged(int amount)
@@ -48,7 +55,7 @@ void ClickCommandWidget::CopyTo(CommandWidget *other)
 
 QString ClickCommandWidget::GetCommandString()
 {
-    return "clc|" + QString::number(clickAmount()) + "|" + ui->clickTypeBox->currentIndex();
+    return QString::number((int)CommandType::Click) + "|" + QString::number(clickAmount()) + "|" + QString::number(ui->clickTypeBox->currentIndex());
 }
 
 int ClickCommandWidget::clickAmount()

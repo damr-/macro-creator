@@ -11,7 +11,6 @@ HEADERS  += mainwindow.h \
     commandwidget.h \
     clickcommandwidget.h \
     setcursorposcommandwidget.h \
-    commandlistitem.h \
     waitcommandwidget.h \
     commands.h\
     keyboardutilities.h
