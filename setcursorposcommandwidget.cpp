@@ -10,7 +10,10 @@ SetCursorPosCommandWidget::SetCursorPosCommandWidget(QWidget *parent) :
     ui->setupUi(this);
     int x = qrand() % (1920 + 1);
     int y = qrand() % (1920 + 1);
-    SetCoordinates(x, y);
+    SetCoordinates(x, y);    
+
+    connect(ui->xCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
+    connect(ui->yCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
 
     commandType = CommandType::SetCursorPosition;
 }

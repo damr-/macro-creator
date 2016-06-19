@@ -10,6 +10,10 @@ WaitCommandWidget::WaitCommandWidget(QWidget *parent) :
     ui->setupUi(this);
     SetWaitSettings(1, 0);
 
+
+    connect(ui->waitTime, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
+    connect(ui->waitTimeType, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCommandChangedSignal()));
+
     commandType = CommandType::Wait;
 }
 
