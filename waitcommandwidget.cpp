@@ -8,7 +8,7 @@ WaitCommandWidget::WaitCommandWidget(QWidget *parent) :
     ui(new Ui::WaitCommandWidget)
 {
     ui->setupUi(this);
-    SetWaitSettings(qrand() % (100 + 1), qrand() % (2));
+    SetWaitSettings(1, 0);
 
     commandType = CommandType::Wait;
 }

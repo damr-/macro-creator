@@ -1729,11 +1729,13 @@
     <property name="title">
      <string>Edit</string>
     </property>
-    <addaction name="actionCut"/>
+    <addaction name="actionAdd_Delay"/>
+    <addaction name="separator"/>
     <addaction name="actionCopy"/>
+    <addaction name="actionCut"/>
     <addaction name="actionPaste"/>
-    <addaction name="actionDelete"/>
     <addaction name="actionDuplicate"/>
+    <addaction name="actionDelete"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -1841,6 +1843,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionAdd_Delay">
+   <property name="text">
+    <string>Add Delay</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+D</string>
    </property>
   </action>
  </widget>

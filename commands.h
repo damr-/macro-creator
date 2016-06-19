@@ -8,7 +8,7 @@ enum CommandType
 {
     Click,
     SetCursorPosition,
-    Wait,
+    Wait
 };
 
 class Commands
@@ -19,8 +19,7 @@ public:
     {
         return {
             "Click",
-            "Set cursor position",
-            "Wait"
+            "Set cursor position"
         };
     }
     static int getCommandTypeIndex(CommandType commandType) { return (int)commandType; }

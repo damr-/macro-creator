@@ -57,7 +57,7 @@ private slots:
 //    void keyBoxEdited();
 
     //Bot Actions
-    void startProgram();
+    void tryStartProgram();
 
     //Loop
     void loopTypeChanged();
@@ -83,6 +83,8 @@ private slots:
     void handleItemChanged(QModelIndex, int, int, QModelIndex, int);
     void addItem(QListWidgetItem *item, CommandWidget *itemWidget, int row);
     void unselectAll();
+
+    void addDelay();
 
     void commandSelectionChanged();
 
