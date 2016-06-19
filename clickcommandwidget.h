@@ -32,10 +32,9 @@ class ClickCommandWidget : public CommandWidget
 
         void CopyTo(CommandWidget *other);
         QString GetCommandString();
-        void SetupCommandChangedSignals();
 
         int clickAmount();
-        ClickType clickType();
+        ClickType GetClickType();
         void SetClickAmount(int amount);       
         void SetClickType(ClickType clickType);
 

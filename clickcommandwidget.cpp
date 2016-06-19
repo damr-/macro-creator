@@ -55,7 +55,7 @@ void ClickCommandWidget::CopyTo(CommandWidget *other)
 
 QString ClickCommandWidget::GetCommandString()
 {
-    return QString::number((int)CommandType::Click) + "|" + QString::number(clickAmount()) + "|" + QString::number(ui->clickTypeBox->currentIndex());
+    return QString::number((int)CommandType::Click) + "|" + QString::number(clickAmount()) + "|" + QString::number((int)GetClickType());
 }
 
 int ClickCommandWidget::clickAmount()
@@ -63,7 +63,7 @@ int ClickCommandWidget::clickAmount()
     return ui->clickAmountSpinBox->value();
 }
 
-ClickType ClickCommandWidget::clickType()
+ClickType ClickCommandWidget::GetClickType()
 {
     return (ClickType)ui->clickTypeBox->currentIndex();
 }

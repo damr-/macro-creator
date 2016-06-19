@@ -6,9 +6,15 @@
 
 enum CommandType
 {
+    Wait = -1,
     Click,
     SetCursorPosition,
-    Wait
+    Drag,
+    Scroll,
+    WriteText,
+    HitKey,
+    OpenExe,
+    EndProcess
 };
 
 class Commands
@@ -19,7 +25,13 @@ public:
     {
         return {
             "Click",
-            "Set cursor position"
+            "Set cursor position",
+            "Drag",
+            "Scroll",
+            "Write text",
+            "Hit key",
+            "Open .exe",
+            "End process"
         };
     }
     static int getCommandTypeIndex(CommandType commandType) { return (int)commandType; }

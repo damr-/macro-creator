@@ -113,7 +113,7 @@ MainWindow::MainWindow(QWidget *parent) :
     programPath = QDir::currentPath();
     ui->tabWidget->setCurrentIndex(0);
     setUnsavedChanges(false);
-    unsavedProgram = true;
+    isUnsavedProgram = true;
     isListeningForKeyInput = false;
 
     ui->actionSave_As->setEnabled(false);
@@ -150,7 +150,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (!unsavedChanges) {
+    if (!hasUnsavedChanges) {
         event->accept();
         return;
     }
@@ -237,7 +237,7 @@ void MainWindow::openProgram()
 
     programName = fileName;
 
-    if(unsavedChanges){
+    if(hasUnsavedChanges){
         UnsavedChangesMessageResult result = UnsavedChangesMessageResult::Cancel;
         QMessageBox* msgbox = showUnsavedChangesWarning(result);
 
@@ -252,18 +252,15 @@ void MainWindow::openProgram()
 
     loadCommandListFromFile(fullFilePath);
     ui->statusBar->showMessage("Opened " + fullFilePath, 3000);
-    unsavedProgram = false;
+    isUnsavedProgram = false;
     setUnsavedChanges(false);
     refreshWindowTitle();
     ui->actionSave_As->setEnabled(true);
 }
 
-//------------------------------------------------------
-//--------------------Save Program----------------------
-//------------------------------------------------------
 void MainWindow::saveProgram()
 {
-    if(!unsavedProgram && !unsavedChanges)
+    if(!isUnsavedProgram && !hasUnsavedChanges)
     {
         ui->statusBar->showMessage("No changes to save", 3000);
         return;
@@ -271,7 +268,7 @@ void MainWindow::saveProgram()
 
     QString pathPlusFileName = getFullFilePath(programPath, programName);
 
-    if(unsavedProgram){
+    if(isUnsavedProgram){
         pathPlusFileName = QFileDialog::getSaveFileName(this, tr("Save the program as..."), programPath, tr("Program Files (*.myprog)"));
 
         QString fileName = QFileInfo(pathPlusFileName).baseName();
@@ -283,7 +280,7 @@ void MainWindow::saveProgram()
             ui->statusBar->showMessage("Saving aborted", 3000);
             return;
         }
-        unsavedProgram = false;
+        isUnsavedProgram = false;
     }
 
     QFile file(pathPlusFileName);
@@ -318,17 +315,11 @@ void MainWindow::saveProgram()
     ui->statusBar->showMessage("Saved program to " + pathPlusFileName, 3000);
 }
 
-
-//--------------------Save program as--------------------
-
 void MainWindow::saveProgramAs()
 {
-    unsavedProgram = true;
+    isUnsavedProgram = true;
     saveProgram();
 }
-
-
-//-------------------Load from File to list--------------
 
 void MainWindow::loadCommandListFromFile(QString filename)
 {
@@ -375,9 +366,6 @@ void MainWindow::loadCommandListFromFile(QString filename)
     file.close();
 }
 
-
-//--------------Load from list to widget-----------------
-
 void MainWindow::fillCommandListWidget(QStringList commandListStrings)
 {
     ui->commandList->clear();
@@ -393,6 +381,14 @@ void MainWindow::fillCommandListWidget(QStringList commandListStrings)
         newWidget->commandType = (CommandType)commandTypeIndex;
 
         switch(commandTypeIndex){
+            case -1:
+            {
+                WaitCommandWidget* waitWidget = (WaitCommandWidget*) newWidget;
+                waitWidget->SetWaitSettings(list[1].toInt(), list[2].toInt());
+                addItem(newItem, waitWidget, i);
+            }
+                break;
+
             case 0:
             {
                 ClickCommandWidget* clickWidget = (ClickCommandWidget*) newWidget;
@@ -486,18 +482,18 @@ void MainWindow::updateWriteTextCount()
 
 void MainWindow::refreshWindowTitle()
 {
-    setWindowTitle(programName + (unsavedChanges ? "*" : "") + " - Personal Macro");
+    setWindowTitle(programName + (hasUnsavedChanges ? "*" : "") + " - Personal Macro");
 }
 
 void MainWindow::setUnsavedChanges(bool newUnsavedChanges)
 {
-    unsavedChanges = newUnsavedChanges;
+    hasUnsavedChanges = newUnsavedChanges;
     refreshWindowTitle();
 }
 
-QString MainWindow::getCommandString(int commandIndex)
+QString MainWindow::getCommandString(int commandListIndex)
 {
-    QListWidgetItem* item = ui->commandList->item(commandIndex);
+    QListWidgetItem* item = ui->commandList->item(commandListIndex);
     QWidget* itemWidget = ui->commandList->itemWidget(item);
     return ((CommandWidget*)itemWidget)->GetCommandString();
 }
@@ -659,16 +655,7 @@ void MainWindow::showContextMenu(const QPoint &pos)
 
 void MainWindow::addNewCommand()
 {
-    int currentCommandIndex = ui->commandSelectBox->currentIndex();
-    CommandWidget *itemWidget = CommandWidget::GetNewCommandWidget(currentCommandIndex);
-    QListWidgetItem *item = new QListWidgetItem();
-    itemWidget->commandType = (CommandType)currentCommandIndex;
-    addItem(item, itemWidget, ui->commandList->count());
-
-    ui->commandList->setCurrentRow(ui->commandList->count() - 1);
-    unselectAll();
-    item->setSelected(true);    
-    setUnsavedChanges(true);
+    addNewCommand(ui->commandSelectBox->currentIndex());
 }
 
 void MainWindow::deleteSelected()
@@ -726,7 +713,7 @@ void MainWindow::addItem(QListWidgetItem *item, CommandWidget *itemWidget, int r
     ui->commandList->insertItem(row, item);
     ui->commandList->setItemWidget(item, itemWidget);
     item->setSizeHint(QSize(0, itemWidget->height()));
-    connect(itemWidget, SIGNAL(commandChanged()), this, SLOT(handleCommandChanged()));
+    connect(itemWidget, SIGNAL(commandChanged()), this, SLOT(handleCommandSettingChanged()));
 }
 
 void MainWindow::unselectAll()
@@ -741,12 +728,17 @@ void MainWindow::unselectAll()
 
 void MainWindow::addDelay()
 {
-    CommandWidget *itemWidget = CommandWidget::GetNewCommandWidget(2);
-    QListWidgetItem *item = new QListWidgetItem();
-    itemWidget->commandType = CommandType::Wait;
-    addItem(item, itemWidget, ui->commandList->currentRow() + 1);
+    addNewCommand(-1);
+}
 
-    ui->commandList->setCurrentItem(item);
+void MainWindow::addNewCommand(int commandIndex)
+{
+    CommandWidget *itemWidget = CommandWidget::GetNewCommandWidget(commandIndex);
+    itemWidget->commandType = (CommandType)commandIndex;
+    QListWidgetItem *item = new QListWidgetItem();
+    addItem(item, itemWidget, ui->commandList->count());
+
+    ui->commandList->setCurrentRow(ui->commandList->count() - 1);
     unselectAll();
     item->setSelected(true);
     setUnsavedChanges(true);
@@ -757,7 +749,7 @@ void MainWindow::commandSelectionChanged()
 
 }
 
-void MainWindow::handleCommandChanged()
+void MainWindow::handleCommandSettingChanged()
 {
     setUnsavedChanges(true);
 }

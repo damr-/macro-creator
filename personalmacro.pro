@@ -13,7 +13,8 @@ HEADERS  += mainwindow.h \
     setcursorposcommandwidget.h \
     waitcommandwidget.h \
     commands.h\
-    keyboardutilities.h
+    keyboardutilities.h \
+    dragcommandwidget.h
 
 SOURCES += main.cpp \
         mainwindow.cpp \
@@ -22,13 +23,15 @@ SOURCES += main.cpp \
     setcursorposcommandwidget.cpp \
     waitcommandwidget.cpp \
     commands.cpp \
-    keyboardutilities.cpp
+    keyboardutilities.cpp \
+    dragcommandwidget.cpp
 
 FORMS    += mainwindow.ui \
     commandwidget.ui \
     clickcommandwidget.ui \
     setcursorposcommandwidget.ui \
-    waitcommandwidget.ui
+    waitcommandwidget.ui \
+    dragcommandwidget.ui
 
 RESOURCES += \
     resources.qrc

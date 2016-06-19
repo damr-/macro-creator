@@ -88,8 +88,7 @@ private slots:
 
     void commandSelectionChanged();
 
-    //called when the setting of a command has changed
-    void handleCommandChanged();
+    void handleCommandSettingChanged();
 
 private:
     Ui::MainWindow *ui;
@@ -97,20 +96,20 @@ private:
     QString programName;
     QString programPath;
 
-    QString delBackupText;
-    int delBackupPos;
+//    QString delBackupText;
+//    int delBackupPos;
 
-    bool unsavedProgram;
+    bool isUnsavedProgram;
+    bool hasUnsavedChanges;
 
-    bool unsavedChanges;
-
+    bool isListeningForKeyInput;
     bool isProgramRunning;
 
     QMenu contextMenu;
 
-    bool isListeningForKeyInput;
+    void addNewCommand(int commandIndex);
 
-    void addCommand(QString commandtype, QStringList arguments);
+    //void addCommand(QString commandtype, QStringList arguments);
     void loadCommandListFromFile(QString pathPlusFilename);
     void fillCommandListWidget(QStringList commandListStrings);
     void closeEvent(QCloseEvent *event);
@@ -120,17 +119,17 @@ private:
     void refreshWindowTitle();
     void setUnsavedChanges(bool newUnsavedChanges);
 
-    QString getCommandString(int commandIndex);
+    QString getCommandString(int commandListIndex);
 
-    static QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + ".myprog"; }
+    QMessageBox *showUnsavedChangesWarning(UnsavedChangesMessageResult &result);
 
     enum UnsavedChangesMessageResult {
         Save = 0,
         DontSave = 1,
         Cancel = 2
-    };
+    };    
 
-    QMessageBox *showUnsavedChangesWarning(UnsavedChangesMessageResult &result);
+    static QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + ".myprog"; }
 };
 
 #endif // MAINWINDOW_H
