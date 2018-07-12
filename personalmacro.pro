@@ -8,30 +8,33 @@ TEMPLATE = app
 CONFIG += static
 
 HEADERS  += mainwindow.h \
-    commandwidget.h \
-    clickcommandwidget.h \
-    setcursorposcommandwidget.h \
-    waitcommandwidget.h \
     commands.h\
     keyboardutilities.h \
-    dragcommandwidget.h
+    CmdWidgets/cmdwidget.h \
+    CmdWidgets/clickcmdwidget.h \
+    CmdWidgets/dragcmdwidget.h \
+    CmdWidgets/scrollcmdwidget.h \
+    CmdWidgets/setcursorposcmdwidget.h \
+    CmdWidgets/waitcmdwidget.h
 
 SOURCES += main.cpp \
         mainwindow.cpp \
-        commandwidget.cpp \
-        clickcommandwidget.cpp \
-    setcursorposcommandwidget.cpp \
-    waitcommandwidget.cpp \
-    commands.cpp \
-    keyboardutilities.cpp \
-    dragcommandwidget.cpp
+        commands.cpp \
+        keyboardutilities.cpp \
+    CmdWidgets/cmdwidget.cpp \
+    CmdWidgets/clickcmdwidget.cpp \
+    CmdWidgets/dragcmdwidget.cpp \
+    CmdWidgets/scrollcmdwidget.cpp \
+    CmdWidgets/waitcmdwidget.cpp \
+    CmdWidgets/setcursorposcmdwidget.cpp
 
 FORMS    += mainwindow.ui \
-    commandwidget.ui \
-    clickcommandwidget.ui \
-    setcursorposcommandwidget.ui \
-    waitcommandwidget.ui \
-    dragcommandwidget.ui
+    CmdWidgets/cmdwidget.ui \
+    CmdWidgets/clickcmdwidget.ui \
+    CmdWidgets/dragcmdwidget.ui \
+    CmdWidgets/scrollcmdwidget.ui \
+    CmdWidgets/setcursorposcmdwidget.ui \
+    CmdWidgets/waitcmdwidget.ui
 
 RESOURCES += \
     resources.qrc

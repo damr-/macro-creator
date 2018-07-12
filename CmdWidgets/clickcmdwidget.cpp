@@ -1,11 +1,11 @@
-#include "clickcommandwidget.h"
-#include "ui_clickcommandwidget.h"
+#include "clickcmdwidget.h"
+#include "ui_clickcmdwidget.h"
 
 #include "commands.h"
 
-ClickCommandWidget::ClickCommandWidget(QWidget *parent) :
-	CommandWidget(parent),
-	ui(new Ui::ClickCommandWidget)
+ClickCmdWidget::ClickCmdWidget(QWidget *parent) :
+    CmdWidget(parent),
+    ui(new Ui::ClickCmdWidget)
 {
 	ui->setupUi(this);
 
@@ -27,43 +27,43 @@ ClickCommandWidget::ClickCommandWidget(QWidget *parent) :
     commandType = CommandType::Click;
 }
 
-ClickCommandWidget::~ClickCommandWidget()
+ClickCmdWidget::~ClickCmdWidget()
 {
     delete ui;
 }
 
-void ClickCommandWidget::SetClickAmount(int amount)
+void ClickCmdWidget::SetClickAmount(int amount)
 {
     ui->clickAmountSpinBox->setValue(amount);
 }
 
-void ClickCommandWidget::SetClickType(ClickType clickType)
+void ClickCmdWidget::SetClickType(ClickType clickType)
 {
     ui->clickTypeBox->setCurrentIndex((int)clickType);
 }
 
-void ClickCommandWidget::clickAmountChanged(int amount)
+void ClickCmdWidget::clickAmountChanged(int amount)
 {
     ui->clickLabel->setText(amount > 1 ? "clicks" : "click");
 }
 
-void ClickCommandWidget::CopyTo(CommandWidget *other)
+void ClickCmdWidget::CopyTo(CmdWidget *other)
 {
-    ClickCommandWidget* widget = (ClickCommandWidget*)other;
+    ClickCmdWidget* widget = (ClickCmdWidget*)other;
     widget->SetClickAmount(clickAmount());
 }
 
-QString ClickCommandWidget::GetCommandString()
+QString ClickCmdWidget::GetCommandString()
 {
     return QString::number((int)CommandType::Click) + "|" + QString::number(clickAmount()) + "|" + QString::number((int)GetClickType());
 }
 
-int ClickCommandWidget::clickAmount()
+int ClickCmdWidget::clickAmount()
 {
     return ui->clickAmountSpinBox->value();
 }
 
-ClickType ClickCommandWidget::GetClickType()
+ClickType ClickCmdWidget::GetClickType()
 {
     return (ClickType)ui->clickTypeBox->currentIndex();
 }

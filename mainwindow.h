@@ -10,7 +10,7 @@
 #include <QMenu>
 #include <QMessageBox>
 
-#include "commandwidget.h"
+#include "CmdWidgets/cmdwidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -34,6 +34,7 @@ private slots:
     void saveProgram();
     void saveProgramAs();
     void openProgram();
+    void showOptionsDialog();
 
     //Slots for adding commands
 //    void addMoveCursorCommand();
@@ -76,15 +77,13 @@ private slots:
 
     //NEW METHODS
     void showContextMenu(const QPoint&);
-    void addNewCommand();
+    void addNewCommand(int commandIndex);
     void deleteSelected();
     void duplicateSelected();
     void handleSelectionChanged();
     void handleItemChanged(QModelIndex, int, int, QModelIndex, int);
-    void addItem(QListWidgetItem *item, CommandWidget *itemWidget, int row);
+    void addItem(QListWidgetItem *item, CmdWidget *itemWidget, int row);
     void unselectAll();
-
-    void addDelay();
 
     void commandSelectionChanged();
 
@@ -107,8 +106,6 @@ private:
 
     QMenu contextMenu;
 
-    void addNewCommand(int commandIndex);
-
     //void addCommand(QString commandtype, QStringList arguments);
     void loadCommandListFromFile(QString pathPlusFilename);
     void fillCommandListWidget(QStringList commandListStrings);
@@ -121,13 +118,13 @@ private:
 
     QString getCommandString(int commandListIndex);
 
-    QMessageBox *showUnsavedChangesWarning(UnsavedChangesMessageResult &result);
-
     enum UnsavedChangesMessageResult {
         Save = 0,
         DontSave = 1,
         Cancel = 2
-    };    
+    };
+
+    QMessageBox *showUnsavedChangesWarning(UnsavedChangesMessageResult &result);
 
     static QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + ".myprog"; }
 };

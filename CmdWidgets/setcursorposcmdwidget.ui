@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DragCommandWidget</class>
- <widget class="QWidget" name="DragCommandWidget">
+ <class>SetCursorPosCmdWidget</class>
+ <widget class="QWidget" name="SetCursorPosCmdWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,35 +23,33 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>DragCommandWidget</string>
+   <string>Form</string>
   </property>
-  <widget class="QLabel" name="yLabel">
+  <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>225</x>
+     <x>5</x>
      <y>5</y>
-     <width>16</width>
+     <width>116</width>
      <height>16</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <pointsize>8</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
     </font>
    </property>
    <property name="text">
-    <string>Y:</string>
+    <string>Set cursor position to</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="xLabel">
    <property name="geometry">
     <rect>
-     <x>155</x>
+     <x>120</x>
      <y>5</y>
      <width>16</width>
      <height>16</height>
@@ -71,10 +69,10 @@
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QSpinBox" name="yCoord">
+  <widget class="QSpinBox" name="xCoord">
    <property name="geometry">
     <rect>
-     <x>242</x>
+     <x>139</x>
      <y>5</y>
      <width>50</width>
      <height>16</height>
@@ -92,49 +90,68 @@
     <number>2000</number>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QSpinBox" name="yCoord">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>207</x>
      <y>5</y>
-     <width>146</width>
+     <width>50</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>7</pointsize>
+    </font>
+   </property>
+   <property name="buttonSymbols">
+    <enum>QAbstractSpinBox::NoButtons</enum>
+   </property>
+   <property name="maximum">
+    <number>2000</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="yLabel">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>5</y>
+     <width>16</width>
      <height>16</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <pointsize>8</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="text">
-    <string>Click and drag Left Mouse to</string>
+    <string>Y:</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="xCoord">
-   <property name="geometry">
-    <rect>
-     <x>174</x>
-     <y>5</y>
-     <width>50</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>7</pointsize>
-    </font>
-   </property>
-   <property name="buttonSymbols">
-    <enum>QAbstractSpinBox::NoButtons</enum>
-   </property>
-   <property name="maximum">
-    <number>2000</number>
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
  </widget>
  <resources/>
  <connections/>
+ <designerdata>
+  <property name="gridDeltaX">
+   <number>5</number>
+  </property>
+  <property name="gridDeltaY">
+   <number>5</number>
+  </property>
+  <property name="gridSnapX">
+   <bool>true</bool>
+  </property>
+  <property name="gridSnapY">
+   <bool>true</bool>
+  </property>
+  <property name="gridVisible">
+   <bool>true</bool>
+  </property>
+ </designerdata>
 </ui>

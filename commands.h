@@ -6,7 +6,7 @@
 
 enum CommandType
 {
-    Wait = -1,
+    Delay,
     Click,
     SetCursorPosition,
     Drag,
@@ -24,8 +24,9 @@ public:
     const static QStringList commandNames()
     {
         return {
+            "Delay"
             "Click",
-            "Set cursor position",
+            "Cursor position",
             "Drag",
             "Scroll",
             "Write text",

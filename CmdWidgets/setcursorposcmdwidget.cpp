@@ -1,11 +1,11 @@
-#include "setcursorposcommandwidget.h"
-#include "ui_setcursorposcommandwidget.h"
+#include "setcursorposcmdwidget.h"
+#include "ui_setcursorposcmd.h"
 
 #include "commands.h"
 
-SetCursorPosCommandWidget::SetCursorPosCommandWidget(QWidget *parent) :
-    CommandWidget(parent),
-    ui(new Ui::SetCursorPosCommandWidget)
+SetCursorPosCmdWidget::SetCursorPosCmdWidget(QWidget *parent) :
+    CmdWidget(parent),
+    ui(new Ui::SetCursorPosCmdWidget)
 {
     ui->setupUi(this);
     int x = qrand() % (1920 + 1);
@@ -18,34 +18,34 @@ SetCursorPosCommandWidget::SetCursorPosCommandWidget(QWidget *parent) :
     commandType = CommandType::SetCursorPosition;
 }
 
-SetCursorPosCommandWidget::~SetCursorPosCommandWidget()
+SetCursorPosCmdWidget::~SetCursorPosCmdWidget()
 {
     delete ui;
 }
 
-void SetCursorPosCommandWidget::SetCoordinates(int x, int y)
+void SetCursorPosCmdWidget::SetCoordinates(int x, int y)
 {
     ui->xCoord->setValue(x);
     ui->yCoord->setValue(y);
 }
 
-void SetCursorPosCommandWidget::CopyTo(CommandWidget *other)
+void SetCursorPosCmdWidget::CopyTo(CmdWidget *other)
 {
-    SetCursorPosCommandWidget *widget = (SetCursorPosCommandWidget*)other;
+    SetCursorPosCmdWidget *widget = (SetCursorPosCmdWidget*)other;
     widget->SetCoordinates(GetX(), GetY());
 }
 
-QString SetCursorPosCommandWidget::GetCommandString()
+QString SetCursorPosCmdWidget::GetCommandString()
 {
     return QString::number((int)CommandType::SetCursorPosition) +  "|" + QString::number(GetX()) + "|" + QString::number(GetY());
 }
 
-int SetCursorPosCommandWidget::GetX()
+int SetCursorPosCmdWidget::GetX()
 {
     return ui->xCoord->value();
 }
 
-int SetCursorPosCommandWidget::GetY()
+int SetCursorPosCmdWidget::GetY()
 {
     return ui->yCoord->value();
 }

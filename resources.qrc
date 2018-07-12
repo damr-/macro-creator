@@ -16,4 +16,8 @@
         <file>resources/images/warning.png</file>
         <file>resources/favicon.jpg</file>
     </qresource>
+    <qresource prefix="/resources/icons">
+        <file>resources/icons/new.png</file>
+        <file>resources/icons/save.png</file>
+    </qresource>
 </RCC>

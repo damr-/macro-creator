@@ -16,11 +16,11 @@
 #include <QTimer>
 
 #include "commands.h"
-#include "clickcommandwidget.h"
-#include "setcursorposcommandwidget.h"
-#include "waitcommandwidget.h"
+#include "CmdWidgets/clickcmdwidget.h"
+#include "CmdWidgets/setcursorposcmdwidget.h"
+#include "CmdWidgets/waitcmdwidget.h"
 
-#pragma comment(lib, "user32.lib")
+//#pragma comment(lib, "user32.lib")
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -40,13 +40,38 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveProgram()));
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openProgram()));
     connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveProgramAs()));
+    connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(showOptionsDialog()));
 
     //Menu->Edit Actions
     connect(ui->actionDelete, SIGNAL(triggered()), this, SLOT(deleteSelected()));
     connect(ui->actionDuplicate, SIGNAL(triggered()), this, SLOT(duplicateSelected()));
-    connect(ui->actionAdd_Delay, SIGNAL(triggered()), this, SLOT(addDelay()));
+
+    //Menu->Add Actions
+    QSignalMapper *addActionsMapper = new QSignalMapper(this);
+    connect(ui->action1Delay, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action2Click, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action3CurorPos, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action4Drag, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action5Scroll, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action6Write, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action7HitKey, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action8RunExe, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+
+    addActionsMapper->setMapping(ui->action1Delay, 0);
+    addActionsMapper->setMapping(ui->action2Click, 1);
+    addActionsMapper->setMapping(ui->action3CurorPos, 2);
+    addActionsMapper->setMapping(ui->action4Drag, 3);
+    addActionsMapper->setMapping(ui->action5Scroll, 4);
+    addActionsMapper->setMapping(ui->action6Write, 5);
+    addActionsMapper->setMapping(ui->action7HitKey, 6);
+    addActionsMapper->setMapping(ui->action8RunExe, 7);
+    connect(addActionsMapper, SIGNAL(mapped(int)), this, SLOT(addNewCommand(int)));
+
+    //Menu->Run Actions
+
 
     //Options
+    /*
     QSignalMapper *optionsMapper = new QSignalMapper(this);
     connect(ui->defaultDelayCheckBox, SIGNAL(toggled(bool)), optionsMapper, SLOT(map()));
     connect(ui->defaultDelaySpinBox, SIGNAL(valueChanged(int)), optionsMapper, SLOT(map()));
@@ -63,38 +88,49 @@ MainWindow::MainWindow(QWidget *parent) :
     optionsMapper->setMapping(ui->loopTo, 0);
     optionsMapper->setMapping(ui->loopAmount, 0);
     connect(optionsMapper, SIGNAL(mapped(int)), this, SLOT(optionsChanged(int)));
+*/
 
     //read key button
     connect(ui->readKeyButton, SIGNAL(clicked(bool)), this, SLOT(readKeyButtonPressed()));
 
     //Loop signals
+    /*
     connect(ui->loopType, SIGNAL(currentIndexChanged(int)), this, SLOT(loopTypeChanged()));
     connect(ui->loopFrom, SIGNAL(editingFinished()), this, SLOT(loopFromChanged()));
     connect(ui->loopTo, SIGNAL(editingFinished()), this, SLOT(loopToChanged()));
+    */
 
     //Default delay
-    connect(ui->defaultDelayCheckBox, SIGNAL(toggled(bool)), this, SLOT(defaultDelayToggled()));
-
+    //connect(ui->defaultDelayCheckBox, SIGNAL(toggled(bool)), this, SLOT(defaultDelayToggled()));
     //Arrange write text edit
-    connect(ui->writeTextEditField, SIGNAL(textChanged(QString)), this, SLOT(updateWriteTextCount()));
+    //connect(ui->writeTextEditField, SIGNAL(textChanged(QString)), this, SLOT(updateWriteTextCount()));
 
+
+    //TODO: Different Context menu depending on clicked QWidget
+    //https://stackoverflow.com/questions/12937812/how-to-create-different-popup-context-menus-for-each-type-of-qtreewidgetitem#
     //setup context menu
     ui->commandList->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QList<QAction *> editActions;
+    QList<QAction *> addActions;
     QList<QMenu*> menuList = ui->menuBar->findChildren<QMenu*>();
     foreach(QMenu* menu, menuList)
     {
         if(menu->title() == "Edit")
         {
             foreach (QAction* a, menu->actions())
-            {
                 editActions.append(a);
-            }
-            break;
+        }
+        else if(menu->title() == "Add")
+        {
+            foreach (QAction* a, menu->actions())
+                addActions.append(a);
         }
     }
+    contextMenu.addMenu("Add")->addActions(addActions);
     contextMenu.addActions(editActions);
+    //
+    //
 
     connect(ui->commandList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
     connect(ui->commandList, SIGNAL(itemSelectionChanged()), this, SLOT(handleSelectionChanged()));
@@ -111,21 +147,15 @@ MainWindow::MainWindow(QWidget *parent) :
     //start with unnamed project
     programName = "unnamed";
     programPath = QDir::currentPath();
-    ui->tabWidget->setCurrentIndex(0);
+    //ui->tabWidget->setCurrentIndex(0);
     setUnsavedChanges(false);
     isUnsavedProgram = true;
     isListeningForKeyInput = false;
 
     ui->actionSave_As->setEnabled(false);
 
-    connect(ui->addCommandButton, SIGNAL(clicked()), this, SLOT(addNewCommand()));
-    connect(ui->commandSelectBox, SIGNAL(currentIndexChanged(int)), this, SLOT(commandSelectionChanged()));
-
-    //fill command select box
-    foreach(QString name, Commands::commandNames())
-    {
-        ui->commandSelectBox->addItem(name);
-    }
+    //connect(ui->addCommandButton, SIGNAL(clicked()), this, SLOT(addNewCommand()));
+    //connect(ui->commandSelectBox, SIGNAL(currentIndexChanged(int)), this, SLOT(commandSelectionChanged()));
 }
 
 MainWindow::~MainWindow()
@@ -169,7 +199,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     msgbox->close();
 }
 
-QMessageBox* MainWindow::showUnsavedChangesWarning(UnsavedChangesMessageResult &result)
+QMessageBox *MainWindow::showUnsavedChangesWarning(UnsavedChangesMessageResult &result)
 {
     QMessageBox *msgbox = new QMessageBox(this);
     QPushButton *btn1 = new QPushButton("Save");
@@ -321,6 +351,14 @@ void MainWindow::saveProgramAs()
     saveProgram();
 }
 
+void MainWindow::showOptionsDialog()
+{
+    //TODO
+    //https://stackoverflow.com/a/9195041
+
+    //show options dialog and return values via SIGNALS and SLOTS
+}
+
 void MainWindow::loadCommandListFromFile(QString filename)
 {
     ui->commandList->clear();
@@ -377,13 +415,13 @@ void MainWindow::fillCommandListWidget(QStringList commandListStrings)
         int commandTypeIndex = list[0].toInt();
 
         QListWidgetItem *newItem = new QListWidgetItem();
-        CommandWidget *newWidget = CommandWidget::GetNewCommandWidget(commandTypeIndex);
+        CmdWidget *newWidget = CmdWidget::GetNewCommandWidget(commandTypeIndex);
         newWidget->commandType = (CommandType)commandTypeIndex;
 
         switch(commandTypeIndex){
             case -1:
             {
-                WaitCommandWidget* waitWidget = (WaitCommandWidget*) newWidget;
+                WaitCmdWidget* waitWidget = (WaitCmdWidget*) newWidget;
                 waitWidget->SetWaitSettings(list[1].toInt(), list[2].toInt());
                 addItem(newItem, waitWidget, i);
             }
@@ -391,7 +429,7 @@ void MainWindow::fillCommandListWidget(QStringList commandListStrings)
 
             case 0:
             {
-                ClickCommandWidget* clickWidget = (ClickCommandWidget*) newWidget;
+                ClickCmdWidget* clickWidget = (ClickCmdWidget*) newWidget;
                 clickWidget->SetClickAmount(list[1].toInt());
                 clickWidget->SetClickType((ClickType)list[2].toInt());
                 addItem(newItem, clickWidget, i);
@@ -400,7 +438,7 @@ void MainWindow::fillCommandListWidget(QStringList commandListStrings)
 
             case 1:
             {
-                ((SetCursorPosCommandWidget*)newWidget)->SetCoordinates(list[1].toInt(), list[2].toInt());
+                ((SetCursorPosCmdWidget*)newWidget)->SetCoordinates(list[1].toInt(), list[2].toInt());
                 addItem(newItem, newWidget, i);
             }
             break;
@@ -495,7 +533,7 @@ QString MainWindow::getCommandString(int commandListIndex)
 {
     QListWidgetItem* item = ui->commandList->item(commandListIndex);
     QWidget* itemWidget = ui->commandList->itemWidget(item);
-    return ((CommandWidget*)itemWidget)->GetCommandString();
+    return ((CmdWidget*)itemWidget)->GetCommandString();
 }
 
 //void MainWindow::chooseExe()
@@ -653,11 +691,6 @@ void MainWindow::showContextMenu(const QPoint &pos)
     contextMenu.exec(globalPos);
 }
 
-void MainWindow::addNewCommand()
-{
-    addNewCommand(ui->commandSelectBox->currentIndex());
-}
-
 void MainWindow::deleteSelected()
 {
     while(ui->commandList->selectedItems().length() > 0)
@@ -681,11 +714,11 @@ void MainWindow::duplicateSelected()
         QListWidgetItem *item = (QListWidgetItem *)selectedItems.at(i);
         QListWidgetItem *newItem = new QListWidgetItem();
 
-        CommandWidget *selectedItemWidget = (CommandWidget*)ui->commandList->itemWidget(item);
+        CmdWidget *selectedItemWidget = (CmdWidget*)ui->commandList->itemWidget(item);
         CommandType selectedItemCommandType = selectedItemWidget->commandType;
 
         //create new widget
-        CommandWidget *newWidget = CommandWidget::GetNewCommandWidget((int)selectedItemCommandType);
+        CmdWidget *newWidget = CmdWidget::GetNewCommandWidget((int)selectedItemCommandType);
 
         //copy widget values to new one
         selectedItemWidget->CopyTo(newWidget);
@@ -708,7 +741,7 @@ void MainWindow::duplicateSelected()
     setUnsavedChanges(true);
 }
 
-void MainWindow::addItem(QListWidgetItem *item, CommandWidget *itemWidget, int row)
+void MainWindow::addItem(QListWidgetItem *item, CmdWidget *itemWidget, int row)
 {
     ui->commandList->insertItem(row, item);
     ui->commandList->setItemWidget(item, itemWidget);
@@ -726,14 +759,9 @@ void MainWindow::unselectAll()
     }
 }
 
-void MainWindow::addDelay()
-{
-    addNewCommand(-1);
-}
-
 void MainWindow::addNewCommand(int commandIndex)
 {
-    CommandWidget *itemWidget = CommandWidget::GetNewCommandWidget(commandIndex);
+    CmdWidget *itemWidget = CmdWidget::GetNewCommandWidget(commandIndex);
     itemWidget->commandType = (CommandType)commandIndex;
     QListWidgetItem *item = new QListWidgetItem();
     addItem(item, itemWidget, ui->commandList->count());
@@ -767,5 +795,4 @@ void MainWindow::handleSelectionChanged()
 void MainWindow::handleItemChanged(QModelIndex, int, int, QModelIndex, int)
 {
     setUnsavedChanges(true);
-
 }

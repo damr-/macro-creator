@@ -1,11 +1,11 @@
-#include "dragcommandwidget.h"
+#include "dragcmdwidget.h"
 #include "ui_dragcommandwidget.h"
 
 #include "commands.h"
 
-DragCommandWidget::DragCommandWidget(QWidget *parent) :
-    CommandWidget(parent),
-    ui(new Ui::DragCommandWidget)
+DragCmdWidget::DragCmdWidget(QWidget *parent) :
+    CmdWidget(parent),
+    ui(new Ui::DragCmdWidget)
 {
     ui->setupUi(this);
 
@@ -15,32 +15,32 @@ DragCommandWidget::DragCommandWidget(QWidget *parent) :
     commandType = CommandType::Drag;
 }
 
-DragCommandWidget::~DragCommandWidget()
+DragCmdWidget::~DragCmdWidget()
 {
     delete ui;
 }
 
-void DragCommandWidget::CopyTo(CommandWidget *other)
+void DragCmdWidget::CopyTo(CmdWidget *other)
 {
-    ((DragCommandWidget*)other)->SetCoordinates(GetX(), GetY());
+    ((DragCmdWidget*)other)->SetCoordinates(GetX(), GetY());
 }
 
-QString DragCommandWidget::GetCommandString()
+QString DragCmdWidget::GetCommandString()
 {
     return QString::number((int)CommandType::Drag) + "|" + QString::number(GetX()) + "|" + QString::number(GetY());
 }
 
-int DragCommandWidget::GetX()
+int DragCmdWidget::GetX()
 {
     return ui->xCoord->value();
 }
 
-int DragCommandWidget::GetY()
+int DragCmdWidget::GetY()
 {
     return ui->yCoord->value();
 }
 
-void DragCommandWidget::SetCoordinates(int x, int y)
+void DragCmdWidget::SetCoordinates(int x, int y)
 {
     ui->xCoord->setValue(x);
     ui->yCoord->setValue(y);

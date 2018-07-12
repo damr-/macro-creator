@@ -1,10 +1,10 @@
-#ifndef CLICKCOMMANDWIDGET_H
-#define CLICKCOMMANDWIDGET_H
+#ifndef CLICKCMDWIDGET_H
+#define CLICKCMDWIDGET_H
 
-#include "commandwidget.h"
+#include "cmdwidget.h"
 
 namespace Ui {
-class ClickCommandWidget;
+class ClickCmdWidget;
 }
 
 static const QList<QString> ClickTypeNames {
@@ -22,15 +22,15 @@ enum ClickType
     Middle
 };
 
-class ClickCommandWidget : public CommandWidget
+class ClickCmdWidget : public CmdWidget
 {
     Q_OBJECT
 
 	public:
-		explicit ClickCommandWidget(QWidget *parent = 0);
-        ~ClickCommandWidget();
+        explicit ClickCmdWidget(QWidget *parent = 0);
+        ~ClickCmdWidget();
 
-        void CopyTo(CommandWidget *other);
+        void CopyTo(CmdWidget *other);
         QString GetCommandString();
 
         int clickAmount();
@@ -42,7 +42,7 @@ class ClickCommandWidget : public CommandWidget
         void clickAmountChanged(int amount);
 
 	private:
-		Ui::ClickCommandWidget *ui;
+        Ui::ClickCmdWidget *ui;
 };
 
-#endif // CLICKCOMMANDWIDGET_H
+#endif // CLICKCMDWIDGET_H
