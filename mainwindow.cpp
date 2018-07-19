@@ -5,10 +5,11 @@
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDebug>
+#include <QList>
+#include <QDir>
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QList>
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSignalMapper>
@@ -18,7 +19,8 @@
 #include "commands.h"
 #include "CmdWidgets/clickcmdwidget.h"
 #include "CmdWidgets/setcursorposcmdwidget.h"
-#include "CmdWidgets/waitcmdwidget.h"
+#include "CmdWidgets/delaycmdwidget.h"
+#include "defaultdelaywidget.h"
 
 //#pragma comment(lib, "user32.lib")
 
@@ -35,22 +37,24 @@ MainWindow::MainWindow(QWidget *parent) :
     timer->start(50);
 
     //Menu->File Actions
-    connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
-    connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newProgram()));
-    connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveProgram()));
-    connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openProgram()));
-    connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveProgramAs()));
-    connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(showOptionsDialog()));
+    connect(ui->actionFExit, SIGNAL(triggered()), this, SLOT(close()));
+    connect(ui->actionFNew, SIGNAL(triggered()), this, SLOT(newMacro()));
+    connect(ui->actionFSave, SIGNAL(triggered()), this, SLOT(saveMacro()));
+    connect(ui->actionFOpen, SIGNAL(triggered()), this, SLOT(openMacro()));
+    connect(ui->actionFSaveAs, SIGNAL(triggered()), this, SLOT(saveMacroAs()));
 
     //Menu->Edit Actions
-    connect(ui->actionDelete, SIGNAL(triggered()), this, SLOT(deleteSelected()));
-    connect(ui->actionDuplicate, SIGNAL(triggered()), this, SLOT(duplicateSelected()));
+    connect(ui->actionECopy, SIGNAL(triggered()), this, SLOT(copySelected()));
+    connect(ui->actionECut, SIGNAL(triggered()), this, SLOT(cutSelected()));
+    connect(ui->actionEPaste, SIGNAL(triggered()), this, SLOT(pasteClipboard()));
+    connect(ui->actionEDelete, SIGNAL(triggered()), this, SLOT(deleteSelected()));
+    connect(ui->actionEDuplicate, SIGNAL(triggered()), this, SLOT(duplicateSelected()));
 
     //Menu->Add Actions
     QSignalMapper *addActionsMapper = new QSignalMapper(this);
     connect(ui->action1Delay, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
     connect(ui->action2Click, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action3CurorPos, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action3CursorPos, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
     connect(ui->action4Drag, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
     connect(ui->action5Scroll, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
     connect(ui->action6Write, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
@@ -59,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     addActionsMapper->setMapping(ui->action1Delay, 0);
     addActionsMapper->setMapping(ui->action2Click, 1);
-    addActionsMapper->setMapping(ui->action3CurorPos, 2);
+    addActionsMapper->setMapping(ui->action3CursorPos, 2);
     addActionsMapper->setMapping(ui->action4Drag, 3);
     addActionsMapper->setMapping(ui->action5Scroll, 4);
     addActionsMapper->setMapping(ui->action6Write, 5);
@@ -68,47 +72,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(addActionsMapper, SIGNAL(mapped(int)), this, SLOT(addNewCommand(int)));
 
     //Menu->Run Actions
+    connect(ui->actionRun_macro, SIGNAL(triggered(bool)), this, SLOT(tryRunMacro()));
 
-
-    //Options
-    /*
-    QSignalMapper *optionsMapper = new QSignalMapper(this);
-    connect(ui->defaultDelayCheckBox, SIGNAL(toggled(bool)), optionsMapper, SLOT(map()));
-    connect(ui->defaultDelaySpinBox, SIGNAL(valueChanged(int)), optionsMapper, SLOT(map()));
-    connect(ui->loopCheckBox, SIGNAL(toggled(bool)), optionsMapper, SLOT(map()));
-    connect(ui->loopType, SIGNAL(currentIndexChanged(int)), optionsMapper, SLOT(map()));
-    connect(ui->loopFrom, SIGNAL(valueChanged(int)), optionsMapper, SLOT(map()));
-    connect(ui->loopTo, SIGNAL(valueChanged(int)), optionsMapper, SLOT(map()));
-    connect(ui->loopAmount, SIGNAL(valueChanged(int)), optionsMapper, SLOT(map()));
-    optionsMapper->setMapping(ui->defaultDelayCheckBox, 0);
-    optionsMapper->setMapping(ui->defaultDelaySpinBox, 0);
-    optionsMapper->setMapping(ui->loopCheckBox, 0);
-    optionsMapper->setMapping(ui->loopType, 0);
-    optionsMapper->setMapping(ui->loopFrom, 0);
-    optionsMapper->setMapping(ui->loopTo, 0);
-    optionsMapper->setMapping(ui->loopAmount, 0);
-    connect(optionsMapper, SIGNAL(mapped(int)), this, SLOT(optionsChanged(int)));
-*/
-
-    //read key button
-    connect(ui->readKeyButton, SIGNAL(clicked(bool)), this, SLOT(readKeyButtonPressed()));
-
-    //Loop signals
-    /*
-    connect(ui->loopType, SIGNAL(currentIndexChanged(int)), this, SLOT(loopTypeChanged()));
-    connect(ui->loopFrom, SIGNAL(editingFinished()), this, SLOT(loopFromChanged()));
-    connect(ui->loopTo, SIGNAL(editingFinished()), this, SLOT(loopToChanged()));
-    */
-
-    //Default delay
-    //connect(ui->defaultDelayCheckBox, SIGNAL(toggled(bool)), this, SLOT(defaultDelayToggled()));
     //Arrange write text edit
     //connect(ui->writeTextEditField, SIGNAL(textChanged(QString)), this, SLOT(updateWriteTextCount()));
 
-
     //TODO: Different Context menu depending on clicked QWidget
     //https://stackoverflow.com/questions/12937812/how-to-create-different-popup-context-menus-for-each-type-of-qtreewidgetitem#
-    //setup context menu
+    //TODO: search area in context menu when right clicking on command list widget:
+    // http://blog.qt.io/blog/2012/12/07/qt-support-28-creating-a-toolbar-widget-that-is-displayed-with-the-context-menu/
     ui->commandList->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QList<QAction *> editActions;
@@ -145,37 +117,21 @@ MainWindow::MainWindow(QWidget *parent) :
     handleSelectionChanged();
 
     //start with unnamed project
-    programName = "unnamed";
-    programPath = QDir::currentPath();
-    //ui->tabWidget->setCurrentIndex(0);
+    macroName = "unnamed";
+    macroPath = QDir::currentPath();
     setUnsavedChanges(false);
-    isUnsavedProgram = true;
-    isListeningForKeyInput = false;
+    isUnsavedMacro = true;
+    ui->actionFSaveAs->setEnabled(false);
 
-    ui->actionSave_As->setEnabled(false);
-
-    //connect(ui->addCommandButton, SIGNAL(clicked()), this, SLOT(addNewCommand()));
-    //connect(ui->commandSelectBox, SIGNAL(currentIndexChanged(int)), this, SLOT(commandSelectionChanged()));
+    //Default delay
+    defaultDelayWidget = new DefaultDelayWidget(this);
+    ui->toolBar->addWidget(defaultDelayWidget);
+    connect(defaultDelayWidget, SIGNAL(SettingsChanged(DefaultDelaySettings)), this, SLOT(setUnsavedChanges()));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::keyPressEvent(QKeyEvent *e)
-{
-    if(!isListeningForKeyInput)
-        return;
-
-    if(e->key() == Qt::Key_Escape){
-        ui->readKeyButton->setText("click me!");
-        isListeningForKeyInput = false;
-    }
-    else{
-        qDebug() << e->text();
-        ui->readKeyButton->setText(e->text());
-    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -193,7 +149,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     else
     {
         if(result == UnsavedChangesMessageResult::Save)
-            saveProgram();
+            saveMacro();
         event->accept();
     }
     msgbox->close();
@@ -230,7 +186,7 @@ QMessageBox *MainWindow::showUnsavedChangesWarning(UnsavedChangesMessageResult &
 
 void MainWindow::checkKey()
 {
-    if(GetAsyncKeyState(VK_INSERT))
+    if(GetAsyncKeyState(VK_F6))
     {
         POINT cursorPos;
         GetCursorPos(&cursorPos);
@@ -239,24 +195,24 @@ void MainWindow::checkKey()
         ui->yCoord->setValue(cursorPos.y);
         ui->xCoordDrag->setValue(cursorPos.x);
         ui->yCoordDrag->setValue(cursorPos.y);
-        ui->statusBar->showMessage("Cursor position (" + QString::number(cursorPos.x) + "," + QString::number(cursorPos.y) + ") has been saved", 10000);
+        ui->statusBar->showMessage("Cursor position (" + QString::number(cursorPos.x) + "," + QString::number(cursorPos.y) + ") has been saved");
     }
     if(GetAsyncKeyState(VK_F7))
     {
-        tryStartProgram();
+        tryRunMacro();
     }
 }
 
-void MainWindow::newProgram()
+void MainWindow::newMacro()
 {
     MainWindow *m = new MainWindow();
     if(close())
         m->show();
 }
 
-void MainWindow::openProgram()
+void MainWindow::openMacro()
 {
-    QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open program"), programPath, tr("Program Files (*.myprog)"));
+    QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open macro"), macroPath, fileInfo);
 
     QString fileName = QFileInfo(fullFilePath).baseName();
     if(fileName.length() == 0)
@@ -265,7 +221,7 @@ void MainWindow::openProgram()
         return;
     }
 
-    programName = fileName;
+    macroName = fileName;
 
     if(hasUnsavedChanges){
         UnsavedChangesMessageResult result = UnsavedChangesMessageResult::Cancel;
@@ -276,41 +232,41 @@ void MainWindow::openProgram()
             return;
         }
         if(result == UnsavedChangesMessageResult::Save)
-            saveProgram();
+            saveMacro();
         msgbox->close();
     }
 
     loadCommandListFromFile(fullFilePath);
     ui->statusBar->showMessage("Opened " + fullFilePath, 3000);
-    isUnsavedProgram = false;
+    isUnsavedMacro = false;
     setUnsavedChanges(false);
     refreshWindowTitle();
-    ui->actionSave_As->setEnabled(true);
+    ui->actionFSaveAs->setEnabled(true);
 }
 
-void MainWindow::saveProgram()
+void MainWindow::saveMacro()
 {
-    if(!isUnsavedProgram && !hasUnsavedChanges)
+    if(!isUnsavedMacro && !hasUnsavedChanges)
     {
         ui->statusBar->showMessage("No changes to save", 3000);
         return;
     }
 
-    QString pathPlusFileName = getFullFilePath(programPath, programName);
+    QString pathPlusFileName = getFullFilePath(macroPath, macroName);
 
-    if(isUnsavedProgram){
-        pathPlusFileName = QFileDialog::getSaveFileName(this, tr("Save the program as..."), programPath, tr("Program Files (*.myprog)"));
+    if(isUnsavedMacro){
+        pathPlusFileName = QFileDialog::getSaveFileName(this, tr("Save the macro as..."), macroPath, fileInfo);
 
         QString fileName = QFileInfo(pathPlusFileName).baseName();
 
         if(fileName.length() > 0)
-            programName = fileName;
+            macroName = fileName;
         else
         {
             ui->statusBar->showMessage("Saving aborted", 3000);
             return;
         }
-        isUnsavedProgram = false;
+        isUnsavedMacro = false;
     }
 
     QFile file(pathPlusFileName);
@@ -342,21 +298,13 @@ void MainWindow::saveProgram()
     file.close();
 
     setUnsavedChanges(false);
-    ui->statusBar->showMessage("Saved program to " + pathPlusFileName, 3000);
+    ui->statusBar->showMessage("Saved macro to " + pathPlusFileName, 3000);
 }
 
-void MainWindow::saveProgramAs()
+void MainWindow::saveMacroAs()
 {
-    isUnsavedProgram = true;
-    saveProgram();
-}
-
-void MainWindow::showOptionsDialog()
-{
-    //TODO
-    //https://stackoverflow.com/a/9195041
-
-    //show options dialog and return values via SIGNALS and SLOTS
+    isUnsavedMacro = true;
+    saveMacro();
 }
 
 void MainWindow::loadCommandListFromFile(QString filename)
@@ -384,11 +332,6 @@ void MainWindow::loadCommandListFromFile(QString filename)
 
     ui->defaultDelayCheckBox->setChecked(options[0] == "1");
     ui->defaultDelaySpinBox->setValue(options[1].toInt());
-    ui->loopCheckBox->setChecked(options[2] == "1");
-    ui->loopType->setCurrentIndex(options[3].toInt());
-    ui->loopFrom->setValue(options[4].toInt());
-    ui->loopTo->setValue(options[5].toInt());
-    ui->loopAmount->setValue(options[6].toInt());
 
     QStringList commandListStrings;
 
@@ -412,36 +355,39 @@ void MainWindow::fillCommandListWidget(QStringList commandListStrings)
     {
         QStringList list = commandListStrings.at(i).split("|");
 
-        int commandTypeIndex = list[0].toInt();
+        CmdType commandTypeIndex = (CmdType)(list[0].toInt());
 
         QListWidgetItem *newItem = new QListWidgetItem();
         CmdWidget *newWidget = CmdWidget::GetNewCommandWidget(commandTypeIndex);
-        newWidget->commandType = (CommandType)commandTypeIndex;
+        newWidget->commandType = commandTypeIndex;
 
         switch(commandTypeIndex){
-            case -1:
+            case CmdType::DELAY:
             {
-                WaitCmdWidget* waitWidget = (WaitCmdWidget*) newWidget;
+                DelayCmdWidget* waitWidget = (DelayCmdWidget*) newWidget;
                 waitWidget->SetWaitSettings(list[1].toInt(), list[2].toInt());
                 addItem(newItem, waitWidget, i);
             }
-                break;
+            break;
 
-            case 0:
+            case CmdType::CLICK:
             {
                 ClickCmdWidget* clickWidget = (ClickCmdWidget*) newWidget;
                 clickWidget->SetClickAmount(list[1].toInt());
                 clickWidget->SetClickType((ClickType)list[2].toInt());
                 addItem(newItem, clickWidget, i);
             }
-                break;
+            break;
 
-            case 1:
+            case CmdType::CURPOS:
             {
                 ((SetCursorPosCmdWidget*)newWidget)->SetCoordinates(list[1].toInt(), list[2].toInt());
                 addItem(newItem, newWidget, i);
             }
             break;
+
+            default:
+                break;
         }
 
 //        else if( list[0] == "drg" ) {
@@ -498,12 +444,13 @@ void MainWindow::fillCommandListWidget(QStringList commandListStrings)
         ui->commandListTitle->setText("Command List [0/"+ QString::number(commandListStrings.size()) + "]");
 }
 
-
+/*
 void MainWindow::optionsChanged(int dummy)
 {
     setUnsavedChanges(true);
-}
+}*/
 
+/*
 void MainWindow::readKeyButtonPressed()
 {
     if(isListeningForKeyInput)
@@ -511,16 +458,21 @@ void MainWindow::readKeyButtonPressed()
 
     isListeningForKeyInput = true;
     ui->readKeyButton->setText("make the sc!");
-}
-
+}*/
+/*
 void MainWindow::updateWriteTextCount()
 {
     ui->count->setText(QString::number(ui->writeTextEditField->text().length()) + " / " + QString::number(ui->writeTextEditField->maxLength()));
-}
+}*/
 
 void MainWindow::refreshWindowTitle()
 {
-    setWindowTitle(programName + (hasUnsavedChanges ? "*" : "") + " - Personal Macro");
+    setWindowTitle(macroName + (hasUnsavedChanges ? "*" : "") + " - Personal Macro");
+}
+
+void MainWindow::setUnsavedChanges()
+{
+    setUnsavedChanges(true);
 }
 
 void MainWindow::setUnsavedChanges(bool newUnsavedChanges)
@@ -533,7 +485,7 @@ QString MainWindow::getCommandString(int commandListIndex)
 {
     QListWidgetItem* item = ui->commandList->item(commandListIndex);
     QWidget* itemWidget = ui->commandList->itemWidget(item);
-    return ((CmdWidget*)itemWidget)->GetCommandString();
+    return ((CmdWidget*)itemWidget)->GetCmdSafeString();
 }
 
 //void MainWindow::chooseExe()
@@ -574,115 +526,48 @@ QString MainWindow::getCommandString(int commandListIndex)
 //    ui->commandList->setCurrentRow(delBackupPos);
 //}
 
-void MainWindow::tryStartProgram()
+void MainWindow::tryRunMacro()
 {
-    if(isProgramRunning)
+    if(isMacroRunning)
         return;
 
-    isProgramRunning = true;
+    isMacroRunning = true;
     showMinimized();
 
-    bool loop = false, partLoop = false, paused = false;
-    int start, stop, times;
-
-    if(ui->loopCheckBox->isChecked()) {
-        if(ui->loopType->currentIndex() == 1) {
-            loop = false;
-            partLoop = true;
-            start = ui->loopFrom->value();
-            stop = ui->loopTo->value();
-            times = ui->loopAmount->value();
-            if(start > ui->commandList->count() || stop > ui->commandList->count())
-            {
-                refreshWindowTitle();
-                showNormal();
-                return;
-            }
-        }
-        else
-            loop = true;
-    }
-
-    do
-    {
-        for(int i = 0; i < ui->commandList->count(); ++i)
-        {
-            if(GetAsyncKeyState(VK_F7))
-                paused = false;
-            if(GetAsyncKeyState(VK_F8))
-                paused = true;
-            if(GetAsyncKeyState(VK_F9)) {
-                loop = false;
-                partLoop = false;
-                break;
-            }
-
-            if(!paused)
-            {
-                if(ui->loopCheckBox->isChecked())
-                {
-                    if(ui->loopCheckBox->isChecked())
-                        setWindowTitle("Program looping w/ delay");
-                    else setWindowTitle("Program running w/ delay");
-                }
-                else
-                {
-                    if(ui->loopCheckBox->isChecked())
-                        setWindowTitle("Program looping w/o delay");
-                    else setWindowTitle("Program running w/o delay");
-                }
-
-                if(i == stop && partLoop == true && times > 0)
-                {
-                    i = start - 1;
-                    --times;
-                }
-
-                Commands::ExecuteCommand(getCommandString(i));
-                if(ui->defaultDelayCheckBox->isChecked())
-                    Sleep(ui->defaultDelaySpinBox->value());
-                qApp->processEvents();
-            }
-            else
-            {
-                --i;
-                setWindowTitle("Program paused");
-                qApp->processEvents();
-                Sleep(50);
-            }
-        }
-    }while(loop);
+    ExecuteCommands();
 
     refreshWindowTitle();
     showNormal();
-    isProgramRunning = false;
+    isMacroRunning = false;
 }
 
-void MainWindow::defaultDelayToggled()
+void MainWindow::ExecuteCommands()
 {
-    if(ui->defaultDelayCheckBox->isChecked())
-        ui->defaultDelaySpinBox->setEnabled(true);
-    else ui->defaultDelaySpinBox->setEnabled(false);
-}
+    bool paused = false;
+    for(int i = 0, total = ui->commandList->count(); i < total; i++)
+    {
+        if(GetAsyncKeyState(VK_F7))
+            paused = false;
+        if(GetAsyncKeyState(VK_F8))
+            paused = true;
+        if(GetAsyncKeyState(VK_F9))
+            break;
 
-void MainWindow::loopTypeChanged()
-{
-    bool loopAll = ui->loopType->currentIndex() == 0;
-    ui->loopFrom->setEnabled(!loopAll);
-    ui->loopTo->setEnabled(!loopAll);
-    ui->loopAmount->setEnabled(!loopAll);
-}
-
-void MainWindow::loopFromChanged()
-{
-    if(ui->loopFrom->value() > ui->loopTo->value())
-        ui->loopTo->setValue(ui->loopFrom->value());
-}
-
-void MainWindow::loopToChanged()
-{
-    if(ui->loopTo->value() < ui->loopFrom->value())
-        ui->loopFrom->setValue(ui->loopTo->value());
+        if(!paused)
+        {
+            Commands::ExecuteCommand(getCommandString(i));
+            if(ui->defaultDelayCheckBox->isChecked())
+                Sleep(ui->defaultDelaySpinBox->value());
+            qApp->processEvents();
+        }
+        else
+        {
+            i--;
+            setWindowTitle("Macro paused");
+            qApp->processEvents();
+            Sleep(50);
+        }
+    }
 }
 
 void MainWindow::showContextMenu(const QPoint &pos)
@@ -709,16 +594,16 @@ void MainWindow::duplicateSelected()
     QList<QListWidgetItem *> selectedItems = ui->commandList->selectedItems();
 
     QList<QListWidgetItem *> newItems;
-    for (int i = 0; i < selectedItems.size(); ++i)
+    for (int i = 0, total = selectedItems.size(); i < total; ++i)
     {
         QListWidgetItem *item = (QListWidgetItem *)selectedItems.at(i);
         QListWidgetItem *newItem = new QListWidgetItem();
 
         CmdWidget *selectedItemWidget = (CmdWidget*)ui->commandList->itemWidget(item);
-        CommandType selectedItemCommandType = selectedItemWidget->commandType;
+        CmdType selectedItemCommandType = selectedItemWidget->commandType;
 
         //create new widget
-        CmdWidget *newWidget = CmdWidget::GetNewCommandWidget((int)selectedItemCommandType);
+        CmdWidget *newWidget = CmdWidget::GetNewCommandWidget(selectedItemCommandType);
 
         //copy widget values to new one
         selectedItemWidget->CopyTo(newWidget);
@@ -735,9 +620,7 @@ void MainWindow::duplicateSelected()
 
     QListWidgetItem *i;
     foreach(i, newItems)
-    {
         i->setSelected(true);
-    }
     setUnsavedChanges(true);
 }
 
@@ -747,6 +630,21 @@ void MainWindow::addItem(QListWidgetItem *item, CmdWidget *itemWidget, int row)
     ui->commandList->setItemWidget(item, itemWidget);
     item->setSizeHint(QSize(0, itemWidget->height()));
     connect(itemWidget, SIGNAL(commandChanged()), this, SLOT(handleCommandSettingChanged()));
+}
+
+void MainWindow::copySelected()
+{
+
+}
+
+void MainWindow::cutSelected()
+{
+
+}
+
+void MainWindow::pasteClipboard()
+{
+
 }
 
 void MainWindow::unselectAll()
@@ -759,10 +657,11 @@ void MainWindow::unselectAll()
     }
 }
 
-void MainWindow::addNewCommand(int commandIndex)
+void MainWindow::addNewCommand(int cmdIndex)
 {
-    CmdWidget *itemWidget = CmdWidget::GetNewCommandWidget(commandIndex);
-    itemWidget->commandType = (CommandType)commandIndex;
+    CmdType cmdType = (CmdType)cmdIndex;
+    CmdWidget *itemWidget = CmdWidget::GetNewCommandWidget(cmdType);
+    itemWidget->commandType = cmdType;
     QListWidgetItem *item = new QListWidgetItem();
     addItem(item, itemWidget, ui->commandList->count());
 
@@ -770,11 +669,6 @@ void MainWindow::addNewCommand(int commandIndex)
     unselectAll();
     item->setSelected(true);
     setUnsavedChanges(true);
-}
-
-void MainWindow::commandSelectionChanged()
-{
-
 }
 
 void MainWindow::handleCommandSettingChanged()
@@ -786,10 +680,11 @@ void MainWindow::handleSelectionChanged()
 {
     bool itemSelected = ui->commandList->selectedItems().count() > 0;
 
-    ui->actionDuplicate->setEnabled(itemSelected);
-    ui->actionDelete->setEnabled(itemSelected);
-    ui->actionCopy->setEnabled(itemSelected);
-    ui->actionCut->setEnabled(itemSelected);
+    ui->actionEDuplicate->setEnabled(itemSelected);
+    ui->actionEDelete->setEnabled(itemSelected);
+    ui->actionECopy->setEnabled(itemSelected);
+    ui->actionECut->setEnabled(itemSelected);
+    ui->actionEPaste->setEnabled(itemSelected);
 }
 
 void MainWindow::handleItemChanged(QModelIndex, int, int, QModelIndex, int)

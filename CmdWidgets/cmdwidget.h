@@ -17,11 +17,12 @@ class CmdWidget : public QWidget
         explicit CmdWidget(QWidget *parent = 0);
         ~CmdWidget();
 
-        CommandType commandType;
+        CmdType commandType;
 
         virtual void CopyTo(CmdWidget *other);
-        virtual QString GetCommandString();
-        static CmdWidget* GetNewCommandWidget(int commandIndex);
+        virtual QString GetCmdSafeString();
+
+        static CmdWidget* GetNewCommandWidget(CmdType cmdType);
 
     protected slots:
         void emitCommandChangedSignal();

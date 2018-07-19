@@ -4,20 +4,31 @@
 #include "clickcmdwidget.h"
 #include "keyboardutilities.h"
 #include "setcursorposcmdwidget.h"
-#include "waitcmdwidget.h"
+#include "delaycmdwidget.h"
 #include "dragcmdwidget.h"
+#include "scrollcmdwidget.h"
+#include "writetextcmdwidget.h"
+#include "hitkeycmdwidget.h"
 
-CmdWidget* CmdWidget::GetNewCommandWidget(int commandIndex)
+CmdWidget* CmdWidget::GetNewCommandWidget(CmdType cmdType)
 {
-    switch(commandIndex){
-        case 0:
-            return new WaitCmdWidget();
-        case 1:
+    switch(cmdType){
+        case CmdType::DELAY:
+            return new DelayCmdWidget();
+        case CmdType::CLICK:
             return new ClickCmdWidget();
-        case 2:
+        case CmdType::CURPOS:
             return new SetCursorPosCmdWidget();
-        case 3:
+        case CmdType::DRAG:
             return new DragCmdWidget();
+        case CmdType::SCROLL:
+            return new ScrollCmdWidget();
+        case CmdType::WRITETEXT:
+            return new WriteTextCmdWidget();
+        case CmdType::HITKEY:
+            return new HitKeyCmdWidget();
+        case CmdType::OPENEXE: //TODO
+            return new CmdWidget();
         default:
             return new CmdWidget();
     }
@@ -37,10 +48,10 @@ CmdWidget::~CmdWidget()
 
 void CmdWidget::CopyTo(CmdWidget *other)
 {
-    other = NULL;
+
 }
 
-QString CmdWidget::GetCommandString()
+QString CmdWidget::GetCmdSafeString()
 {
     return "";
 }

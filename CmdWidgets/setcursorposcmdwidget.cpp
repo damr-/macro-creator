@@ -1,5 +1,5 @@
 #include "setcursorposcmdwidget.h"
-#include "ui_setcursorposcmd.h"
+#include "ui_setcursorposcmdwidget.h"
 
 #include "commands.h"
 
@@ -15,7 +15,7 @@ SetCursorPosCmdWidget::SetCursorPosCmdWidget(QWidget *parent) :
     connect(ui->xCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
     connect(ui->yCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
 
-    commandType = CommandType::SetCursorPosition;
+    commandType = CmdType::CURPOS;
 }
 
 SetCursorPosCmdWidget::~SetCursorPosCmdWidget()
@@ -35,9 +35,9 @@ void SetCursorPosCmdWidget::CopyTo(CmdWidget *other)
     widget->SetCoordinates(GetX(), GetY());
 }
 
-QString SetCursorPosCmdWidget::GetCommandString()
+QString SetCursorPosCmdWidget::GetCmdSafeString()
 {
-    return QString::number((int)CommandType::SetCursorPosition) +  "|" + QString::number(GetX()) + "|" + QString::number(GetY());
+    return QString::number((int)CmdType::CURPOS) +  "|" + QString::number(GetX()) + "|" + QString::number(GetY());
 }
 
 int SetCursorPosCmdWidget::GetX()

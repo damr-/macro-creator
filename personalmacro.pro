@@ -15,7 +15,10 @@ HEADERS  += mainwindow.h \
     CmdWidgets/dragcmdwidget.h \
     CmdWidgets/scrollcmdwidget.h \
     CmdWidgets/setcursorposcmdwidget.h \
-    CmdWidgets/waitcmdwidget.h
+    defaultdelaywidget.h \
+    CmdWidgets/delaycmdwidget.h \
+    CmdWidgets/hitkeycmdwidget.h \
+    CmdWidgets/writetextcmdwidget.h
 
 SOURCES += main.cpp \
         mainwindow.cpp \
@@ -25,8 +28,11 @@ SOURCES += main.cpp \
     CmdWidgets/clickcmdwidget.cpp \
     CmdWidgets/dragcmdwidget.cpp \
     CmdWidgets/scrollcmdwidget.cpp \
-    CmdWidgets/waitcmdwidget.cpp \
-    CmdWidgets/setcursorposcmdwidget.cpp
+    CmdWidgets/setcursorposcmdwidget.cpp \
+    defaultdelaywidget.cpp \
+    CmdWidgets/delaycmdwidget.cpp \
+    CmdWidgets/hitkeycmdwidget.cpp \
+    CmdWidgets/writetextcmdwidget.cpp
 
 FORMS    += mainwindow.ui \
     CmdWidgets/cmdwidget.ui \
@@ -34,7 +40,10 @@ FORMS    += mainwindow.ui \
     CmdWidgets/dragcmdwidget.ui \
     CmdWidgets/scrollcmdwidget.ui \
     CmdWidgets/setcursorposcmdwidget.ui \
-    CmdWidgets/waitcmdwidget.ui
+    defaultdelaywidget.ui \
+    CmdWidgets/delaycmdwidget.ui \
+    CmdWidgets/hitkeycmdwidget.ui \
+    CmdWidgets/writetextcmdwidget.ui
 
 RESOURCES += \
     resources.qrc

@@ -4,17 +4,16 @@
 #include <QString>
 #include <QStringList>
 
-enum CommandType
+enum CmdType
 {
-    Delay,
-    Click,
-    SetCursorPosition,
-    Drag,
-    Scroll,
-    WriteText,
-    HitKey,
-    OpenExe,
-    EndProcess
+    DELAY = 0,
+    CLICK,
+    CURPOS,
+    DRAG,
+    SCROLL,
+    HITKEY,
+    WRITETEXT,
+    OPENEXE
 };
 
 class Commands
@@ -26,7 +25,7 @@ public:
         return {
             "Delay"
             "Click",
-            "Cursor position",
+            "Set cursor position",
             "Drag",
             "Scroll",
             "Write text",
@@ -35,7 +34,7 @@ public:
             "End process"
         };
     }
-    static int getCommandTypeIndex(CommandType commandType) { return (int)commandType; }
+    static int getCommandTypeIndex(CmdType commandType) { return (int)commandType; }
 
 };
 

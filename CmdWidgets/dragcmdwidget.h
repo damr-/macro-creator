@@ -16,7 +16,7 @@ class DragCmdWidget : public CmdWidget
         ~DragCmdWidget();
 
         void CopyTo(CmdWidget *other);
-        QString GetCommandString();
+        QString GetCmdSafeString();
 
         int GetX();
         int GetY();

@@ -31,7 +31,7 @@ class ClickCmdWidget : public CmdWidget
         ~ClickCmdWidget();
 
         void CopyTo(CmdWidget *other);
-        QString GetCommandString();
+        QString GetCmdSafeString();
 
         int clickAmount();
         ClickType GetClickType();

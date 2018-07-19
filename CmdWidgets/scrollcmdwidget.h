@@ -1,22 +1,28 @@
 #ifndef SCROLLCMDWIDGET_H
 #define SCROLLCMDWIDGET_H
 
-#include <QWidget>
+#include "cmdwidget.h"
 
 namespace Ui {
 class ScrollCmdWidget;
 }
 
-class ScrollCmdWidget : public QWidget
+class ScrollCmdWidget : public CmdWidget
 {
     Q_OBJECT
 
-public:
-    explicit ScrollCmdWidget(QWidget *parent = 0);
-    ~ScrollCmdWidget();
+    public:
+        explicit ScrollCmdWidget(QWidget *parent = 0);
+        ~ScrollCmdWidget();
 
-private:
-    Ui::ScrollCmdWidget *ui;
+        void CopyTo(CmdWidget *other);
+        QString GetCmdSafeString();
+
+    private:
+        Ui::ScrollCmdWidget *ui;
+
+    private slots:
+        void scrollAmountChanged(int newTimes);
 };
 
 #endif // SCROLLCMDWIDGET_H

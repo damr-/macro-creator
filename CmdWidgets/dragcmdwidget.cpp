@@ -1,5 +1,5 @@
 #include "dragcmdwidget.h"
-#include "ui_dragcommandwidget.h"
+#include "ui_dragcmdwidget.h"
 
 #include "commands.h"
 
@@ -12,7 +12,7 @@ DragCmdWidget::DragCmdWidget(QWidget *parent) :
     connect(ui->xCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
     connect(ui->yCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
 
-    commandType = CommandType::Drag;
+    commandType = CmdType::DRAG;
 }
 
 DragCmdWidget::~DragCmdWidget()
@@ -25,9 +25,9 @@ void DragCmdWidget::CopyTo(CmdWidget *other)
     ((DragCmdWidget*)other)->SetCoordinates(GetX(), GetY());
 }
 
-QString DragCmdWidget::GetCommandString()
+QString DragCmdWidget::GetCmdSafeString()
 {
-    return QString::number((int)CommandType::Drag) + "|" + QString::number(GetX()) + "|" + QString::number(GetY());
+    return QString::number((int)CmdType::DRAG) + "|" + QString::number(GetX()) + "|" + QString::number(GetY());
 }
 
 int DragCmdWidget::GetX()
