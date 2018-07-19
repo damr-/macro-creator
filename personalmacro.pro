@@ -43,7 +43,8 @@ FORMS    += mainwindow.ui \
     defaultdelaywidget.ui \
     CmdWidgets/delaycmdwidget.ui \
     CmdWidgets/hitkeycmdwidget.ui \
-    CmdWidgets/writetextcmdwidget.ui
+    CmdWidgets/writetextcmdwidget.ui \
+    old_mainwindow.ui
 
 RESOURCES += \
     resources.qrc

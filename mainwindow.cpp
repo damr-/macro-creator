@@ -15,6 +15,7 @@
 #include <QSignalMapper>
 #include <QStringList>
 #include <QTimer>
+#include <QPushButton>
 
 #include "commands.h"
 #include "CmdWidgets/clickcmdwidget.h"
@@ -72,14 +73,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(addActionsMapper, SIGNAL(mapped(int)), this, SLOT(addNewCommand(int)));
 
     //Menu->Run Actions
-    connect(ui->actionRun_macro, SIGNAL(triggered(bool)), this, SLOT(tryRunMacro()));
-
-    //Arrange write text edit
-    //connect(ui->writeTextEditField, SIGNAL(textChanged(QString)), this, SLOT(updateWriteTextCount()));
+    connect(ui->actionRStart, SIGNAL(triggered(bool)), this, SLOT(tryRunMacro()));
 
     //TODO: Different Context menu depending on clicked QWidget
     //https://stackoverflow.com/questions/12937812/how-to-create-different-popup-context-menus-for-each-type-of-qtreewidgetitem#
-    //TODO: search area in context menu when right clicking on command list widget:
+    //TODO: Search area in context menu when right clicking on command list widget:
     // http://blog.qt.io/blog/2012/12/07/qt-support-28-creating-a-toolbar-widget-that-is-displayed-with-the-context-menu/
     ui->commandList->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -102,7 +100,6 @@ MainWindow::MainWindow(QWidget *parent) :
     contextMenu.addMenu("Add")->addActions(addActions);
     contextMenu.addActions(editActions);
     //
-    //
 
     connect(ui->commandList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
     connect(ui->commandList, SIGNAL(itemSelectionChanged()), this, SLOT(handleSelectionChanged()));
@@ -111,7 +108,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->commandList->model(),
             SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
             this,
-            SLOT(handleItemChanged(QModelIndex,int,int,QModelIndex,int)));
+            SLOT(handleRowMoved(QModelIndex,int,int,QModelIndex,int)));
 
     //disable actions by default
     handleSelectionChanged();
@@ -191,10 +188,10 @@ void MainWindow::checkKey()
         POINT cursorPos;
         GetCursorPos(&cursorPos);
 
-        ui->xCoord->setValue(cursorPos.x);
-        ui->yCoord->setValue(cursorPos.y);
-        ui->xCoordDrag->setValue(cursorPos.x);
-        ui->yCoordDrag->setValue(cursorPos.y);
+//        ui->xCoord->setValue(cursorPos.x);
+//        ui->yCoord->setValue(cursorPos.y);
+//        ui->xCoordDrag->setValue(cursorPos.x);
+//        ui->yCoordDrag->setValue(cursorPos.y);
         ui->statusBar->showMessage("Cursor position (" + QString::number(cursorPos.x) + "," + QString::number(cursorPos.y) + ") has been saved");
     }
     if(GetAsyncKeyState(VK_F7))
@@ -240,7 +237,7 @@ void MainWindow::openMacro()
     ui->statusBar->showMessage("Opened " + fullFilePath, 3000);
     isUnsavedMacro = false;
     setUnsavedChanges(false);
-    refreshWindowTitle();
+    RefreshWindowTitle();
     ui->actionFSaveAs->setEnabled(true);
 }
 
@@ -280,13 +277,13 @@ void MainWindow::saveMacro()
     QTextStream output(&file);
     QString out;
 
-    out.append(QString::number(ui->defaultDelayCheckBox->isChecked()) + "|"+
-               QString::number(ui->defaultDelaySpinBox->value()) + "|" +
-               QString::number(ui->loopCheckBox->isChecked()) + "|" +
-               QString::number(ui->loopType->currentIndex()) + "|" +
-               QString::number(ui->loopFrom->value()) + "|" +
-               QString::number(ui->loopTo->value()) + "|" +
-               QString::number(ui->loopAmount->value()) + "\n");
+//    out.append(QString::number(ui->defaultDelayCheckBox->isChecked()) + "|"+
+//               QString::number(ui->defaultDelaySpinBox->value()) + "|" +
+//               QString::number(ui->loopCheckBox->isChecked()) + "|" +
+//               QString::number(ui->loopType->currentIndex()) + "|" +
+//               QString::number(ui->loopFrom->value()) + "|" +
+//               QString::number(ui->loopTo->value()) + "|" +
+//               QString::number(ui->loopAmount->value()) + "\n");
 
     for(int i = 0; i < ui->commandList->count(); ++i)
     {
@@ -330,8 +327,8 @@ void MainWindow::loadCommandListFromFile(QString filename)
         return;
     }
 
-    ui->defaultDelayCheckBox->setChecked(options[0] == "1");
-    ui->defaultDelaySpinBox->setValue(options[1].toInt());
+//    ui->defaultDelayCheckBox->setChecked(options[0] == "1");
+//    ui->defaultDelaySpinBox->setValue(options[1].toInt());
 
     QStringList commandListStrings;
 
@@ -450,22 +447,7 @@ void MainWindow::optionsChanged(int dummy)
     setUnsavedChanges(true);
 }*/
 
-/*
-void MainWindow::readKeyButtonPressed()
-{
-    if(isListeningForKeyInput)
-        return;
-
-    isListeningForKeyInput = true;
-    ui->readKeyButton->setText("make the sc!");
-}*/
-/*
-void MainWindow::updateWriteTextCount()
-{
-    ui->count->setText(QString::number(ui->writeTextEditField->text().length()) + " / " + QString::number(ui->writeTextEditField->maxLength()));
-}*/
-
-void MainWindow::refreshWindowTitle()
+void MainWindow::RefreshWindowTitle()
 {
     setWindowTitle(macroName + (hasUnsavedChanges ? "*" : "") + " - Personal Macro");
 }
@@ -478,7 +460,7 @@ void MainWindow::setUnsavedChanges()
 void MainWindow::setUnsavedChanges(bool newUnsavedChanges)
 {
     hasUnsavedChanges = newUnsavedChanges;
-    refreshWindowTitle();
+    RefreshWindowTitle();
 }
 
 QString MainWindow::getCommandString(int commandListIndex)
@@ -536,7 +518,7 @@ void MainWindow::tryRunMacro()
 
     ExecuteCommands();
 
-    refreshWindowTitle();
+    RefreshWindowTitle();
     showNormal();
     isMacroRunning = false;
 }
@@ -544,6 +526,8 @@ void MainWindow::tryRunMacro()
 void MainWindow::ExecuteCommands()
 {
     bool paused = false;
+    DefaultDelaySettings s = defaultDelayWidget->GetSettings();
+
     for(int i = 0, total = ui->commandList->count(); i < total; i++)
     {
         if(GetAsyncKeyState(VK_F7))
@@ -556,8 +540,8 @@ void MainWindow::ExecuteCommands()
         if(!paused)
         {
             Commands::ExecuteCommand(getCommandString(i));
-            if(ui->defaultDelayCheckBox->isChecked())
-                Sleep(ui->defaultDelaySpinBox->value());
+            if(s.enabled)
+                Sleep(s.amount);
             qApp->processEvents();
         }
         else
@@ -687,7 +671,7 @@ void MainWindow::handleSelectionChanged()
     ui->actionEPaste->setEnabled(itemSelected);
 }
 
-void MainWindow::handleItemChanged(QModelIndex, int, int, QModelIndex, int)
+void MainWindow::handleRowMoved(QModelIndex, int, int, QModelIndex, int)
 {
     setUnsavedChanges(true);
 }

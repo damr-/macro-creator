@@ -38,3 +38,13 @@ void HitKeyCmdWidget::keyPressEvent(QKeyEvent *e)
         ui->readKeyButton->setText(e->text());
     }*/
 }
+
+/*
+void HitKeyCmdWidget::readKeyButtonPressed()
+{
+    if(isListeningForKeyInput)
+        return;
+
+    isListeningForKeyInput = true;
+    ui->readKeyButton->setText("make the sc!");
+}*/

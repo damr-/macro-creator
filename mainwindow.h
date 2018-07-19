@@ -29,19 +29,19 @@ private slots:
     //For catching the mouse position
     void checkKey();
 
-    //Menu Actions
+    //File Actions
     void newMacro();
     void saveMacro();
     void saveMacroAs();
     void openMacro();
 
-    //Bot Actions
+    //Macro Actions
     void tryRunMacro();
 
     //NEW METHODS
     void showContextMenu(const QPoint&);
+    void handleRowMoved(QModelIndex, int, int, QModelIndex, int);
     void addNewCommand(int cmdIndex);
-    void handleItemChanged(QModelIndex, int, int, QModelIndex, int);
     void addItem(QListWidgetItem *item, CmdWidget *itemWidget, int row);
 
     //List editing
@@ -59,46 +59,38 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-
-//    QString delBackupText;
-//    int delBackupPos;
-
-    bool isUnsavedMacro;
-    bool hasUnsavedChanges;
-    bool isMacroRunning;
-
+    DefaultDelayWidget *defaultDelayWidget;
     QMenu contextMenu;
 
-    QString macroName;
-    QString macroPath;
-    QString fileExtension = "pmac";
-    QString fileInfo = "Personal Macro Files (*." + fileExtension + ")";
+    //Running Macro
+    bool isMacroRunning;
+    void ExecuteCommands();
+    void ExecuteCommand(QString cmd);
 
-    DefaultDelayWidget *defaultDelayWidget;
-
-    //void addCommand(QString commandtype, QStringList arguments);
-    void loadCommandListFromFile(QString pathPlusFilename);
-    void fillCommandListWidget(QStringList commandListStrings);
-
-    void closeEvent(QCloseEvent *event);
-    void executeCommand(QString cmd);
-
-    void refreshWindowTitle();
-    void setUnsavedChanges(bool newUnsavedChanges);
-
-    QString getCommandString(int commandListIndex);
-
+    //Unsafed changes
     enum UnsavedChangesMessageResult {
         Save = 0,
         DontSave = 1,
         Cancel = 2
     };
 
+    bool isUnsavedMacro;
+    bool hasUnsavedChanges;
+    void setUnsavedChanges(bool newUnsavedChanges);
+    void closeEvent(QCloseEvent *event);
+    void RefreshWindowTitle();
     QMessageBox *showUnsavedChangesWarning(UnsavedChangesMessageResult &result);
 
+    //Storing data
+    QString macroName;
+    QString macroPath;
+    QString fileExtension = "pmac";
+    QString fileInfo = "Personal Macro Files (*." + fileExtension + ")";
     QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + "." + this->fileExtension; }
-
-    void ExecuteCommands();
+    //void addCommand(QString commandtype, QStringList arguments);
+    void loadCommandListFromFile(QString pathPlusFilename);
+    void fillCommandListWidget(QStringList commandListStrings);
+    QString getCommandString(int commandListIndex);
 };
 
 #endif // MAINWINDOW_H
