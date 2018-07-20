@@ -7,13 +7,13 @@
 enum CmdType
 {
     DELAY = 0,
-    CLICK,
-    CURPOS,
-    DRAG,
-    SCROLL,
-    HITKEY,
-    WRITETEXT,
-    OPENEXE
+    CLICK = 1,
+    CURPOS = 2,
+    DRAG = 3,
+    SCROLL = 4,
+    HITKEY = 5,
+    WRITETEXT = 6,
+    RUNEXE = 7
 };
 
 class Commands
@@ -35,7 +35,6 @@ public:
         };
     }
     static int getCommandTypeIndex(CmdType commandType) { return (int)commandType; }
-
 };
 
 #endif // COMMANDS_H

@@ -8,12 +8,13 @@ DelayCmdWidget::DelayCmdWidget(QWidget *parent) :
     ui(new Ui::DelayCmdWidget)
 {
     ui->setupUi(this);
+
+    cmdType = CmdType::DELAY;
+
     SetWaitSettings(1, 0);
 
     connect(ui->waitTime, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
     connect(ui->waitTimeType, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCommandChangedSignal()));
-
-    commandType = CmdType::DELAY;
 }
 
 DelayCmdWidget::~DelayCmdWidget()
@@ -29,7 +30,7 @@ void DelayCmdWidget::SetWaitSettings(int amount, int type)
 
 void DelayCmdWidget::CopyTo(CmdWidget *other)
 {
-    DelayCmdWidget *widget = (DelayCmdWidget*) other;
+    DelayCmdWidget *widget = qobject_cast<DelayCmdWidget*>(other);
     widget->SetWaitSettings(GetAmount(), GetTimeScale());
 }
 

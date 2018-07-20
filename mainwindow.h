@@ -27,7 +27,7 @@ public:
 
 private slots:
     //For catching the mouse position
-    void checkKey();
+    void checkUserKeyInput();
 
     //File Actions
     void newMacro();
@@ -41,7 +41,7 @@ private slots:
     //NEW METHODS
     void showContextMenu(const QPoint&);
     void handleRowMoved(QModelIndex, int, int, QModelIndex, int);
-    void addNewCommand(int cmdIndex);
+    CmdWidget *addNewCommand(int cmdIndex);
     void addItem(QListWidgetItem *item, CmdWidget *itemWidget, int row);
 
     //List editing
@@ -50,6 +50,7 @@ private slots:
     void pasteClipboard();
     void deleteSelected();
     void duplicateSelected();
+    void updateRowNumbers();
 
     void handleSelectionChanged();
     void unselectAll();
@@ -64,6 +65,7 @@ private:
 
     //Running Macro
     bool isMacroRunning;
+    int AllCommandsValid();
     void ExecuteCommands();
     void ExecuteCommand(QString cmd);
 
@@ -89,7 +91,7 @@ private:
     QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + "." + this->fileExtension; }
     //void addCommand(QString commandtype, QStringList arguments);
     void loadCommandListFromFile(QString pathPlusFilename);
-    void fillCommandListWidget(QStringList commandListStrings);
+    //void fillCommandListWidget(QStringList commandListStrings);
     QString getCommandString(int commandListIndex);
 };
 

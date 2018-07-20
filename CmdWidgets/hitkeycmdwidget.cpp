@@ -6,6 +6,10 @@ HitKeyCmdWidget::HitKeyCmdWidget(QWidget *parent) :
     ui(new Ui::HitKeyCmdWidget)
 {
     ui->setupUi(this);
+
+    cmdType = CmdType::HITKEY;
+
+    connect(ui->keySequenceEdit, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(emitCommandChangedSignal()));
 }
 
 HitKeyCmdWidget::~HitKeyCmdWidget()
@@ -15,36 +19,25 @@ HitKeyCmdWidget::~HitKeyCmdWidget()
 
 void HitKeyCmdWidget::CopyTo(CmdWidget *other)
 {
-    //TODO
+    qobject_cast<HitKeyCmdWidget*>(other)->SetKeySequence(GetKeySequence());
 }
 
 QString HitKeyCmdWidget::GetCmdSafeString()
 {
-    return QString("HitKeyCmdWidget");
+    return QString("HitKeyCmdWidget safestring");
 }
 
-void HitKeyCmdWidget::keyPressEvent(QKeyEvent *e)
+bool HitKeyCmdWidget::IsValidCmd()
 {
-    /*
-    if(!isListeningForKeyInput)
-        return;
-
-    if(e->key() == Qt::Key_Escape){
-        ui->readKeyButton->setText("click me!");
-        isListeningForKeyInput = false;
-    }
-    else{
-        qDebug() << e->text();
-        ui->readKeyButton->setText(e->text());
-    }*/
+    return !ui->keySequenceEdit->keySequence().isEmpty();
 }
 
-/*
-void HitKeyCmdWidget::readKeyButtonPressed()
+void HitKeyCmdWidget::SetKeySequence(QKeySequence keySequence)
 {
-    if(isListeningForKeyInput)
-        return;
+    ui->keySequenceEdit->setKeySequence(keySequence);
+}
 
-    isListeningForKeyInput = true;
-    ui->readKeyButton->setText("make the sc!");
-}*/
+QKeySequence HitKeyCmdWidget::GetKeySequence()
+{
+    return ui->keySequenceEdit->keySequence();
+}

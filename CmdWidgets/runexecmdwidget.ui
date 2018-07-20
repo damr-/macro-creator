@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>HitKeyCmdWidget</class>
- <widget class="QWidget" name="HitKeyCmdWidget">
+ <class>RunExeCmdWidget</class>
+ <widget class="QWidget" name="RunExeCmdWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,24 +23,46 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>HitKeyCmdWidget</string>
+   <string>RunExeCmdWidget</string>
   </property>
-  <widget class="QKeySequenceEdit" name="keySequenceEdit">
+  <widget class="QPushButton" name="selectFileButton">
    <property name="geometry">
     <rect>
-     <x>66</x>
+     <x>225</x>
      <y>5</y>
-     <width>161</width>
+     <width>70</width>
      <height>20</height>
     </rect>
    </property>
+   <property name="text">
+    <string>Select file</string>
+   </property>
   </widget>
-  <widget class="QLabel" name="hitKeyLabel">
+  <widget class="QLineEdit" name="exeName">
+   <property name="geometry">
+    <rect>
+     <x>75</x>
+     <y>5</y>
+     <width>150</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="frame">
+    <bool>true</bool>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+   <property name="placeholderText">
+    <string>no file selected</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="runExeLabel">
    <property name="geometry">
     <rect>
      <x>40</x>
      <y>4</y>
-     <width>31</width>
+     <width>35</width>
      <height>20</height>
     </rect>
    </property>
@@ -50,9 +72,12 @@
     </font>
    </property>
    <property name="text">
-    <string>Hit</string>
+    <string>Run</string>
    </property>
   </widget>
+  <zorder>exeName</zorder>
+  <zorder>selectFileButton</zorder>
+  <zorder>runExeLabel</zorder>
  </widget>
  <resources/>
  <connections/>

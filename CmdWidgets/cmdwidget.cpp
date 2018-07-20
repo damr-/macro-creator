@@ -9,6 +9,7 @@
 #include "scrollcmdwidget.h"
 #include "writetextcmdwidget.h"
 #include "hitkeycmdwidget.h"
+#include "runexecmdwidget.h"
 
 CmdWidget* CmdWidget::GetNewCommandWidget(CmdType cmdType)
 {
@@ -27,8 +28,8 @@ CmdWidget* CmdWidget::GetNewCommandWidget(CmdType cmdType)
             return new WriteTextCmdWidget();
         case CmdType::HITKEY:
             return new HitKeyCmdWidget();
-        case CmdType::OPENEXE: //TODO
-            return new CmdWidget();
+        default:
+            return new RunExeCmdWidget();
     }
 }
 
@@ -44,14 +45,29 @@ CmdWidget::~CmdWidget()
     delete ui;
 }
 
-void CmdWidget::CopyTo(CmdWidget *other)
-{
-
-}
-
 QString CmdWidget::GetCmdSafeString()
 {
-    return "";
+    return QString("CmdWidget");
+}
+
+void CmdWidget::CopyTo(CmdWidget *other)
+{
+    other->GetCmdSafeString();
+}
+
+CmdType CmdWidget::GetCmdType()
+{
+    return cmdType;
+}
+
+void CmdWidget::SetRowNumber(int number)
+{
+    ui->rowIndexLabel->setText(QString::number(number));
+}
+
+bool CmdWidget::IsValidCmd()
+{
+    return true;
 }
 
 void CmdWidget::emitCommandChangedSignal()

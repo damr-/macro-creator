@@ -7,7 +7,9 @@ WriteTextCmdWidget::WriteTextCmdWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    //connect(ui->textEdit, SIGNAL(textChanged(QString)), this, SLOT(updateWriteTextCount()));
+    cmdType = CmdType::WRITETEXT;
+
+    //connect(ui->textEdit, SIGNAL(textChanged(QString)), this, SLOT("emit change signal"()));
 }
 
 WriteTextCmdWidget::~WriteTextCmdWidget()
@@ -17,7 +19,7 @@ WriteTextCmdWidget::~WriteTextCmdWidget()
 
 void WriteTextCmdWidget::CopyTo(CmdWidget *other)
 {
-    //TODO
+    qobject_cast<WriteTextCmdWidget*>(other)->SetText(GetText());
 }
 
 QString WriteTextCmdWidget::GetCmdSafeString()
@@ -25,8 +27,17 @@ QString WriteTextCmdWidget::GetCmdSafeString()
     return QString("WriteTextCmdWidget");
 }
 
-/*
-void WriteTextCmdWidget::updateWriteTextCount()
+bool WriteTextCmdWidget::IsValidCmd()
 {
-    ui->count->setText(QString::number(ui->textEdit->text().length()) + " / " + QString::number(ui->textEdit->maxLength()));
-}*/
+    return !ui->textEdit->text().isEmpty();
+}
+
+QString WriteTextCmdWidget::GetText()
+{
+    return ui->textEdit->text();
+}
+
+void WriteTextCmdWidget::SetText(QString text)
+{
+    ui->textEdit->setText(text);
+}

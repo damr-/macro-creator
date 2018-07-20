@@ -18,7 +18,8 @@ HEADERS  += mainwindow.h \
     defaultdelaywidget.h \
     CmdWidgets/delaycmdwidget.h \
     CmdWidgets/hitkeycmdwidget.h \
-    CmdWidgets/writetextcmdwidget.h
+    CmdWidgets/writetextcmdwidget.h \
+    CmdWidgets/runexecmdwidget.h
 
 SOURCES += main.cpp \
         mainwindow.cpp \
@@ -32,7 +33,8 @@ SOURCES += main.cpp \
     defaultdelaywidget.cpp \
     CmdWidgets/delaycmdwidget.cpp \
     CmdWidgets/hitkeycmdwidget.cpp \
-    CmdWidgets/writetextcmdwidget.cpp
+    CmdWidgets/writetextcmdwidget.cpp \
+    CmdWidgets/runexecmdwidget.cpp
 
 FORMS    += mainwindow.ui \
     CmdWidgets/cmdwidget.ui \
@@ -44,7 +46,8 @@ FORMS    += mainwindow.ui \
     CmdWidgets/delaycmdwidget.ui \
     CmdWidgets/hitkeycmdwidget.ui \
     CmdWidgets/writetextcmdwidget.ui \
-    old_mainwindow.ui
+    old_mainwindow.ui \
+    CmdWidgets/runexecmdwidget.ui
 
 RESOURCES += \
     resources.qrc

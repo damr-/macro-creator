@@ -14,10 +14,13 @@ class HitKeyCmdWidget : public CmdWidget
     public:
         explicit HitKeyCmdWidget(QWidget *parent = nullptr);
         ~HitKeyCmdWidget();
-        void keyPressEvent(QKeyEvent* e);
 
         void CopyTo(CmdWidget *other);
         QString GetCmdSafeString();
+        bool IsValidCmd();
+
+        void SetKeySequence(QKeySequence keySequence);
+        QKeySequence GetKeySequence();
 
     private:
         Ui::HitKeyCmdWidget *ui;

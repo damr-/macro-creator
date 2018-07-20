@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
+    <width>350</width>
     <height>30</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>300</width>
+    <width>350</width>
     <height>30</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>300</width>
+    <width>350</width>
     <height>30</height>
    </size>
   </property>
@@ -28,7 +28,7 @@
   <widget class="QComboBox" name="clickTypeBox">
    <property name="geometry">
     <rect>
-     <x>80</x>
+     <x>116</x>
      <y>5</y>
      <width>125</width>
      <height>20</height>
@@ -43,7 +43,7 @@
   <widget class="QSpinBox" name="clickAmountSpinBox">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>76</x>
      <y>5</y>
      <width>30</width>
      <height>20</height>
@@ -76,7 +76,7 @@
   <widget class="QLabel" name="makeLabel">
    <property name="geometry">
     <rect>
-     <x>5</x>
+     <x>40</x>
      <y>4</y>
      <width>40</width>
      <height>20</height>
@@ -94,7 +94,7 @@
   <widget class="QLabel" name="clickLabel">
    <property name="geometry">
     <rect>
-     <x>215</x>
+     <x>251</x>
      <y>4</y>
      <width>40</width>
      <height>20</height>

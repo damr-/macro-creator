@@ -18,6 +18,10 @@ class ScrollCmdWidget : public CmdWidget
         void CopyTo(CmdWidget *other);
         QString GetCmdSafeString();
 
+        int GetAmount();
+        int GetDirection();
+        void SetScrollSettings(int amount, int direction);
+
     private:
         Ui::ScrollCmdWidget *ui;
 
