@@ -28,10 +28,10 @@
   <widget class="QComboBox" name="directionComboBox">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>3</y>
-     <width>41</width>
-     <height>20</height>
+     <x>44</x>
+     <y>2</y>
+     <width>60</width>
+     <height>25</height>
     </rect>
    </property>
    <item>
@@ -48,10 +48,10 @@
   <widget class="QSpinBox" name="amountSpinBox">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>110</x>
      <y>5</y>
-     <width>42</width>
-     <height>16</height>
+     <width>50</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="frame">
@@ -66,19 +66,22 @@
    <property name="maximum">
     <number>9999</number>
    </property>
+   <property name="value">
+    <number>1</number>
+   </property>
   </widget>
   <widget class="QLabel" name="scrollLabel">
    <property name="geometry">
     <rect>
-     <x>5</x>
+     <x>6</x>
      <y>5</y>
      <width>40</width>
-     <height>16</height>
+     <height>20</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>8</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="text">
@@ -88,15 +91,15 @@
   <widget class="QLabel" name="timesLabel">
    <property name="geometry">
     <rect>
-     <x>140</x>
+     <x>165</x>
      <y>5</y>
      <width>40</width>
-     <height>16</height>
+     <height>20</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>8</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="text">

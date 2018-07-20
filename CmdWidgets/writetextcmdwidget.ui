@@ -28,24 +28,38 @@
   <widget class="QLabel" name="writeTextLabel">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>3</y>
-     <width>61</width>
+     <x>5</x>
+     <y>4</y>
+     <width>60</width>
      <height>20</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
    <property name="text">
-    <string>WriteText</string>
+    <string>Write</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="textEdit">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>3</y>
-     <width>131</width>
+     <x>50</x>
+     <y>5</y>
+     <width>150</width>
      <height>20</height>
     </rect>
+   </property>
+   <property name="maxLength">
+    <number>50</number>
+   </property>
+   <property name="placeholderText">
+    <string>your text...</string>
+   </property>
+   <property name="clearButtonEnabled">
+    <bool>false</bool>
    </property>
   </widget>
  </widget>
