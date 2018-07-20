@@ -2,7 +2,7 @@
 
 #include <tchar.h>
 #include <string>
-#include <Windows.h>
+#include <windows.h>
 
 std::map<std::string, BYTE> KeyboardUtilities::byteCodes =
 {

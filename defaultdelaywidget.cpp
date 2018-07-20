@@ -25,7 +25,7 @@ DefaultDelaySettings DefaultDelayWidget::GetSettings()
     settings->timeScale = ui->timeScaleBox->currentIndex();
 }
 
-DefaultDelayWidget::SetSettings(DefaultDelaySettings *settings)
+void DefaultDelayWidget::SetSettings(DefaultDelaySettings *settings)
 {
     ui->checkBox->setChecked(settings->enabled);
     ui->amountBox->setValue(settings->amount);

@@ -12,7 +12,7 @@ class DragCmdWidget : public CmdWidget
     Q_OBJECT
 
     public:
-        explicit DragCmdWidget(QWidget *parent = 0);
+        explicit DragCmdWidget(QWidget *parent = nullptr);
         ~DragCmdWidget();
 
         void CopyTo(CmdWidget *other);

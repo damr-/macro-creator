@@ -27,7 +27,7 @@ class ClickCmdWidget : public CmdWidget
     Q_OBJECT
 
 	public:
-        explicit ClickCmdWidget(QWidget *parent = 0);
+        explicit ClickCmdWidget(QWidget *parent = nullptr);
         ~ClickCmdWidget();
 
         void CopyTo(CmdWidget *other);

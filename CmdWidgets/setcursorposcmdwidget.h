@@ -12,7 +12,7 @@ class SetCursorPosCmdWidget : public CmdWidget
     Q_OBJECT
 
     public:
-        explicit SetCursorPosCmdWidget(QWidget *parent = 0);
+        explicit SetCursorPosCmdWidget(QWidget *parent = nullptr);
         ~SetCursorPosCmdWidget();
 
         void CopyTo(CmdWidget *other);

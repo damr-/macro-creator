@@ -352,7 +352,7 @@ void MainWindow::fillCommandListWidget(QStringList commandListStrings)
     {
         QStringList list = commandListStrings.at(i).split("|");
 
-        CmdType commandTypeIndex = (CmdType)(list[0].toInt());
+        CmdType commandTypeIndex = CmdType(list[0].toInt());
 
         QListWidgetItem *newItem = new QListWidgetItem();
         CmdWidget *newWidget = CmdWidget::GetNewCommandWidget(commandTypeIndex);
@@ -435,10 +435,10 @@ void MainWindow::fillCommandListWidget(QStringList commandListStrings)
 
     ui->commandList->setCurrentRow(ui->commandList->count() - 1);
 
-    if(ui->commandList->count() > 0)
-        ui->commandListTitle->setText("Command List [" + QString::number(ui->commandList->currentRow()) + "/"+ QString::number(commandListStrings.size()) + "]");
-    else
-        ui->commandListTitle->setText("Command List [0/"+ QString::number(commandListStrings.size()) + "]");
+   // if(ui->commandList->count() > 0)
+     //   ui->commandListTitle->setText("Command List [" + QString::number(ui->commandList->currentRow()) + "/"+ QString::number(commandListStrings.size()) + "]");
+    //else
+      //  ui->commandListTitle->setText("Command List [0/"+ QString::number(commandListStrings.size()) + "]");
 }
 
 /*
@@ -643,7 +643,7 @@ void MainWindow::unselectAll()
 
 void MainWindow::addNewCommand(int cmdIndex)
 {
-    CmdType cmdType = (CmdType)cmdIndex;
+    CmdType cmdType = CmdType(cmdIndex);
     CmdWidget *itemWidget = CmdWidget::GetNewCommandWidget(cmdType);
     itemWidget->commandType = cmdType;
     QListWidgetItem *item = new QListWidgetItem();

@@ -35,7 +35,7 @@ void DelayCmdWidget::CopyTo(CmdWidget *other)
 
 QString DelayCmdWidget::GetCmdSafeString()
 {
-    return QString::number((int)CmdType::DELAY) + "|" + QString::number(GetAmount()) + "|" + QString::number(GetTimeScale());
+    return QString::number(int(CmdType::DELAY)) + "|" + QString::number(GetAmount()) + "|" + QString::number(GetTimeScale());
 }
 
 int DelayCmdWidget::GetAmount()

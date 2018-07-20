@@ -12,7 +12,7 @@ class HitKeyCmdWidget : public CmdWidget
     Q_OBJECT
 
     public:
-        explicit HitKeyCmdWidget(QWidget *parent = 0);
+        explicit HitKeyCmdWidget(QWidget *parent = nullptr);
         ~HitKeyCmdWidget();
         void keyPressEvent(QKeyEvent* e);
 

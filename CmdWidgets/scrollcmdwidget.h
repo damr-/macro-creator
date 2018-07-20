@@ -12,7 +12,7 @@ class ScrollCmdWidget : public CmdWidget
     Q_OBJECT
 
     public:
-        explicit ScrollCmdWidget(QWidget *parent = 0);
+        explicit ScrollCmdWidget(QWidget *parent = nullptr);
         ~ScrollCmdWidget();
 
         void CopyTo(CmdWidget *other);

@@ -29,8 +29,6 @@ CmdWidget* CmdWidget::GetNewCommandWidget(CmdType cmdType)
             return new HitKeyCmdWidget();
         case CmdType::OPENEXE: //TODO
             return new CmdWidget();
-        default:
-            return new CmdWidget();
     }
 }
 

@@ -14,7 +14,7 @@ class CmdWidget : public QWidget
     Q_OBJECT
 
 	public:
-        explicit CmdWidget(QWidget *parent = 0);
+        explicit CmdWidget(QWidget *parent = nullptr);
         ~CmdWidget();
 
         CmdType commandType;

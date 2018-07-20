@@ -12,7 +12,7 @@ class WriteTextCmdWidget : public CmdWidget
     Q_OBJECT
 
     public:
-        explicit WriteTextCmdWidget(QWidget *parent = 0);
+        explicit WriteTextCmdWidget(QWidget *parent = nullptr);
         ~WriteTextCmdWidget();
 
         void CopyTo(CmdWidget *other);

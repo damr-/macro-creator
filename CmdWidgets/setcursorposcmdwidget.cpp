@@ -37,7 +37,7 @@ void SetCursorPosCmdWidget::CopyTo(CmdWidget *other)
 
 QString SetCursorPosCmdWidget::GetCmdSafeString()
 {
-    return QString::number((int)CmdType::CURPOS) +  "|" + QString::number(GetX()) + "|" + QString::number(GetY());
+    return QString::number(int(CmdType::CURPOS)) +  "|" + QString::number(GetX()) + "|" + QString::number(GetY());
 }
 
 int SetCursorPosCmdWidget::GetX()

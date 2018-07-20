@@ -12,7 +12,7 @@ class DelayCmdWidget : public CmdWidget
     Q_OBJECT
 
     public:
-        explicit DelayCmdWidget(QWidget *parent = 0);
+        explicit DelayCmdWidget(QWidget *parent = nullptr);
         ~DelayCmdWidget();
 
         void CopyTo(CmdWidget *other);

@@ -27,7 +27,7 @@ void DragCmdWidget::CopyTo(CmdWidget *other)
 
 QString DragCmdWidget::GetCmdSafeString()
 {
-    return QString::number((int)CmdType::DRAG) + "|" + QString::number(GetX()) + "|" + QString::number(GetY());
+    return QString::number(int(CmdType::DRAG)) + "|" + QString::number(GetX()) + "|" + QString::number(GetY());
 }
 
 int DragCmdWidget::GetX()

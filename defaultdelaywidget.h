@@ -20,11 +20,11 @@ class DefaultDelayWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit DefaultDelayWidget(QWidget *parent = 0);
+    explicit DefaultDelayWidget(QWidget *parent = nullptr);
     ~DefaultDelayWidget();
 
     DefaultDelaySettings GetSettings();
-    SetSettings(DefaultDelaySettings *settings);
+    void SetSettings(DefaultDelaySettings *settings);
 
     bool IsEnabled();
     int GetAmount();

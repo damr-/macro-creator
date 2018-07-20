@@ -7,36 +7,36 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>25</height>
+    <height>30</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>300</width>
-    <height>25</height>
+    <height>30</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>300</width>
-    <height>25</height>
+    <height>30</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>SetCursorPosCmdWidget</string>
   </property>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
      <x>5</x>
-     <y>5</y>
-     <width>116</width>
-     <height>16</height>
+     <y>4</y>
+     <width>140</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>8</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="text">
@@ -46,93 +46,93 @@
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="xLabel">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>5</y>
-     <width>16</width>
-     <height>16</height>
+     <x>205</x>
+     <y>4</y>
+     <width>71</width>
+     <height>22</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <pointsize>8</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>X:</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_Y">
+    <item>
+     <widget class="QLabel" name="yLabel">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Y:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSpinBox" name="yCoord">
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+       </font>
+      </property>
+      <property name="buttonSymbols">
+       <enum>QAbstractSpinBox::NoButtons</enum>
+      </property>
+      <property name="maximum">
+       <number>2000</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
-  <widget class="QSpinBox" name="xCoord">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>139</x>
-     <y>5</y>
-     <width>50</width>
-     <height>16</height>
+     <x>135</x>
+     <y>4</y>
+     <width>71</width>
+     <height>22</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <pointsize>7</pointsize>
-    </font>
-   </property>
-   <property name="buttonSymbols">
-    <enum>QAbstractSpinBox::NoButtons</enum>
-   </property>
-   <property name="maximum">
-    <number>2000</number>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="yCoord">
-   <property name="geometry">
-    <rect>
-     <x>207</x>
-     <y>5</y>
-     <width>50</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>7</pointsize>
-    </font>
-   </property>
-   <property name="buttonSymbols">
-    <enum>QAbstractSpinBox::NoButtons</enum>
-   </property>
-   <property name="maximum">
-    <number>2000</number>
-   </property>
-  </widget>
-  <widget class="QLabel" name="yLabel">
-   <property name="geometry">
-    <rect>
-     <x>190</x>
-     <y>5</y>
-     <width>16</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>8</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Y:</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_X">
+    <item>
+     <widget class="QLabel" name="xLabel">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>X:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSpinBox" name="xCoord">
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+       </font>
+      </property>
+      <property name="buttonSymbols">
+       <enum>QAbstractSpinBox::NoButtons</enum>
+      </property>
+      <property name="maximum">
+       <number>2000</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

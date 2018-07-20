@@ -35,7 +35,7 @@ void ClickCmdWidget::SetClickAmount(int amount)
 
 void ClickCmdWidget::SetClickType(ClickType clickType)
 {
-    ui->clickTypeBox->setCurrentIndex((int)clickType);
+    ui->clickTypeBox->setCurrentIndex(int(clickType));
 }
 
 void ClickCmdWidget::clickAmountChanged(int amount)
@@ -51,7 +51,7 @@ void ClickCmdWidget::CopyTo(CmdWidget *other)
 
 QString ClickCmdWidget::GetCmdSafeString()
 {
-    return QString::number((int)CmdType::CLICK) + "|" + QString::number(clickAmount()) + "|" + QString::number((int)GetClickType());
+    return QString::number(int(CmdType::CLICK)) + "|" + QString::number(clickAmount()) + "|" + QString::number(int(GetClickType()));
 }
 
 int ClickCmdWidget::clickAmount()
@@ -61,5 +61,5 @@ int ClickCmdWidget::clickAmount()
 
 ClickType ClickCmdWidget::GetClickType()
 {
-    return (ClickType)ui->clickTypeBox->currentIndex();
+    return ClickType(ui->clickTypeBox->currentIndex());
 }
