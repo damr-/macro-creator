@@ -82,6 +82,7 @@ private:
     void closeEvent(QCloseEvent *event);
     void RefreshWindowTitle();
     QMessageBox *showUnsavedChangesWarning(UnsavedChangesMessageResult &result);
+    QMessageBox *showMessage(QString title, QString message, QMessageBox::Icon type);
 
     //Storing data
     QString macroName;
@@ -90,7 +91,7 @@ private:
     QString fileInfo = "Personal Macro Files (*." + fileExtension + ")";
     QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + "." + this->fileExtension; }
     //void addCommand(QString commandtype, QStringList arguments);
-    void loadCommandListFromFile(QString pathPlusFilename);
+    bool tryLoadCmdsFromFile(QString pathPlusFilename);
     //void fillCommandListWidget(QStringList commandListStrings);
     QString getCommandString(int commandListIndex);
 };

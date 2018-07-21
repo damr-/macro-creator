@@ -187,6 +187,22 @@ QMessageBox *MainWindow::showUnsavedChangesWarning(UnsavedChangesMessageResult &
     return msgbox;
 }
 
+QMessageBox *MainWindow::showMessage(QString title, QString message, QMessageBox::Icon type)
+{
+    switch(type)
+    {
+    case QMessageBox::Icon::Information:
+        QMessageBox::information(this, title, message);
+        break;
+    case QMessageBox::Icon::Warning:
+        QMessageBox::warning(this, title, message);
+        break;
+    default:
+        QMessageBox::critical(this, title, message);
+        break;
+    }
+}
+
 void MainWindow::checkUserKeyInput()
 {
     if(GetAsyncKeyState(VK_F6))
@@ -274,7 +290,9 @@ void MainWindow::openMacro()
         msgbox->close();
     }
 
-    loadCommandListFromFile(fullFilePath);
+    if(!tryLoadCmdsFromFile(fullFilePath))
+        return;
+
     ui->statusBar->showMessage("Opened " + fullFilePath, 3000);
     isUnsavedMacro = false;
     setUnsavedChanges(false);
@@ -345,27 +363,26 @@ void MainWindow::saveMacroAs()
     saveMacro();
 }
 
-void MainWindow::loadCommandListFromFile(QString filename)
+bool MainWindow::tryLoadCmdsFromFile(QString filename)
 {
     ui->commandList->clear();
 
     QFile file(filename);
 
     if(!file.exists())
-        return;
+        return false;
 
     if(!file.open(QFile::ReadOnly))
-        return;
+        return false;
 
     QTextStream input(&file);
     QStringList options = input.readLine().split("|");
 
     if(options.size() != 7){
-        QString msg = filename + " is corrupted. Aborted opening process.";
-        ui->statusBar->showMessage(msg);
-        qDebug() << msg;
+        showMessage("Error", filename + " is corrupted.\nAborted opening process.", QMessageBox::Icon::Critical);
+        ui->statusBar->showMessage("Opening aborted", 3000);
         file.close();
-        return;
+        return false;
     }
 
     QStringList commandListStrings;
@@ -380,6 +397,7 @@ void MainWindow::loadCommandListFromFile(QString filename)
 
     //fillCommandListWidget(commandListStrings);
     file.close();
+    return true;
 }
 
 //void MainWindow::fillCommandListWidget(QStringList commandListStrings)
@@ -503,7 +521,10 @@ void MainWindow::tryRunMacro()
     int result = AllCommandsValid();
     if(result != -1)
     {
-        ui->statusBar->showMessage("Possible error in row " + QString::number(result + 1));
+        QString msg = QString("Possible error in row " + QString::number(result + 1));
+        showMessage("Warning", msg, QMessageBox::Icon::Warning);
+        ui->statusBar->showMessage(msg, 10000);
+
         ui->commandList->setCurrentRow(result);
         unselectAll();
         ui->commandList->item(result)->setSelected(true);
