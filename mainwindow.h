@@ -41,8 +41,8 @@ private slots:
     //NEW METHODS
     void showContextMenu(const QPoint&);
     void handleRowMoved(QModelIndex, int, int, QModelIndex, int);
-    CmdWidget *addNewCommand(int cmdIndex);
-    void addItem(QListWidgetItem *item, CmdWidget *itemWidget, int row);
+    CmdWidget *addNewCommand(int cmdType);
+    void addCmdListItem(QListWidgetItem *item, CmdWidget *itemWidget, int row);
 
     //List editing
     void copySelected();
@@ -82,7 +82,7 @@ private:
     void closeEvent(QCloseEvent *event);
     void RefreshWindowTitle();
     QMessageBox *showUnsavedChangesWarning(UnsavedChangesMessageResult &result);
-    QMessageBox *showMessage(QString title, QString message, QMessageBox::Icon type);
+    void showMessage(QString title, QString message, QMessageBox::Icon type);
 
     //Storing data
     QString macroName;
@@ -90,10 +90,10 @@ private:
     QString fileExtension = "pmac";
     QString fileInfo = "Personal Macro Files (*." + fileExtension + ")";
     QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + "." + this->fileExtension; }
-    //void addCommand(QString commandtype, QStringList arguments);
+
     bool tryLoadCmdsFromFile(QString pathPlusFilename);
-    //void fillCommandListWidget(QStringList commandListStrings);
-    QString getCommandString(int commandListIndex);
+    void fillCommandListWidget(QStringList commandListStrings);
+    QString getCmdString(int commandListIndex);
 };
 
 #endif // MAINWINDOW_H

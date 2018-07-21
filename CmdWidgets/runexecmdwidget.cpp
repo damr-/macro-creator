@@ -26,9 +26,9 @@ void RunExeCmdWidget::CopyTo(CmdWidget *other)
     qobject_cast<RunExeCmdWidget*>(other)->SetFilePath(GetFilePath());
 }
 
-QString RunExeCmdWidget::GetCmdSafeString()
+QString RunExeCmdWidget::GetCmdString()
 {
-    return QString("RunExeCmdWidget");
+    return QString::number(int(cmdType)) + "|" + GetFilePath();
 }
 
 bool RunExeCmdWidget::IsValidCmd()

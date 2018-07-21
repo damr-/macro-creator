@@ -56,6 +56,12 @@
      <height>20</height>
     </rect>
    </property>
+   <property name="cursor">
+    <cursorShape>BlankCursor</cursorShape>
+   </property>
+   <property name="currentIndex">
+    <number>1</number>
+   </property>
    <property name="maxVisibleItems">
     <number>2</number>
    </property>

@@ -16,7 +16,7 @@ class HitKeyCmdWidget : public CmdWidget
         ~HitKeyCmdWidget();
 
         void CopyTo(CmdWidget *other);
-        QString GetCmdSafeString();
+        QString GetCmdString();
         bool IsValidCmd();
 
         void SetKeySequence(QKeySequence keySequence);

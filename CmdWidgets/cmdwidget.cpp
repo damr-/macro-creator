@@ -45,14 +45,14 @@ CmdWidget::~CmdWidget()
     delete ui;
 }
 
-QString CmdWidget::GetCmdSafeString()
+QString CmdWidget::GetCmdString()
 {
     return QString("CmdWidget");
 }
 
 void CmdWidget::CopyTo(CmdWidget *other)
 {
-    other->GetCmdSafeString();
+    other->GetCmdString();
 }
 
 CmdType CmdWidget::GetCmdType()

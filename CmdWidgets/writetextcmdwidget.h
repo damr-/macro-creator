@@ -16,7 +16,7 @@ class WriteTextCmdWidget : public CmdWidget
         ~WriteTextCmdWidget();
 
         void CopyTo(CmdWidget *other);
-        QString GetCmdSafeString();
+        QString GetCmdString();
         bool IsValidCmd();
 
         QString GetText();

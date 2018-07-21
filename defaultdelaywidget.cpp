@@ -1,6 +1,8 @@
 #include "defaultdelaywidget.h"
 #include "ui_defaultdelaywidget.h"
 
+#include <QDebug>
+
 DefaultDelayWidget::DefaultDelayWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DefaultDelayWidget)
@@ -17,12 +19,13 @@ DefaultDelayWidget::~DefaultDelayWidget()
     delete ui;
 }
 
-DefaultDelaySettings DefaultDelayWidget::GetSettings()
+DefaultDelaySettings *DefaultDelayWidget::GetSettings()
 {
     DefaultDelaySettings *settings = new DefaultDelaySettings();
     settings->enabled = ui->checkBox->isChecked();
     settings->amount = ui->amountBox->value();
     settings->timeScale = ui->timeScaleBox->currentIndex();
+    return settings;
 }
 
 void DefaultDelayWidget::SetSettings(DefaultDelaySettings *settings)
@@ -30,21 +33,6 @@ void DefaultDelayWidget::SetSettings(DefaultDelaySettings *settings)
     ui->checkBox->setChecked(settings->enabled);
     ui->amountBox->setValue(settings->amount);
     ui->timeScaleBox->setCurrentIndex(settings->timeScale);
-}
-
-bool DefaultDelayWidget::IsEnabled()
-{
-    return ui->checkBox->isChecked();
-}
-
-int DefaultDelayWidget::GetAmount()
-{
-    return ui->amountBox->value();
-}
-
-int DefaultDelayWidget::GetTimeScale()
-{
-    return ui->timeScaleBox->currentIndex();
 }
 
 void DefaultDelayWidget::Toggle()

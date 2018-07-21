@@ -6,7 +6,7 @@
 
 std::map<std::string, BYTE> KeyboardUtilities::byteCodes =
 {
-    std::pair<std::string, BYTE>("Backspace", 0x08)
+//    std::pair<std::string, BYTE>("Backspace", 0x08)
 };
 
 std::map<std::string, BYTE> KeyboardUtilities::GetByteCodes()
@@ -63,9 +63,13 @@ void KeyboardUtilities::writeText(std::string text)
 {
     for(unsigned int i = 0; i < text.length(); ++i)
     {
+        if(isupper(text[i]))
+            keybd_event(VK_SHIFT, 0xAA, 0, 0);
         keybd_event(VkKeyScan(text[i]), 0, KEYEVENTF_EXTENDEDKEY, 0);
         keybd_event(VkKeyScan(text[i]), 0, KEYEVENTF_KEYUP, 0);
-        Sleep(50);
+        if(isupper(text[i]))
+            keybd_event(VK_SHIFT, 0xAA, KEYEVENTF_KEYUP, 0);
+        Sleep(10);
     }
 }
 

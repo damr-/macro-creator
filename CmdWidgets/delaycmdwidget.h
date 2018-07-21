@@ -16,7 +16,7 @@ class DelayCmdWidget : public CmdWidget
         ~DelayCmdWidget();
 
         void CopyTo(CmdWidget *other);
-        QString GetCmdSafeString();
+        QString GetCmdString();
 
         int GetAmount();
         int GetTimeScale();

@@ -20,21 +20,16 @@ class Commands
 {
 public:
     static void ExecuteCommand(QString command);
-    const static QStringList commandNames()
-    {
-        return {
-            "Delay"
-            "Click",
-            "Set cursor position",
-            "Drag",
-            "Scroll",
-            "Write text",
-            "Hit key",
-            "Open .exe",
-            "End process"
-        };
-    }
-    static int getCommandTypeIndex(CmdType commandType) { return (int)commandType; }
+
+private:
+    static void Click(QStringList cmd);
+    static void Delay(QStringList cmd);
+    static void CursorPos(QStringList cmd);
+    static void Drag(QStringList cmd);
+    static void Scroll(QStringList cmd);
+    static void HitKey(QStringList cmd);
+    static void WriteText(QStringList cmd);
+    static void RunExe(QStringList cmd);
 };
 
 #endif // COMMANDS_H

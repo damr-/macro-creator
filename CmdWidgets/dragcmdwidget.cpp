@@ -25,9 +25,9 @@ void DragCmdWidget::CopyTo(CmdWidget *other)
     qobject_cast<DragCmdWidget*>(other)->SetCoordinates(GetX(), GetY());
 }
 
-QString DragCmdWidget::GetCmdSafeString()
+QString DragCmdWidget::GetCmdString()
 {
-    return QString::number(int(CmdType::DRAG)) + "|" + QString::number(GetX()) + "|" + QString::number(GetY());
+    return QString::number(int(cmdType)) + "|" + QString::number(GetX()) + "|" + QString::number(GetY());
 }
 
 int DragCmdWidget::GetX()

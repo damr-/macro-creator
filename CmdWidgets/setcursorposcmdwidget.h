@@ -16,7 +16,7 @@ class SetCursorPosCmdWidget : public CmdWidget
         ~SetCursorPosCmdWidget();
 
         void CopyTo(CmdWidget *other);
-        QString GetCmdSafeString();
+        QString GetCmdString();
 
         int GetX();
         int GetY();

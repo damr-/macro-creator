@@ -25,9 +25,9 @@ void ScrollCmdWidget::CopyTo(CmdWidget *other)
     qobject_cast<ScrollCmdWidget*>(other)->SetScrollSettings(GetAmount(), GetDirection());
 }
 
-QString ScrollCmdWidget::GetCmdSafeString()
+QString ScrollCmdWidget::GetCmdString()
 {
-    return QString("ScrollCmdWidget");
+    return QString::number(int(cmdType)) + "|" + QString::number(GetAmount()) + "|" + QString::number(GetDirection());
 }
 
 int ScrollCmdWidget::GetAmount()

@@ -23,15 +23,11 @@ public:
     explicit DefaultDelayWidget(QWidget *parent = nullptr);
     ~DefaultDelayWidget();
 
-    DefaultDelaySettings GetSettings();
+    DefaultDelaySettings *GetSettings();
     void SetSettings(DefaultDelaySettings *settings);
 
-    bool IsEnabled();
-    int GetAmount();
-    int GetTimeScale();
-
 signals:
-    void SettingsChanged(DefaultDelaySettings settings);
+    void SettingsChanged(DefaultDelaySettings *settings);
 
 private slots:
     void Toggle();

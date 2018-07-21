@@ -18,7 +18,7 @@ class CmdWidget : public QWidget
         ~CmdWidget();
 
         virtual void CopyTo(CmdWidget *other) = 0;
-        virtual QString GetCmdSafeString() = 0;
+        virtual QString GetCmdString() = 0;
         virtual bool IsValidCmd();
 
         CmdType GetCmdType();

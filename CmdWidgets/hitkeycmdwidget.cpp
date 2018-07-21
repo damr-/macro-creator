@@ -22,9 +22,9 @@ void HitKeyCmdWidget::CopyTo(CmdWidget *other)
     qobject_cast<HitKeyCmdWidget*>(other)->SetKeySequence(GetKeySequence());
 }
 
-QString HitKeyCmdWidget::GetCmdSafeString()
+QString HitKeyCmdWidget::GetCmdString()
 {
-    return QString("HitKeyCmdWidget safestring");
+    return QString::number(int(cmdType)) + "|" + GetKeySequence().toString();
 }
 
 bool HitKeyCmdWidget::IsValidCmd()

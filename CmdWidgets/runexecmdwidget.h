@@ -16,7 +16,7 @@ class RunExeCmdWidget : public CmdWidget
         ~RunExeCmdWidget();
 
         void CopyTo(CmdWidget *other);
-        QString GetCmdSafeString();
+        QString GetCmdString();
         bool IsValidCmd();
 
         QString GetFilePath();

@@ -22,9 +22,9 @@ void WriteTextCmdWidget::CopyTo(CmdWidget *other)
     qobject_cast<WriteTextCmdWidget*>(other)->SetText(GetText());
 }
 
-QString WriteTextCmdWidget::GetCmdSafeString()
+QString WriteTextCmdWidget::GetCmdString()
 {
-    return QString("WriteTextCmdWidget");
+    return QString::number(int(cmdType)) + "|" + GetText();
 }
 
 bool WriteTextCmdWidget::IsValidCmd()

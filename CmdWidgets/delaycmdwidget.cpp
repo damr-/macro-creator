@@ -34,9 +34,9 @@ void DelayCmdWidget::CopyTo(CmdWidget *other)
     widget->SetWaitSettings(GetAmount(), GetTimeScale());
 }
 
-QString DelayCmdWidget::GetCmdSafeString()
+QString DelayCmdWidget::GetCmdString()
 {
-    return QString::number(int(CmdType::DELAY)) + "|" + QString::number(GetAmount()) + "|" + QString::number(GetTimeScale());
+    return QString::number(int(cmdType)) + "|" + QString::number(GetAmount()) + "|" + QString::number(GetTimeScale());
 }
 
 int DelayCmdWidget::GetAmount()

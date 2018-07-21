@@ -41,9 +41,9 @@ void ClickCmdWidget::CopyTo(CmdWidget *other)
     qobject_cast<ClickCmdWidget*>(other)->SetClickSettings(GetClickAmount(), GetClickType());
 }
 
-QString ClickCmdWidget::GetCmdSafeString()
+QString ClickCmdWidget::GetCmdString()
 {
-    return QString::number(int(CmdType::CLICK)) + "|" + QString::number(GetClickAmount()) + "|" + QString::number(int(GetClickType()));
+    return QString::number(int(cmdType)) + "|" + QString::number(GetClickAmount()) + "|" + QString::number(int(GetClickType()));
 }
 
 int ClickCmdWidget::GetClickAmount()
