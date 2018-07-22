@@ -19,8 +19,17 @@ class HitKeyCmdWidget : public CmdWidget
         QString GetCmdString();
         bool IsValidCmd();
 
-        void SetKeySequence(QKeySequence keySequence);
+        void SetSettings(int isSpecialKey, int specialKeyIndex, QKeySequence keySequence);
+        int GetIsSpecialKey();
+        int GetSpecialKeyIndex();
         QKeySequence GetKeySequence();
+
+        static const int KeySeqIdx = 3;
+
+    private slots:
+        void truncateKeySequence();
+        void clearKeySequence();
+        void updateVisibility();
 
     private:
         Ui::HitKeyCmdWidget *ui;

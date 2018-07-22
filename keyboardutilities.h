@@ -5,16 +5,21 @@
 #include <string>
 #include <windows.h>
 
+using namespace std;
+
 class KeyboardUtilities
 {
 public:
-    static std::map<std::string, BYTE> GetByteCodes();
-    static void writeText(std::string text);
-    static void pressVK(std::string vk);
+    static void writeText(string text);
+
+    static void hitKey(char key);
+
+    static void hitSpecialKey(string vk);
+    static void pressSpecialKey(string vk);
+    static void releaseSpecialKey(string vk);
 
 private:
-    static std::map<std::string, BYTE> byteCodes;
-
+    static map<string, BYTE> byteCodes;
 };
 
 #endif // KEYBOARDUTILITIES_H

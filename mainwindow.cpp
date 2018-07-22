@@ -4,7 +4,6 @@
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
-#include <QDebug>
 #include <QList>
 #include <QDir>
 #include <QFile>
@@ -16,6 +15,7 @@
 #include <QStringList>
 #include <QTimer>
 #include <QPushButton>
+#include <QDebug>
 
 #include "defaultdelaywidget.h"
 
@@ -64,8 +64,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action3CursorPos, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
     connect(ui->action4Drag, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
     connect(ui->action5Scroll, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action6Write, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action7HitKey, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action6HitKey, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action7Write, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
     connect(ui->action8RunExe, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
 
     addActionsMapper->setMapping(ui->action1Delay, 0);
@@ -73,8 +73,8 @@ MainWindow::MainWindow(QWidget *parent) :
     addActionsMapper->setMapping(ui->action3CursorPos, 2);
     addActionsMapper->setMapping(ui->action4Drag, 3);
     addActionsMapper->setMapping(ui->action5Scroll, 4);
-    addActionsMapper->setMapping(ui->action6Write, 5);
-    addActionsMapper->setMapping(ui->action7HitKey, 6);
+    addActionsMapper->setMapping(ui->action6HitKey, 5);
+    addActionsMapper->setMapping(ui->action7Write, 6);
     addActionsMapper->setMapping(ui->action8RunExe, 7);
     connect(addActionsMapper, SIGNAL(mapped(int)), this, SLOT(addNewCommand(int)));
 
@@ -132,6 +132,9 @@ MainWindow::MainWindow(QWidget *parent) :
     defaultDelayWidget = new DefaultDelayWidget(this);
     ui->toolBar->addWidget(defaultDelayWidget);
     connect(defaultDelayWidget, SIGNAL(SettingsChanged(DefaultDelaySettings*)), this, SLOT(setUnsavedChanges()));
+
+    isMacroRunning = false;
+    canRunMacro = true;
 }
 
 MainWindow::~MainWindow()
@@ -267,6 +270,8 @@ void MainWindow::newMacro()
 
 void MainWindow::openMacro()
 {
+    canRunMacro = false;
+
     QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open macro"), macroPath, fileInfo);
 
     QString fileName = QFileInfo(fullFilePath).baseName();
@@ -298,11 +303,13 @@ void MainWindow::openMacro()
     isUnsavedMacro = false;
     setUnsavedChanges(false);
     RefreshWindowTitle();
-    ui->actionFSaveAs->setEnabled(true);
+    ui->actionFSaveAs->setEnabled(true);    
+    canRunMacro = true;
 }
 
 void MainWindow::saveMacro()
 {
+//    canRunMacro = false;
     if(!isUnsavedMacro && !hasUnsavedChanges)
     {
         ui->statusBar->showMessage("No changes to save", 3000);
@@ -350,6 +357,7 @@ void MainWindow::saveMacro()
 
     setUnsavedChanges(false);
     ui->statusBar->showMessage("Saved macro to " + pathPlusFileName, 3000);
+//    canRunMacro = true;
 }
 
 void MainWindow::saveMacroAs()
@@ -373,7 +381,7 @@ bool MainWindow::tryLoadCmdsFromFile(QString filename)
     QTextStream input(&file);
     QStringList options = input.readLine().split("|");
 
-    if(options.size() != 3){
+    if(options.size() != OPTIONS_LEN){
         showMessage("Error", filename + " is corrupted.\nAborted opening process.", QMessageBox::Icon::Critical);
         ui->statusBar->showMessage("Opening aborted", 3000);
         file.close();
@@ -397,20 +405,31 @@ bool MainWindow::tryLoadCmdsFromFile(QString filename)
             commandListStrings.append(line);
     }while(!line.isNull());
 
-    fillCommandListWidget(commandListStrings);
+    if(!fillCommandListWidget(commandListStrings))
+    {
+        showMessage("Error", filename + " is corrupted.\nAborted opening process.", QMessageBox::Icon::Critical);
+        ui->statusBar->showMessage("Opening aborted", 3000);
+        file.close();
+        return false;
+    }
     file.close();
     return true;
 }
 
-void MainWindow::fillCommandListWidget(QStringList commandListStrings)
+bool MainWindow::fillCommandListWidget(QStringList commandListStrings)
 {
     ui->commandList->clear();
 
     for(int i = 0; i < commandListStrings.size(); ++i)
     {
         QStringList list = commandListStrings.at(i).split("|");
-
         CmdType commandTypeIndex = CmdType(list[0].toInt());
+
+        if(list.length() != Commands::GetCmdStrLen(static_cast<CmdType>(commandTypeIndex)))
+        {
+            ui->commandList->clear();
+            return false;
+        }
 
         QListWidgetItem *newItem = new QListWidgetItem();
         CmdWidget *newWidget = CmdWidget::GetNewCommandWidget(commandTypeIndex);
@@ -426,31 +445,19 @@ void MainWindow::fillCommandListWidget(QStringList commandListStrings)
                 qobject_cast<DragCmdWidget*>(newWidget)->SetCoordinates(list[1].toInt(), list[2].toInt()); break;
             case CmdType::SCROLL:
                 qobject_cast<ScrollCmdWidget*>(newWidget)->SetScrollSettings(list[1].toInt(), list[2].toInt()); break;
+            case CmdType::HITKEY:
+                qobject_cast<HitKeyCmdWidget*>(newWidget)->SetSettings(list[1].toInt(), list[2].toInt(), QKeySequence::fromString(list[3])); break;
             case CmdType::WRITETEXT:
                 qobject_cast<WriteTextCmdWidget*>(newWidget)->SetText(list[1]); break;
             case CmdType::RUNEXE:
                 qobject_cast<RunExeCmdWidget*>(newWidget)->SetFilePath(list[1]); break;
-            //TODO CmdType::HITKEY
-            default:
-                break;
         }
         addCmdListItem(newItem, newWidget, i);
-
-//        else if( list[0] == "sct" ) {
-//            QString item;
-//            item.append("Press '");
-//            if(list[1] == "1") item.append("CTRL + ");
-//            if(list[2] == "1") item.append("ALT + ");
-//            if(list[3] == "1") item.append("SHIFT + ");
-//            item.append(list[5]);
-//            item.append("' " + list[6] + " times");
-
-//            ui->commandList->addItem(item);
-//        }
     }
 
     updateRowNumbers();
     ui->commandList->setCurrentRow(ui->commandList->count() - 1);
+    return true;
 }
 
 void MainWindow::RefreshWindowTitle()
@@ -478,8 +485,14 @@ QString MainWindow::getCmdString(int commandListIndex)
 
 void MainWindow::tryRunMacro()
 {
-    if(isMacroRunning)
+    if(!canRunMacro || isMacroRunning)
         return;
+
+    if(ui->commandList->count() == 0)
+    {
+        showMessage("Error", "Macro is empty", QMessageBox::Icon::Critical);
+        return;
+    }
 
     int result = AllCommandsValid();
     if(result != -1)
@@ -496,7 +509,7 @@ void MainWindow::tryRunMacro()
 
     isMacroRunning = true;
     setWindowTitle(macroName + " - Running");
-    setWindowOpacity(0.5);
+    setWindowOpacity(0.5);    
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowTransparentForInput);// | Qt::WindowDoesNotAcceptFocus);
     show();
 
@@ -506,8 +519,11 @@ void MainWindow::tryRunMacro()
     setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint & ~Qt::WindowTransparentForInput);// & ~Qt::WindowDoesNotAcceptFocus);
     show();
 
-    isMacroRunning = false;
     RefreshWindowTitle();
+    activateWindow();
+    setFocus();
+    raise();
+    isMacroRunning = false;
 }
 
 int MainWindow::AllCommandsValid()
@@ -531,12 +547,12 @@ void MainWindow::ExecuteCommands()
 
     for(int i = 0, total = ui->commandList->count(); i < total; i++)
     {
-        if(GetAsyncKeyState(VK_F7))
+        if(GetAsyncKeyState(VK_F7) && paused)
         {
             setWindowTitle(macroName + " - Running");
             paused = false;
         }
-        if(GetAsyncKeyState(VK_F8))
+        if(GetAsyncKeyState(VK_F8) && !paused)
         {
             setWindowTitle(macroName + " - Paused");
             paused = true;
@@ -578,6 +594,7 @@ void MainWindow::deleteSelected()
         delete item;
     }
     setUnsavedChanges(true);
+    updateRowNumbers();
 }
 
 void MainWindow::duplicateSelected()
@@ -693,9 +710,11 @@ void MainWindow::handleSelectionChanged()
 
     ui->actionEDuplicate->setEnabled(itemSelected);
     ui->actionEDelete->setEnabled(itemSelected);
-    ui->actionECopy->setEnabled(itemSelected);
-    ui->actionECut->setEnabled(itemSelected);
-    ui->actionEPaste->setEnabled(itemSelected);
+
+    //TODO
+    ui->actionECopy->setEnabled(false);
+    ui->actionECut->setEnabled(false);
+    ui->actionEPaste->setEnabled(false);
 }
 
 void MainWindow::handleRowMoved(QModelIndex, int, int, QModelIndex, int)

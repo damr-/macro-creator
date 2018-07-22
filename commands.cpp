@@ -2,9 +2,17 @@
 
 #include <windows.h>
 #include <QProcess>
+#include <QDebug>
 
 #include "keyboardutilities.h"
 #include "CmdWidgets/clickcmdwidget.h"
+#include "CmdWidgets/delaycmdwidget.h"
+#include "CmdWidgets/dragcmdwidget.h"
+#include "CmdWidgets/hitkeycmdwidget.h"
+#include "CmdWidgets/runexecmdwidget.h"
+#include "CmdWidgets/scrollcmdwidget.h"
+#include "CmdWidgets/setcursorposcmdwidget.h"
+#include "CmdWidgets/writetextcmdwidget.h"
 
 #define SCROLLUP 120
 #define SCROLLDOWN -120
@@ -12,7 +20,7 @@
 void Commands::ExecuteCommand(QString command)
 {
     QStringList cmd = command.split("|");
-    CmdType type = static_cast<CmdType>(cmd[0].toInt());
+    CmdType type = static_cast<CmdType>(cmd[CmdWidget::CmdTypeIdx].toInt());
 
     switch(type)
     {
@@ -37,16 +45,16 @@ void Commands::ExecuteCommand(QString command)
 
 void Commands::Delay(QStringList cmd)
 {
-    DWORD amount = DWORD(cmd[1].toInt());
-    DWORD timeScale = (cmd[2] == "0" ? 1000 : 1);
+    DWORD amount = DWORD(cmd[DelayCmdWidget::AmountIdx].toInt());
+    DWORD timeScale = (cmd[DelayCmdWidget::ScaleIdx] == "0" ? 1000 : 1);
     Sleep(amount * timeScale);
 }
 
 void Commands::Click(QStringList cmd)
 {
-    ClickType clickType = static_cast<ClickType>(cmd[2].toInt());
+    ClickType clickType = static_cast<ClickType>(cmd[ClickCmdWidget::TypeIdx].toInt());
 
-    for(int i = 0, amount = cmd[1].toInt(); i < amount; i++)
+    for(int i = 0, amount = cmd[ClickCmdWidget::AmountIdx].toInt(); i < amount; i++)
     {
         switch(clickType)
         {
@@ -82,22 +90,22 @@ void Commands::Click(QStringList cmd)
 
 void Commands::CursorPos(QStringList cmd)
 {
-    SetCursorPos(cmd[1].toInt(), cmd[2].toInt());
+    SetCursorPos(cmd[SetCursorPosCmdWidget::XIdx].toInt(), cmd[SetCursorPosCmdWidget::YIdx].toInt());
 }
 
 void Commands::Drag(QStringList cmd)
 {
     mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
     Sleep(10);
-    SetCursorPos(cmd[1].toInt(), cmd[2].toInt());
+    SetCursorPos(cmd[DragCmdWidget::XIdx].toInt(), cmd[DragCmdWidget::YIdx].toInt());
     Sleep(10);
     mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
 }
 
 void Commands::Scroll(QStringList cmd)
 {
-    DWORD direction = (cmd[2] == "0" ? DWORD(SCROLLUP) : DWORD(SCROLLDOWN));
-    for(int i = 0, amount = cmd[1].toInt(); i <= amount; i++)
+    DWORD direction = (cmd[ScrollCmdWidget::DirIdx] == "0" ? DWORD(SCROLLUP) : DWORD(SCROLLDOWN));
+    for(int i = 0, amount = cmd[ScrollCmdWidget::AmountIdx].toInt(); i <= amount; i++)
     {
         mouse_event(MOUSEEVENTF_WHEEL, 0, 0, direction, 0);
         Sleep(10);
@@ -127,17 +135,41 @@ void Commands::HitKey(QStringList cmd)
 //        if(cmd[3] == "1")
 //            keybd_event(VK_SHIFT, 0xAA, KEYEVENTF_KEYUP, 0);
 //    }
-    QList<QKeySequence> keySequence = QKeySequence::listFromString(cmd[1]);
-    //TODO
-    Sleep(50);
+    QKeySequence keySequence = QKeySequence::fromString(cmd[HitKeyCmdWidget::KeySeqIdx]);
+    QString s = keySequence.toString();
+
+    QStringList parts = s.split('+');
+
+    QString part;
+    foreach(part, parts)
+    {
+        if(part.length() == 1 && part.at(0).isLetter())
+        {
+            char letter = part.at(0).toLatin1();
+            KeyboardUtilities::hitKey(letter);
+        }
+        else //It's a special key
+        {
+            KeyboardUtilities::pressSpecialKey(part.toStdString());
+        }
+    }
+
+    //Release the special keys
+    foreach(part, parts)
+    {
+        if(part.length() != 1)
+            KeyboardUtilities::releaseSpecialKey(part.toStdString());
+    }
+
+    Sleep(10);
 }
 
 void Commands::WriteText(QStringList cmd)
 {
-    KeyboardUtilities::writeText(cmd[1].toStdString());
+    KeyboardUtilities::writeText(cmd[WriteTextCmdWidget::TextIdx].toStdString());
 }
 
 void Commands::RunExe(QStringList cmd)
 {
-    WinExec(cmd[1].toUtf8(), SW_NORMAL);
+    WinExec(cmd[RunExeCmdWidget::PathIdx].toUtf8(), SW_NORMAL);
 }

@@ -1,6 +1,8 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
+#include <map>
+
 #include <QString>
 #include <QStringList>
 
@@ -16,10 +18,23 @@ enum CmdType
     RUNEXE = 7
 };
 
+static std::map<CmdType, int> CmdStrLen
+{
+    std::pair<CmdType, int>(CmdType::DELAY, 3),
+    std::pair<CmdType, int>(CmdType::CLICK, 3),
+    std::pair<CmdType, int>(CmdType::CURPOS, 3),
+    std::pair<CmdType, int>(CmdType::DRAG, 3),
+    std::pair<CmdType, int>(CmdType::SCROLL, 3),
+    std::pair<CmdType, int>(CmdType::HITKEY, 4),
+    std::pair<CmdType, int>(CmdType::WRITETEXT, 2),
+    std::pair<CmdType, int>(CmdType::RUNEXE, 2)
+};
+
 class Commands
 {
 public:
     static void ExecuteCommand(QString command);
+    static int GetCmdStrLen(CmdType cmdType) { return CmdStrLen.find(cmdType)->second; }
 
 private:
     static void Click(QStringList cmd);

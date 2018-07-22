@@ -22,6 +22,8 @@ class WriteTextCmdWidget : public CmdWidget
         QString GetText();
         void SetText(QString text);
 
+        static const int TextIdx = 1;
+
     private:
         Ui::WriteTextCmdWidget *ui;
 };

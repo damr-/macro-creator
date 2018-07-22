@@ -22,6 +22,9 @@ class ScrollCmdWidget : public CmdWidget
         int GetDirection();
         void SetScrollSettings(int amount, int direction);
 
+        static const int AmountIdx = 1;
+        static const int DirIdx = 2;
+
     private:
         Ui::ScrollCmdWidget *ui;
 

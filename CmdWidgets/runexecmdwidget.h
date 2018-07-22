@@ -22,6 +22,8 @@ class RunExeCmdWidget : public CmdWidget
         QString GetFilePath();
         void SetFilePath(QString filePath);
 
+        static const int PathIdx = 1;
+
     private slots:
         void chooseExe();
 

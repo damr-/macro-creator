@@ -4,79 +4,91 @@
 #include <string>
 #include <windows.h>
 
-std::map<std::string, BYTE> KeyboardUtilities::byteCodes =
+#include <QDebug>
+
+map<string, BYTE> KeyboardUtilities::byteCodes =
 {
-//    std::pair<std::string, BYTE>("Backspace", 0x08)
+    pair<string, BYTE>("Backspace", 0x08),
+    pair<string, BYTE>("Tab", 0x09),
+    pair<string, BYTE>("Return", 0x0D),
+    pair<string, BYTE>("Shift", 0x10),
+    pair<string, BYTE>("Ctrl", 0x11),
+    pair<string, BYTE>("Alt", 0x12),
+    pair<string, BYTE>("Pause", 0x15),
+    pair<string, BYTE>("CapsLock", 0x14),
+    pair<string, BYTE>("Escape", 0x1B),
+    pair<string, BYTE>("Space", 0x20),
+    pair<string, BYTE>("PgUp", 0x21),
+    pair<string, BYTE>("PgDown", 0x22),
+    pair<string, BYTE>("End", 0x23),
+    pair<string, BYTE>("Home", 0x24),
+    pair<string, BYTE>("Up", 0x26),
+    pair<string, BYTE>("Down", 0x28),
+    pair<string, BYTE>("Left", 0x25),
+    pair<string, BYTE>("Right", 0x27),
+    pair<string, BYTE>("Del", 0x2E),
+    pair<string, BYTE>("Ins", 0x2D),
+    pair<string, BYTE>("NumLock", 0x90),
+    pair<string, BYTE>("Scroll Lock", 0x91),
+    pair<string, BYTE>("Window", 0x5B),
+    pair<string, BYTE>("F1", 0x70),
+    pair<string, BYTE>("F2", 0x71),
+    pair<string, BYTE>("F3", 0x72),
+    pair<string, BYTE>("F4", 0x73),
+    pair<string, BYTE>("F5", 0x74),
+    pair<string, BYTE>("F6", 0x75),
+    pair<string, BYTE>("F7", 0x76),
+    pair<string, BYTE>("F8", 0x77),
+    pair<string, BYTE>("F9", 0x78),
+    pair<string, BYTE>("F10", 0x79),
+    pair<string, BYTE>("F11", 0x7A),
+    pair<string, BYTE>("F12", 0x7B),
+//    pair<string, BYTE>("NUMPAD0", 0x60),
+//    pair<string, BYTE>("NUMPAD1", 0x61),
+//    pair<string, BYTE>("NUMPAD2", 0x62),
+//    pair<string, BYTE>("NUMPAD3", 0x63),
+//    pair<string, BYTE>("NUMPAD4", 0x64),
+//    pair<string, BYTE>("NUMPAD5", 0x65),
+//    pair<string, BYTE>("NUMPAD6", 0x66),
+//    pair<string, BYTE>("NUMPAD7", 0x67),
+//    pair<string, BYTE>("NUMPAD8", 0x68),
+//    pair<string, BYTE>("NUMPAD9", 0x69)
 };
 
-std::map<std::string, BYTE> KeyboardUtilities::GetByteCodes()
-{
-    if(byteCodes.size() == 0)
-    {
-        byteCodes.insert( std::pair<std::string, BYTE>("Backspace", 0x08) );
-        byteCodes.insert( std::pair<std::string, BYTE>("Tab", 0x09) );
-        byteCodes.insert( std::pair<std::string, BYTE>("Return", 0x0D) );
-        byteCodes.insert( std::pair<std::string, BYTE>("Pause", 0x15) );
-        byteCodes.insert( std::pair<std::string, BYTE>("Caps Lock", 0x14) );
-        byteCodes.insert( std::pair<std::string, BYTE>("Escape", 0x1B) );
-        byteCodes.insert( std::pair<std::string, BYTE>("Space", 0x20));
-        byteCodes.insert( std::pair<std::string, BYTE>("Page Up", 0x21));
-        byteCodes.insert( std::pair<std::string, BYTE>("Page Down", 0x22));
-        byteCodes.insert( std::pair<std::string, BYTE>("End", 0x23));
-        byteCodes.insert( std::pair<std::string, BYTE>("Home", 0x24));
-        byteCodes.insert( std::pair<std::string, BYTE>("Arrow Up", 0x26));
-        byteCodes.insert( std::pair<std::string, BYTE>("Arrow Down", 0x28));
-        byteCodes.insert( std::pair<std::string, BYTE>("Arrow Left", 0x25));
-        byteCodes.insert( std::pair<std::string, BYTE>("Arrow Right", 0x27));
-        byteCodes.insert( std::pair<std::string, BYTE>("Delete", 0x2E));
-        byteCodes.insert( std::pair<std::string, BYTE>("Insert", 0x2D));
-        byteCodes.insert( std::pair<std::string, BYTE>("NUM Lock", 0x90));
-        byteCodes.insert( std::pair<std::string, BYTE>("Scroll Lock", 0x91));
-        byteCodes.insert( std::pair<std::string, BYTE>("Window", 0x5B));
-        byteCodes.insert( std::pair<std::string, BYTE>("F1", 0x70));
-        byteCodes.insert( std::pair<std::string, BYTE>("F2", 0x71));
-        byteCodes.insert( std::pair<std::string, BYTE>("F3", 0x72));
-        byteCodes.insert( std::pair<std::string, BYTE>("F4", 0x73));
-        byteCodes.insert( std::pair<std::string, BYTE>("F5", 0x74));
-        byteCodes.insert( std::pair<std::string, BYTE>("F6", 0x75));
-        byteCodes.insert( std::pair<std::string, BYTE>("F7", 0x76));
-        byteCodes.insert( std::pair<std::string, BYTE>("F8", 0x77));
-        byteCodes.insert( std::pair<std::string, BYTE>("F9", 0x78));
-        byteCodes.insert( std::pair<std::string, BYTE>("F10", 0x79));
-        byteCodes.insert( std::pair<std::string, BYTE>("F11", 0x7A));
-        byteCodes.insert( std::pair<std::string, BYTE>("F12", 0x7B));
-        byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD0", 0x60));
-        byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD1", 0x61));
-        byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD2", 0x62));
-        byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD3", 0x63));
-        byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD4", 0x64));
-        byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD5", 0x65));
-        byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD6", 0x66));
-        byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD7", 0x67));
-        byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD8", 0x68));
-        byteCodes.insert( std::pair<std::string, BYTE>("NUMPAD9", 0x69));
-    }
-    return byteCodes;
-}
-
-void KeyboardUtilities::writeText(std::string text)
+void KeyboardUtilities::writeText(string text)
 {
     for(unsigned int i = 0; i < text.length(); ++i)
     {
         if(isupper(text[i]))
             keybd_event(VK_SHIFT, 0xAA, 0, 0);
-        keybd_event(VkKeyScan(text[i]), 0, KEYEVENTF_EXTENDEDKEY, 0);
-        keybd_event(VkKeyScan(text[i]), 0, KEYEVENTF_KEYUP, 0);
+        hitKey(text[i]);
         if(isupper(text[i]))
             keybd_event(VK_SHIFT, 0xAA, KEYEVENTF_KEYUP, 0);
         Sleep(10);
     }
 }
 
-void KeyboardUtilities::pressVK(std::string vk)
+void KeyboardUtilities::hitKey(char key)
+{
+    BYTE kscan = BYTE(VkKeyScan(WCHAR(key)));
+    keybd_event(kscan, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
+    keybd_event(kscan, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+}
+
+void KeyboardUtilities::hitSpecialKey(string vk)
+{
+    pressSpecialKey(vk);
+    releaseSpecialKey(vk);
+}
+
+void KeyboardUtilities::pressSpecialKey(string vk)
 {
     BYTE key = byteCodes.find(vk)->second;
-    keybd_event(key, 0, KEYEVENTF_EXTENDEDKEY, 0);
-    keybd_event(key, 0, KEYEVENTF_KEYUP, 0);
-    Sleep(50);
+    keybd_event(key, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
+}
+
+void KeyboardUtilities::releaseSpecialKey(string vk)
+{
+    BYTE key = byteCodes.find(vk)->second;
+    keybd_event(key, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
 }

@@ -13,6 +13,8 @@
 #include "CmdWidgets/cmdwidget.h"
 #include "defaultdelaywidget.h"
 
+#define OPTIONS_LEN 3
+
 namespace Ui {
 class MainWindow;
 }
@@ -64,6 +66,7 @@ private:
     QMenu contextMenu;
 
     //Running Macro
+    bool canRunMacro;
     bool isMacroRunning;
     int AllCommandsValid();
     void ExecuteCommands();
@@ -92,7 +95,7 @@ private:
     QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + "." + this->fileExtension; }
 
     bool tryLoadCmdsFromFile(QString pathPlusFilename);
-    void fillCommandListWidget(QStringList commandListStrings);
+    bool fillCommandListWidget(QStringList commandListStrings);
     QString getCmdString(int commandListIndex);
 };
 

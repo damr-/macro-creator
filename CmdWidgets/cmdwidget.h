@@ -26,6 +26,8 @@ class CmdWidget : public QWidget
 
         static CmdWidget* GetNewCommandWidget(CmdType cmdType);
 
+        static const int CmdTypeIdx = 0;
+
     protected:
         CmdType cmdType;
 

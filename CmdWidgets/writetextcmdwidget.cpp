@@ -1,6 +1,8 @@
 #include "writetextcmdwidget.h"
 #include "ui_writetextcmdwidget.h"
 
+#include <QRegExpValidator>
+
 WriteTextCmdWidget::WriteTextCmdWidget(QWidget *parent) :
     CmdWidget(parent),
     ui(new Ui::WriteTextCmdWidget)
@@ -9,7 +11,9 @@ WriteTextCmdWidget::WriteTextCmdWidget(QWidget *parent) :
 
     cmdType = CmdType::WRITETEXT;
 
-    //connect(ui->textEdit, SIGNAL(textChanged(QString)), this, SLOT("emit change signal"()));
+    connect(ui->textEdit, SIGNAL(textChanged(QString)), this, SLOT(emitCommandChangedSignal()));
+
+    ui->textEdit->setValidator(new QRegExpValidator( QRegExp("[A-Za-z0-9,.-#+ß/*]+"), this));
 }
 
 WriteTextCmdWidget::~WriteTextCmdWidget()

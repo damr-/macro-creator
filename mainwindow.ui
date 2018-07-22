@@ -175,8 +175,8 @@
     <addaction name="action3CursorPos"/>
     <addaction name="action4Drag"/>
     <addaction name="action5Scroll"/>
-    <addaction name="action7HitKey"/>
-    <addaction name="action6Write"/>
+    <addaction name="action6HitKey"/>
+    <addaction name="action7Write"/>
     <addaction name="action8RunExe"/>
    </widget>
    <widget class="QMenu" name="menuRun">
@@ -395,23 +395,23 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="action6Write">
+  <action name="action7Write">
    <property name="text">
     <string>Write text</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+6</string>
+    <string>Ctrl+7</string>
    </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>true</bool>
    </property>
   </action>
-  <action name="action7HitKey">
+  <action name="action6HitKey">
    <property name="text">
     <string>Hit key</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+7</string>
+    <string>Ctrl+6</string>
    </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>true</bool>

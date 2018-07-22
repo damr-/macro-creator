@@ -52,8 +52,11 @@
      <height>20</height>
     </rect>
    </property>
+   <property name="inputMask">
+    <string/>
+   </property>
    <property name="maxLength">
-    <number>50</number>
+    <number>100</number>
    </property>
    <property name="placeholderText">
     <string>your text...</string>

@@ -22,6 +22,9 @@ class SetCursorPosCmdWidget : public CmdWidget
         int GetY();
         void SetCoordinates(int x, int y);
 
+        static const int XIdx = 1;
+        static const int YIdx = 2;
+
     private:
         Ui::SetCursorPosCmdWidget *ui;
 };

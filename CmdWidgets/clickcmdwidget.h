@@ -37,6 +37,9 @@ class ClickCmdWidget : public CmdWidget
         ClickType GetClickType();
         void SetClickSettings(int amount, ClickType clickType);
 
+        static const int AmountIdx = 1;
+        static const int TypeIdx = 2;
+
     private slots:
         void clickAmountChanged(int amount);
 

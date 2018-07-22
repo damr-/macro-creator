@@ -22,6 +22,9 @@ class DelayCmdWidget : public CmdWidget
         int GetTimeScale();
         void SetWaitSettings(int GetAmount, int GetTimeScale);
 
+        static const int AmountIdx = 1;
+        static const int ScaleIdx = 2;
+
     private:
         Ui::DelayCmdWidget *ui;
 };
