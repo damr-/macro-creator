@@ -13,7 +13,8 @@
 #include "CmdWidgets/cmdwidget.h"
 #include "defaultdelaywidget.h"
 
-#define OPTIONS_LEN 3
+#define DELAY_OPTIONS_LEN 3
+#define WINDOW_OPTIONS_LEN 5
 
 namespace Ui {
 class MainWindow;

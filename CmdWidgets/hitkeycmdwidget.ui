@@ -58,7 +58,7 @@
   </widget>
   <widget class="QComboBox" name="specialKeyComboBox">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>
@@ -90,39 +90,24 @@
    </item>
    <item>
     <property name="text">
-     <string>Ctrl</string>
+     <string>Alt+Tab</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>Shift</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Alt</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Tab</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Window</string>
+     <string>Alt+F4</string>
     </property>
    </item>
   </widget>
   <widget class="QCheckBox" name="specialKeyCheckBox">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>
-     <x>240</x>
+     <x>220</x>
      <y>5</y>
-     <width>80</width>
+     <width>101</width>
      <height>20</height>
     </rect>
    </property>
@@ -132,16 +117,16 @@
     </font>
    </property>
    <property name="text">
-    <string>Special Key</string>
+    <string>Special keys</string>
    </property>
   </widget>
   <widget class="QPushButton" name="clearButton">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>5</y>
-     <width>20</width>
-     <height>20</height>
+     <x>191</x>
+     <y>6</y>
+     <width>18</width>
+     <height>18</height>
     </rect>
    </property>
    <property name="text">

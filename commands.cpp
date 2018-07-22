@@ -114,54 +114,49 @@ void Commands::Scroll(QStringList cmd)
 
 void Commands::HitKey(QStringList cmd)
 {
-//    for(int i = 0; i < cmd[6].toInt(); ++i)
-//    {
-//        if(cmd[1] == "1")
-//            keybd_event(VK_CONTROL, 0x9D, 0, 0);
-//        if(cmd[2] == "1")
-//            keybd_event(VK_MENU, 0xB8, 0, 0);
-//        if(cmd[3] == "1")
-//            keybd_event(VK_SHIFT, 0xAA, 0, 0);
-
-//        if(cmd[4] == "1")
-//            KeyboardUtilities::writeText(cmd[5].toStdString());
-//        else
-//            KeyboardUtilities::pressVK(cmd[5].toStdString());
-
-//        if(cmd[1] == "1")
-//            keybd_event(VK_CONTROL, 0x9D, KEYEVENTF_KEYUP, 0);
-//        if(cmd[2] == "1")
-//            keybd_event(VK_MENU, 0xB8, KEYEVENTF_KEYUP, 0);
-//        if(cmd[3] == "1")
-//            keybd_event(VK_SHIFT, 0xAA, KEYEVENTF_KEYUP, 0);
-//    }
-    QKeySequence keySequence = QKeySequence::fromString(cmd[HitKeyCmdWidget::KeySeqIdx]);
-    QString s = keySequence.toString();
-
-    QStringList parts = s.split('+');
-
-    QString part;
-    foreach(part, parts)
+    if(cmd[HitKeyCmdWidget::SpcKeyIdx] == "1")
     {
-        if(part.length() == 1 && part.at(0).isLetter())
+        switch(cmd[HitKeyCmdWidget::SpcKeyTypeIdx].toInt())
         {
-            char letter = part.at(0).toLatin1();
-            KeyboardUtilities::hitKey(letter);
-        }
-        else //It's a special key
-        {
-            KeyboardUtilities::pressSpecialKey(part.toStdString());
+        case 1:
+            keybd_event(VK_MENU, 0xB8, 0, 0);
+            KeyboardUtilities::hitSpecialKey("Tab");
+            keybd_event(VK_MENU, 0xB8, KEYEVENTF_KEYUP, 0);
+            break;
+        case 2:
+            keybd_event(VK_MENU, 0xB8, 0, 0);
+            KeyboardUtilities::hitSpecialKey("F4");
+            keybd_event(VK_MENU, 0xB8, KEYEVENTF_KEYUP, 0);
+            break;
         }
     }
-
-    //Release the special keys
-    foreach(part, parts)
+    else
     {
-        if(part.length() != 1)
-            KeyboardUtilities::releaseSpecialKey(part.toStdString());
-    }
+        QKeySequence keySequence = QKeySequence::fromString(cmd[HitKeyCmdWidget::KeySeqIdx]);
+        QString s = keySequence.toString();
 
-    Sleep(10);
+        QStringList parts = s.split('+');
+
+        QString part;
+        foreach(part, parts)
+        {
+            if(part.length() == 1 && part.at(0).isLetter())
+            {
+                char letter = part.at(0).toLatin1();
+                KeyboardUtilities::hitKey(letter);
+            }
+            else //It's a special key
+            {
+                KeyboardUtilities::pressSpecialKey(part.toStdString());
+            }
+        }
+        //Release the special keys
+        foreach(part, parts)
+        {
+            if(part.length() != 1)
+                KeyboardUtilities::releaseSpecialKey(part.toStdString());
+        }
+    }
 }
 
 void Commands::WriteText(QStringList cmd)

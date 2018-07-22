@@ -24,6 +24,8 @@ class HitKeyCmdWidget : public CmdWidget
         int GetSpecialKeyIndex();
         QKeySequence GetKeySequence();
 
+        static const int SpcKeyIdx = 1;
+        static const int SpcKeyTypeIdx = 2;
         static const int KeySeqIdx = 3;
 
     private slots:

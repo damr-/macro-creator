@@ -309,12 +309,7 @@ void MainWindow::openMacro()
 
 void MainWindow::saveMacro()
 {
-//    canRunMacro = false;
-    if(!isUnsavedMacro && !hasUnsavedChanges)
-    {
-        ui->statusBar->showMessage("No changes to save", 3000);
-        return;
-    }
+    canRunMacro = false;
 
     QString pathPlusFileName = getFullFilePath(macroPath, macroName);
 
@@ -341,6 +336,12 @@ void MainWindow::saveMacro()
     QTextStream output(&file);
     QString out;
 
+    out.append(QString::number(x()) + "|" +
+               QString::number(y()) + "|" +
+               QString::number(width()) + "|" +
+               QString::number(height()) + "|" +
+               QString::number(isMaximized()) + "\n");
+
     DefaultDelaySettings *settings = defaultDelayWidget->GetSettings();
     out.append(QString::number(settings->enabled) + "|" +
                QString::number(settings->amount) + "|" +
@@ -357,7 +358,7 @@ void MainWindow::saveMacro()
 
     setUnsavedChanges(false);
     ui->statusBar->showMessage("Saved macro to " + pathPlusFileName, 3000);
-//    canRunMacro = true;
+    canRunMacro = true;
 }
 
 void MainWindow::saveMacroAs()
@@ -379,16 +380,38 @@ bool MainWindow::tryLoadCmdsFromFile(QString filename)
         return false;
 
     QTextStream input(&file);
-    QStringList options = input.readLine().split("|");
 
-    if(options.size() != OPTIONS_LEN){
+    //Read and apply window size
+    QStringList options = input.readLine().split("|");
+    if(options.size() != WINDOW_OPTIONS_LEN)
+    {
         showMessage("Error", filename + " is corrupted.\nAborted opening process.", QMessageBox::Icon::Critical);
         ui->statusBar->showMessage("Opening aborted", 3000);
         file.close();
         return false;
     }
 
-    //Apply saved options
+    int x = options[0].toInt();
+    int y = options[1].toInt();
+    int width  = options[2].toInt();
+    int height = options[3].toInt();
+    bool isMaximized = options[4].toInt();
+
+    move(x, y);
+    resize(width, height);
+    if(isMaximized)
+        showMaximized();
+
+    //Read and apply default delay options
+    options = input.readLine().split("|");
+    if(options.size() != DELAY_OPTIONS_LEN)
+    {
+        showMessage("Error", filename + " is corrupted.\nAborted opening process.", QMessageBox::Icon::Critical);
+        ui->statusBar->showMessage("Opening aborted", 3000);
+        file.close();
+        return false;
+    }
+
     DefaultDelaySettings *settings = new DefaultDelaySettings();
     settings->enabled = options[0].toInt();
     settings->amount = options[1].toInt();
@@ -547,6 +570,8 @@ void MainWindow::ExecuteCommands()
 
     for(int i = 0, total = ui->commandList->count(); i < total; i++)
     {
+        //TODO HIGHTLIGHT CURRENT ROW
+
         if(GetAsyncKeyState(VK_F7) && paused)
         {
             setWindowTitle(macroName + " - Running");
