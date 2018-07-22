@@ -56,7 +56,7 @@ private slots:
     void updateRowNumbers();
 
     void handleSelectionChanged();
-    void unselectAll();
+    void selectRow(int row);
 
     void handleCommandSettingChanged();
     void setUnsavedChanges();

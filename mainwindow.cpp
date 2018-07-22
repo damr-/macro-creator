@@ -524,15 +524,14 @@ void MainWindow::tryRunMacro()
         showMessage("Warning", msg, QMessageBox::Icon::Warning);
         ui->statusBar->showMessage(msg, 10000);
 
-        ui->commandList->setCurrentRow(result);
-        unselectAll();
-        ui->commandList->item(result)->setSelected(true);
+        selectRow(result);
         return;
     }
 
     isMacroRunning = true;
+    selectRow(0);
     setWindowTitle(macroName + " - Running");
-    setWindowOpacity(0.5);    
+    setWindowOpacity(0.75);
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowTransparentForInput);// | Qt::WindowDoesNotAcceptFocus);
     show();
 
@@ -570,8 +569,6 @@ void MainWindow::ExecuteCommands()
 
     for(int i = 0, total = ui->commandList->count(); i < total; i++)
     {
-        //TODO HIGHTLIGHT CURRENT ROW
-
         if(GetAsyncKeyState(VK_F7) && paused)
         {
             setWindowTitle(macroName + " - Running");
@@ -587,20 +584,18 @@ void MainWindow::ExecuteCommands()
 
         if(!paused)
         {
+            selectRow(i);
+            qApp->processEvents();
+
             Commands::ExecuteCommand(getCmdString(i));
 
             if(s->enabled)
                 Sleep(DWORD(s->amount) * (s->timeScale == 0 ? 1000 : 1));
-            qApp->processEvents();
-
-            //Internal default delay (maybe not necessary)
-            Sleep(50);
         }
         else
         {
             i--;
             qApp->processEvents();
-            Sleep(50);
         }
     }
 }
@@ -648,8 +643,7 @@ void MainWindow::duplicateSelected()
         newItems.append(newItem);
     }
 
-    ui->commandList->setCurrentRow(ui->commandList->row(newItems.at(0)));
-    unselectAll();
+    selectRow(ui->commandList->row(newItems.at(0)));
 
     QListWidgetItem *i;
     foreach(i, newItems)
@@ -685,16 +679,6 @@ void MainWindow::pasteClipboard()
 
 }
 
-void MainWindow::unselectAll()
-{
-    QList<QListWidgetItem *> selectedItems = ui->commandList->selectedItems();
-    for (int i = 0; i < selectedItems.size(); ++i)
-    {
-        QListWidgetItem *item = selectedItems.at(i);
-        item->setSelected(false);
-    }
-}
-
 CmdWidget* MainWindow::addNewCommand(int cmdType)
 {
     CmdWidget *itemWidget = CmdWidget::GetNewCommandWidget(CmdType(cmdType));
@@ -707,12 +691,9 @@ CmdWidget* MainWindow::addNewCommand(int cmdType)
 
     addCmdListItem(item, itemWidget, row);
 
-    ui->commandList->setCurrentRow(row);
-    unselectAll();
-    item->setSelected(true);
-    setUnsavedChanges(true);
-
+    selectRow(row);
     updateRowNumbers();
+    setUnsavedChanges(true);
     return itemWidget;
 }
 
@@ -740,6 +721,12 @@ void MainWindow::handleSelectionChanged()
     ui->actionECopy->setEnabled(false);
     ui->actionECut->setEnabled(false);
     ui->actionEPaste->setEnabled(false);
+}
+
+void MainWindow::selectRow(int row)
+{
+    ui->commandList->clearSelection();
+    ui->commandList->setCurrentRow(row);
 }
 
 void MainWindow::handleRowMoved(QModelIndex, int, int, QModelIndex, int)
