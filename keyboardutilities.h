@@ -10,12 +10,14 @@ using namespace std;
 class KeyboardUtilities
 {
 public:
-    static void writeText(string text);
+    static void WriteText(string text);
 
-    static void hitKey(char key);
-    static void hitSpecialKey(string vk);
-    static void pressSpecialKey(string vk);
-    static void releaseSpecialKey(string vk);
+    //PAR ... Press And Release
+    static void PARKey(char key);
+    static void PARSpecialKey(string vk);
+
+    static void PressSpecialKey(string vk);
+    static void ReleaseSpecialKey(string vk);
 
 private:
     static map<string, BYTE> byteCodes;

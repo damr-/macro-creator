@@ -8,7 +8,7 @@
 #include "dragcmdwidget.h"
 #include "scrollcmdwidget.h"
 #include "writetextcmdwidget.h"
-#include "hitkeycmdwidget.h"
+#include "presskeycmdwidget.h"
 #include "runexecmdwidget.h"
 
 CmdWidget* CmdWidget::GetNewCommandWidget(CmdType cmdType)
@@ -26,8 +26,8 @@ CmdWidget* CmdWidget::GetNewCommandWidget(CmdType cmdType)
             return new ScrollCmdWidget();
         case CmdType::WRITETEXT:
             return new WriteTextCmdWidget();
-        case CmdType::HITKEY:
-            return new HitKeyCmdWidget();
+        case CmdType::PRESSKEY:
+            return new PressKeyCmdWidget();
         default:
             return new RunExeCmdWidget();
     }

@@ -11,7 +11,7 @@ enum CmdType
     CURPOS = 2,
     DRAG = 3,
     SCROLL = 4,
-    HITKEY = 5,
+    PRESSKEY = 5,
     WRITETEXT = 6,
     RUNEXE = 7
 };
@@ -27,7 +27,7 @@ private:
     static void CursorPos(QStringList cmd);
     static void Drag(QStringList cmd);
     static void Scroll(QStringList cmd);
-    static void HitKey(QStringList cmd);
+    static void PressKey(QStringList cmd);
     static void WriteText(QStringList cmd);
     static void RunExe(QStringList cmd);
 };

@@ -16,12 +16,11 @@ WriteTextCmdWidget::WriteTextCmdWidget(QWidget *parent) :
     cmdType = CmdType::WRITETEXT;
 
     connect(ui->textLineEdit, SIGNAL(textChanged(QString)), this, SLOT(emitCommandChangedSignal()));
-    connect(ui->randomTextCheckBox, SIGNAL(toggled(bool)), this, SLOT(emitCommandChangedSignal()));
+    connect(ui->textTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCommandChangedSignal()));
     connect(ui->randomAmountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
     connect(ui->possibleCharsLineEdit, SIGNAL(textChanged(QString)), this, SLOT(emitCommandChangedSignal()));
 
-    connect(ui->randomTextCheckBox, SIGNAL(toggled(bool)), this, SLOT(updateVisibility()));
-    connect(ui->randomAmountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateGrammar()));
+    connect(ui->textTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateVisibility()));
 
     //
     QMenu *menu = new QMenu("Menu");
@@ -92,9 +91,9 @@ bool WriteTextCmdWidget::IsValidCmd()
     return (!GetIsRandom() && !GetText().isEmpty()) || (GetIsRandom() && !GetPossibleChars().isEmpty());
 }
 
-bool WriteTextCmdWidget::GetIsRandom()
+int WriteTextCmdWidget::GetIsRandom()
 {
-    return ui->randomTextCheckBox->isChecked();
+    return ui->textTypeComboBox->currentIndex() == 1;
 }
 
 QString WriteTextCmdWidget::GetPossibleChars()
@@ -114,7 +113,7 @@ QString WriteTextCmdWidget::GetText()
 
 void WriteTextCmdWidget::SetCmdSettings(bool isRandom, QString possibleChars, int randomAmount, QString text)
 {
-    ui->randomTextCheckBox->setChecked(isRandom);
+    ui->textTypeComboBox->setCurrentIndex(isRandom);
     ui->possibleCharsLineEdit->setText(possibleChars);
     ui->randomAmountSpinBox->setValue(randomAmount);
     ui->textLineEdit->setText(text);
@@ -125,17 +124,9 @@ void WriteTextCmdWidget::updateVisibility()
     ui->textLineEdit->setVisible(!GetIsRandom());
     ui->possibleCharsLineEdit->setVisible(GetIsRandom());
     ui->randomAmountSpinBox->setVisible(GetIsRandom());
-    ui->usingTextLabel->setVisible(GetIsRandom());
+    ui->randomL2->setVisible(GetIsRandom());
     ui->toolButton->setVisible(GetIsRandom());
-
-    QRect rect = ui->randomTextCheckBox->geometry();
-    ui->randomTextCheckBox->setGeometry((GetIsRandom() ? randomCBRandomX : randomCBDefaultX), rect.y(), rect.width(), rect.height());
-}
-
-void WriteTextCmdWidget::updateGrammar()
-{
-    QString add = ui->randomAmountSpinBox->value() > 1 ? "s" : "";
-    ui->usingTextLabel->setText("character" + add + " using");
+    ui->textLabel->setText(QString("text") + (GetIsRandom() ? " of length" : ":"));
 }
 
 void WriteTextCmdWidget::applyPreset(int presetIndex)

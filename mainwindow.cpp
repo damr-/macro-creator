@@ -26,8 +26,9 @@
 #include "CmdWidgets/dragcmdwidget.h"
 #include "CmdWidgets/writetextcmdwidget.h"
 #include "CmdWidgets/runexecmdwidget.h"
-#include "CmdWidgets/hitkeycmdwidget.h"
+#include "CmdWidgets/presskeycmdwidget.h"
 #include "CmdWidgets/scrollcmdwidget.h"
+#include "CmdWidgets/presskeycmdwidget.h"
 
 //#pragma comment(lib, "user32.lib")
 
@@ -64,7 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action3CursorPos, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
     connect(ui->action4Drag, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
     connect(ui->action5Scroll, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action6HitKey, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action6PressKey, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
     connect(ui->action7Write, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
     connect(ui->action8RunExe, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
 
@@ -73,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent) :
     addActionsMapper->setMapping(ui->action3CursorPos, 2);
     addActionsMapper->setMapping(ui->action4Drag, 3);
     addActionsMapper->setMapping(ui->action5Scroll, 4);
-    addActionsMapper->setMapping(ui->action6HitKey, 5);
+    addActionsMapper->setMapping(ui->action6PressKey, 5);
     addActionsMapper->setMapping(ui->action7Write, 6);
     addActionsMapper->setMapping(ui->action8RunExe, 7);
     connect(addActionsMapper, SIGNAL(mapped(int)), this, SLOT(addNewCommand(int)));
@@ -172,9 +173,7 @@ QMessageBox *MainWindow::showUnsavedChangesWarning(UnsavedChangesMessageResult &
 
     msgbox->setText(tr("There are unsaved changes which will be lost."));
     msgbox->setWindowTitle("Warning!");
-
-    QPixmap icon(":/images/warning.png");
-    msgbox->setIconPixmap(icon);
+    msgbox->setIcon(QMessageBox::Icon::Warning);
 
     msgbox->addButton(btn1, QMessageBox::ActionRole);
     msgbox->addButton(btn2, QMessageBox::ActionRole);
@@ -483,23 +482,35 @@ bool MainWindow::fillCommandListWidget(QStringList commandListStrings)
                             list[ScrollCmdWidget::AmountIdx].toInt(),
                             list[ScrollCmdWidget::DirIdx].toInt());
                 break;
-            case CmdType::HITKEY:
-                qobject_cast<HitKeyCmdWidget*>(newWidget)->SetCmdSettings(
-                            list[HitKeyCmdWidget::SpcKeyIdx].toInt(),
-                            list[HitKeyCmdWidget::SpcKeyTypeIdx].toInt(),
-                            QKeySequence::fromString(list[HitKeyCmdWidget::KeySeqIdx]));
+            case CmdType::PRESSKEY:
+            {
+                PressKeyCmdWidget::Modifiers mod = PressKeyCmdWidget::Modifiers(
+                            list[PressKeyCmdWidget::ModCTRLIdx].toInt(),
+                            list[PressKeyCmdWidget::ModSHIFTIdx].toInt(),
+                            list[PressKeyCmdWidget::ModALTIdx].toInt());
+
+                qobject_cast<PressKeyCmdWidget*>(newWidget)->SetCmdSettings(
+                            mod,
+                            list[PressKeyCmdWidget::KeyTypeIdx].toInt(),
+                            list[PressKeyCmdWidget::LetterIdx],
+                            list[PressKeyCmdWidget::SeqLetterIdx],
+                            list[PressKeyCmdWidget::SpcKeyIndexIdx].toInt());
                 break;
+            }
             case CmdType::WRITETEXT:
                 qobject_cast<WriteTextCmdWidget*>(newWidget)->SetCmdSettings(
-                            list[WriteTextCmdWidget::IsRandomIdx].toInt(),
+                            list[WriteTextCmdWidget::TypeIdx].toInt(),
                             list[WriteTextCmdWidget::CharsIdx],
                             list[WriteTextCmdWidget::AmountIdx].toInt(),
                             list[WriteTextCmdWidget::TextIdx]);
                 break;
             case CmdType::RUNEXE:
-                qobject_cast<RunExeCmdWidget*>(newWidget)->SetCmdSettings(
-                            list[RunExeCmdWidget::PathIdx]);
+            {
+                QString path = list[RunExeCmdWidget::PathIdx];
+                path = path.length() == 0 ? "" : path;
+                qobject_cast<RunExeCmdWidget*>(newWidget)->SetCmdSettings(path);
                 break;
+            }
         }
         addCmdListItem(newItem, newWidget, i);
     }

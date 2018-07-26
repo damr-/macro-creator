@@ -23,20 +23,19 @@ class WriteTextCmdWidget : public CmdWidget
         int GetCmdStrLen();
         bool IsValidCmd();
 
-        bool GetIsRandom();
+        int GetIsRandom();
         QString GetPossibleChars();
         int GetRandomAmount();
         QString GetText();
         void SetCmdSettings(bool isRandom, QString possibleChars, int randomAmount, QString text);
 
-        static const int IsRandomIdx = 1;
+        static const int TypeIdx = 1;
         static const int CharsIdx = 2;
         static const int AmountIdx = 3;
         static const int TextIdx = 4;
 
     private slots:
         void updateVisibility();
-        void updateGrammar();
         void applyPreset(int presetIndex);
 
     private:

@@ -175,7 +175,7 @@
     <addaction name="action3CursorPos"/>
     <addaction name="action4Drag"/>
     <addaction name="action5Scroll"/>
-    <addaction name="action6HitKey"/>
+    <addaction name="action6PressKey"/>
     <addaction name="action7Write"/>
     <addaction name="action8RunExe"/>
    </widget>
@@ -338,6 +338,9 @@
    <property name="text">
     <string>Delay</string>
    </property>
+   <property name="toolTip">
+    <string>Add a delay</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+1</string>
    </property>
@@ -350,7 +353,7 @@
     <string>Click</string>
    </property>
    <property name="toolTip">
-    <string>Add a command to make a mouse click</string>
+    <string>Add a 'Mouse click' command</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+2</string>
@@ -377,6 +380,9 @@
    <property name="text">
     <string>Drag</string>
    </property>
+   <property name="toolTip">
+    <string>Add a command to drag the mouse cursor</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+4</string>
    </property>
@@ -387,6 +393,9 @@
   <action name="action5Scroll">
    <property name="text">
     <string>Scroll</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a command to scroll the mouse wheel</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+5</string>
@@ -399,6 +408,9 @@
    <property name="text">
     <string>Write text</string>
    </property>
+   <property name="toolTip">
+    <string>Add a command to write a text</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+7</string>
    </property>
@@ -406,9 +418,12 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="action6HitKey">
+  <action name="action6PressKey">
    <property name="text">
-    <string>Hit key</string>
+    <string>Press key</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a command to press a key</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+6</string>
@@ -420,6 +435,9 @@
   <action name="action8RunExe">
    <property name="text">
     <string>Run .exe</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a command to run an '.exe'</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+8</string>
@@ -435,6 +453,9 @@
    </property>
    <property name="text">
     <string>Start</string>
+   </property>
+   <property name="toolTip">
+    <string>Start the macro</string>
    </property>
   </action>
   <action name="actionRPause">

@@ -17,9 +17,9 @@ HEADERS  += mainwindow.h \
     CmdWidgets/setcursorposcmdwidget.h \
     defaultdelaywidget.h \
     CmdWidgets/delaycmdwidget.h \
-    CmdWidgets/hitkeycmdwidget.h \
     CmdWidgets/writetextcmdwidget.h \
-    CmdWidgets/runexecmdwidget.h
+    CmdWidgets/runexecmdwidget.h \
+    CmdWidgets/presskeycmdwidget.h
 
 SOURCES += main.cpp \
         mainwindow.cpp \
@@ -32,9 +32,9 @@ SOURCES += main.cpp \
     CmdWidgets/setcursorposcmdwidget.cpp \
     defaultdelaywidget.cpp \
     CmdWidgets/delaycmdwidget.cpp \
-    CmdWidgets/hitkeycmdwidget.cpp \
     CmdWidgets/writetextcmdwidget.cpp \
-    CmdWidgets/runexecmdwidget.cpp
+    CmdWidgets/runexecmdwidget.cpp \
+    CmdWidgets/presskeycmdwidget.cpp
 
 FORMS    += mainwindow.ui \
     CmdWidgets/cmdwidget.ui \
@@ -44,10 +44,10 @@ FORMS    += mainwindow.ui \
     CmdWidgets/setcursorposcmdwidget.ui \
     defaultdelaywidget.ui \
     CmdWidgets/delaycmdwidget.ui \
-    CmdWidgets/hitkeycmdwidget.ui \
     CmdWidgets/writetextcmdwidget.ui \
     old_mainwindow.ui \
-    CmdWidgets/runexecmdwidget.ui
+    CmdWidgets/runexecmdwidget.ui \
+    CmdWidgets/presskeycmdwidget.ui
 
 RESOURCES += \
     resources.qrc

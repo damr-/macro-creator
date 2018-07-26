@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>480</width>
     <height>30</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>400</width>
+    <width>480</width>
     <height>30</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>400</width>
+    <width>480</width>
     <height>30</height>
    </size>
   </property>
@@ -30,7 +30,7 @@
     <rect>
      <x>40</x>
      <y>4</y>
-     <width>60</width>
+     <width>51</width>
      <height>20</height>
     </rect>
    </property>
@@ -46,7 +46,7 @@
   <widget class="QLineEdit" name="textLineEdit">
    <property name="geometry">
     <rect>
-     <x>80</x>
+     <x>180</x>
      <y>5</y>
      <width>150</width>
      <height>20</height>
@@ -59,33 +59,35 @@
     <number>100</number>
    </property>
    <property name="placeholderText">
-    <string>your text...</string>
+    <string>Your text</string>
    </property>
    <property name="clearButtonEnabled">
     <bool>false</bool>
    </property>
   </widget>
-  <widget class="QCheckBox" name="randomTextCheckBox">
-   <property name="geometry">
-    <rect>
-     <x>300</x>
-     <y>5</y>
-     <width>71</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Random</string>
-   </property>
-  </widget>
   <widget class="QSpinBox" name="randomAmountSpinBox">
    <property name="geometry">
     <rect>
-     <x>75</x>
+     <x>230</x>
      <y>5</y>
-     <width>25</width>
+     <width>30</width>
      <height>20</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>30</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>30</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string>The amount of characters randomly written</string>
    </property>
    <property name="buttonSymbols">
     <enum>QAbstractSpinBox::NoButtons</enum>
@@ -103,11 +105,29 @@
   <widget class="QLineEdit" name="possibleCharsLineEdit">
    <property name="geometry">
     <rect>
-     <x>200</x>
+     <x>300</x>
      <y>5</y>
-     <width>75</width>
+     <width>150</width>
      <height>20</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>150</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>150</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string>The characters used for writing a random text</string>
+   </property>
+   <property name="statusTip">
+    <string/>
    </property>
    <property name="text">
     <string/>
@@ -119,32 +139,29 @@
     <string>used chars</string>
    </property>
   </widget>
-  <widget class="QLabel" name="usingTextLabel">
-   <property name="geometry">
-    <rect>
-     <x>103</x>
-     <y>5</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>character using</string>
-   </property>
-  </widget>
   <widget class="QToolButton" name="toolButton">
    <property name="geometry">
     <rect>
-     <x>275</x>
-     <y>5</y>
+     <x>450</x>
+     <y>6</y>
      <width>20</width>
      <height>20</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string>Select a preset of characters</string>
    </property>
    <property name="text">
     <string/>
@@ -159,17 +176,95 @@
     <enum>Qt::DownArrow</enum>
    </property>
   </widget>
-  <zorder>writeTextLabel</zorder>
-  <zorder>textLineEdit</zorder>
-  <zorder>randomTextCheckBox</zorder>
-  <zorder>randomAmountSpinBox</zorder>
-  <zorder>usingTextLabel</zorder>
-  <zorder>possibleCharsLineEdit</zorder>
-  <zorder>toolButton</zorder>
+  <widget class="QComboBox" name="textTypeComboBox">
+   <property name="geometry">
+    <rect>
+     <x>75</x>
+     <y>3</y>
+     <width>70</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>70</width>
+     <height>25</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>70</width>
+     <height>25</height>
+    </size>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <property name="maxCount">
+    <number>20</number>
+   </property>
+   <item>
+    <property name="text">
+     <string>given</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>random</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="textLabel">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>5</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>text of length</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="randomL2">
+   <property name="geometry">
+    <rect>
+     <x>265</x>
+     <y>5</y>
+     <width>35</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>35</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>35</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>using</string>
+   </property>
+  </widget>
  </widget>
  <tabstops>
   <tabstop>randomAmountSpinBox</tabstop>
-  <tabstop>randomTextCheckBox</tabstop>
   <tabstop>textLineEdit</tabstop>
   <tabstop>possibleCharsLineEdit</tabstop>
   <tabstop>toolButton</tabstop>
