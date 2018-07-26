@@ -32,10 +32,11 @@ class ClickCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
+        int GetCmdStrLen();
 
         int GetClickAmount();
         ClickType GetClickType();
-        void SetClickSettings(int amount, ClickType clickType);
+        void SetCmdSettings(int amount, ClickType clickType);
 
         static const int AmountIdx = 1;
         static const int TypeIdx = 2;

@@ -45,6 +45,11 @@ CmdWidget::~CmdWidget()
     delete ui;
 }
 
+int CmdWidget::GetCmdStrLen()
+{
+    return 0;
+}
+
 QString CmdWidget::GetCmdString()
 {
     return QString("CmdWidget");

@@ -54,7 +54,7 @@ void Commands::Click(QStringList cmd)
 {
     ClickType clickType = static_cast<ClickType>(cmd[ClickCmdWidget::TypeIdx].toInt());
 
-    for(int i = 0, amount = cmd[ClickCmdWidget::AmountIdx].toInt(); i < amount; i++)
+    for(int i = 0, amount = cmd[ClickCmdWidget::AmountIdx].toInt(); i < amount; ++i)
     {
         switch(clickType)
         {
@@ -105,7 +105,7 @@ void Commands::Drag(QStringList cmd)
 void Commands::Scroll(QStringList cmd)
 {
     DWORD direction = (cmd[ScrollCmdWidget::DirIdx] == "0" ? DWORD(SCROLLUP) : DWORD(SCROLLDOWN));
-    for(int i = 0, amount = cmd[ScrollCmdWidget::AmountIdx].toInt(); i <= amount; i++)
+    for(int i = 0, amount = cmd[ScrollCmdWidget::AmountIdx].toInt(); i <= amount; ++i)
     {
         mouse_event(MOUSEEVENTF_WHEEL, 0, 0, direction, 0);
         Sleep(10);
@@ -161,7 +161,21 @@ void Commands::HitKey(QStringList cmd)
 
 void Commands::WriteText(QStringList cmd)
 {
-    KeyboardUtilities::writeText(cmd[WriteTextCmdWidget::TextIdx].toStdString());
+    if(cmd[WriteTextCmdWidget::IsRandomIdx].toInt() == 0)
+        KeyboardUtilities::writeText(cmd[WriteTextCmdWidget::TextIdx].toStdString());
+    else
+    {
+        QString possibleChars = cmd[WriteTextCmdWidget::CharsIdx];
+        int high = possibleChars.count();
+
+        QString text = "";
+        for(int i = 0, total = cmd[WriteTextCmdWidget::AmountIdx].toInt(); i < total; ++i)
+        {
+            int randIndex = qrand() % high;
+            text.append(possibleChars.at(randIndex));
+        }
+        KeyboardUtilities::writeText(text.toStdString());
+    }
 }
 
 void Commands::RunExe(QStringList cmd)

@@ -221,7 +221,7 @@ void MainWindow::checkUserKeyInput()
         {
             CmdWidget *w = addNewCommand(int(CmdType::CURPOS));
             SetCursorPosCmdWidget* widget = qobject_cast<SetCursorPosCmdWidget*>(w);
-            widget->SetCoordinates(x, y);
+            widget->SetCmdSettings(x, y);
             ui->statusBar->showMessage("Added new 'Cursor position' command for (" + QString::number(x) + "," + QString::number(y) + ")", 5000);
         }
         else
@@ -236,11 +236,11 @@ void MainWindow::checkUserKeyInput()
                 switch(widget->GetCmdType())
                 {
                     case CmdType::CURPOS:
-                        qobject_cast<SetCursorPosCmdWidget*>(widget)->SetCoordinates(x, y);
+                        qobject_cast<SetCursorPosCmdWidget*>(widget)->SetCmdSettings(x, y);
                         ui->statusBar->showMessage("Updated 'Cursor position': (" + QString::number(x) + "," + QString::number(y) + ")", 5000);
                         break;
                     case CmdType::DRAG:
-                        qobject_cast<DragCmdWidget*>(widget)->SetCoordinates(x, y);
+                        qobject_cast<DragCmdWidget*>(widget)->SetCmdSettings(x, y);
                         ui->statusBar->showMessage("Updated 'Drag': (" + QString::number(x) + "," + QString::number(y) + ")", 5000);
                         break;
                     default:
@@ -443,37 +443,63 @@ bool MainWindow::fillCommandListWidget(QStringList commandListStrings)
 {
     ui->commandList->clear();
 
-    for(int i = 0; i < commandListStrings.size(); ++i)
+    for(int i = 0; i < commandListStrings.size(); i++)
     {
         QStringList list = commandListStrings.at(i).split("|");
         CmdType commandTypeIndex = CmdType(list[0].toInt());
 
-        if(list.length() != Commands::GetCmdStrLen(static_cast<CmdType>(commandTypeIndex)))
+        QListWidgetItem *newItem = new QListWidgetItem();
+        CmdWidget *newWidget = CmdWidget::GetNewCommandWidget(commandTypeIndex);
+
+        if(list.length() != newWidget->GetCmdStrLen())
         {
             ui->commandList->clear();
             return false;
         }
 
-        QListWidgetItem *newItem = new QListWidgetItem();
-        CmdWidget *newWidget = CmdWidget::GetNewCommandWidget(commandTypeIndex);
-
         switch(commandTypeIndex){
             case CmdType::DELAY:
-                qobject_cast<DelayCmdWidget*>(newWidget)->SetWaitSettings(list[1].toInt(), list[2].toInt()); break;
+                qobject_cast<DelayCmdWidget*>(newWidget)->SetCmdSettings(
+                            list[DelayCmdWidget::AmountIdx].toInt(),
+                            list[DelayCmdWidget::ScaleIdx].toInt());
+                break;
             case CmdType::CLICK:
-                qobject_cast<ClickCmdWidget*>(newWidget)->SetClickSettings(list[1].toInt(), static_cast<ClickType>(list[2].toInt())); break;
+                qobject_cast<ClickCmdWidget*>(newWidget)->SetCmdSettings(
+                            list[ClickCmdWidget::AmountIdx].toInt(),
+                            static_cast<ClickType>(list[ClickCmdWidget::TypeIdx].toInt()));
+                break;
             case CmdType::CURPOS:
-                qobject_cast<SetCursorPosCmdWidget*>(newWidget)->SetCoordinates(list[1].toInt(), list[2].toInt());  break;
+                qobject_cast<SetCursorPosCmdWidget*>(newWidget)->SetCmdSettings(
+                            list[SetCursorPosCmdWidget::XIdx].toInt(),
+                            list[SetCursorPosCmdWidget::YIdx].toInt());
+                break;
             case CmdType::DRAG:
-                qobject_cast<DragCmdWidget*>(newWidget)->SetCoordinates(list[1].toInt(), list[2].toInt()); break;
+                qobject_cast<DragCmdWidget*>(newWidget)->SetCmdSettings(
+                            list[DragCmdWidget::XIdx].toInt(),
+                            list[DragCmdWidget::YIdx].toInt());
+                break;
             case CmdType::SCROLL:
-                qobject_cast<ScrollCmdWidget*>(newWidget)->SetScrollSettings(list[1].toInt(), list[2].toInt()); break;
+                qobject_cast<ScrollCmdWidget*>(newWidget)->SetCmdSettings(
+                            list[ScrollCmdWidget::AmountIdx].toInt(),
+                            list[ScrollCmdWidget::DirIdx].toInt());
+                break;
             case CmdType::HITKEY:
-                qobject_cast<HitKeyCmdWidget*>(newWidget)->SetSettings(list[1].toInt(), list[2].toInt(), QKeySequence::fromString(list[3])); break;
+                qobject_cast<HitKeyCmdWidget*>(newWidget)->SetCmdSettings(
+                            list[HitKeyCmdWidget::SpcKeyIdx].toInt(),
+                            list[HitKeyCmdWidget::SpcKeyTypeIdx].toInt(),
+                            QKeySequence::fromString(list[HitKeyCmdWidget::KeySeqIdx]));
+                break;
             case CmdType::WRITETEXT:
-                qobject_cast<WriteTextCmdWidget*>(newWidget)->SetText(list[1]); break;
+                qobject_cast<WriteTextCmdWidget*>(newWidget)->SetCmdSettings(
+                            list[WriteTextCmdWidget::IsRandomIdx].toInt(),
+                            list[WriteTextCmdWidget::CharsIdx],
+                            list[WriteTextCmdWidget::AmountIdx].toInt(),
+                            list[WriteTextCmdWidget::TextIdx]);
+                break;
             case CmdType::RUNEXE:
-                qobject_cast<RunExeCmdWidget*>(newWidget)->SetFilePath(list[1]); break;
+                qobject_cast<RunExeCmdWidget*>(newWidget)->SetCmdSettings(
+                            list[RunExeCmdWidget::PathIdx]);
+                break;
         }
         addCmdListItem(newItem, newWidget, i);
     }

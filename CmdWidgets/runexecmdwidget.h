@@ -17,10 +17,11 @@ class RunExeCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
+        int GetCmdStrLen();
         bool IsValidCmd();
 
         QString GetFilePath();
-        void SetFilePath(QString filePath);
+        void SetCmdSettings(QString filePath);
 
         static const int PathIdx = 1;
 

@@ -17,10 +17,11 @@ class SetCursorPosCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
+        int GetCmdStrLen();
 
         int GetX();
         int GetY();
-        void SetCoordinates(int x, int y);
+        void SetCmdSettings(int x, int y);
 
         static const int XIdx = 1;
         static const int YIdx = 2;

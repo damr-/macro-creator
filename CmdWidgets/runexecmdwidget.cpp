@@ -23,12 +23,17 @@ RunExeCmdWidget::~RunExeCmdWidget()
 
 void RunExeCmdWidget::CopyTo(CmdWidget *other)
 {
-    qobject_cast<RunExeCmdWidget*>(other)->SetFilePath(GetFilePath());
+    qobject_cast<RunExeCmdWidget*>(other)->SetCmdSettings(GetFilePath());
 }
 
 QString RunExeCmdWidget::GetCmdString()
 {
     return QString::number(int(cmdType)) + "|" + GetFilePath();
+}
+
+int RunExeCmdWidget::GetCmdStrLen()
+{
+    return 2;
 }
 
 bool RunExeCmdWidget::IsValidCmd()
@@ -42,7 +47,7 @@ QString RunExeCmdWidget::GetFilePath()
     return currentFilePath;
 }
 
-void RunExeCmdWidget::SetFilePath(QString filePath)
+void RunExeCmdWidget::SetCmdSettings(QString filePath)
 {
     currentFilePath = filePath;
     ui->exeName->setText(currentFilePath);

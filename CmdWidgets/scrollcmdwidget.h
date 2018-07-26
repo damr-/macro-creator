@@ -17,10 +17,11 @@ class ScrollCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
+        int GetCmdStrLen();
 
         int GetAmount();
         int GetDirection();
-        void SetScrollSettings(int amount, int direction);
+        void SetCmdSettings(int amount, int direction);
 
         static const int AmountIdx = 1;
         static const int DirIdx = 2;

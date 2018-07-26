@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
+    <width>400</width>
     <height>30</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>350</width>
+    <width>400</width>
     <height>30</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>350</width>
+    <width>400</width>
     <height>30</height>
    </size>
   </property>
@@ -28,7 +28,7 @@
   <widget class="QPushButton" name="selectFileButton">
    <property name="geometry">
     <rect>
-     <x>225</x>
+     <x>230</x>
      <y>5</y>
      <width>70</width>
      <height>20</height>
@@ -79,6 +79,10 @@
   <zorder>selectFileButton</zorder>
   <zorder>runExeLabel</zorder>
  </widget>
+ <tabstops>
+  <tabstop>exeName</tabstop>
+  <tabstop>selectFileButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

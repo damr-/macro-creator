@@ -22,12 +22,17 @@ ScrollCmdWidget::~ScrollCmdWidget()
 
 void ScrollCmdWidget::CopyTo(CmdWidget *other)
 {
-    qobject_cast<ScrollCmdWidget*>(other)->SetScrollSettings(GetAmount(), GetDirection());
+    qobject_cast<ScrollCmdWidget*>(other)->SetCmdSettings(GetAmount(), GetDirection());
 }
 
 QString ScrollCmdWidget::GetCmdString()
 {
     return QString::number(int(cmdType)) + "|" + QString::number(GetAmount()) + "|" + QString::number(GetDirection());
+}
+
+int ScrollCmdWidget::GetCmdStrLen()
+{
+    return 3;
 }
 
 int ScrollCmdWidget::GetAmount()
@@ -40,7 +45,7 @@ int ScrollCmdWidget::GetDirection()
     return ui->directionComboBox->currentIndex();
 }
 
-void ScrollCmdWidget::SetScrollSettings(int amount, int direction)
+void ScrollCmdWidget::SetCmdSettings(int amount, int direction)
 {
     ui->amountSpinBox->setValue(amount);
     ui->directionComboBox->setCurrentIndex(direction);

@@ -17,9 +17,10 @@ class HitKeyCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
+        int GetCmdStrLen();
         bool IsValidCmd();
 
-        void SetSettings(int isSpecialKey, int specialKeyIndex, QKeySequence keySequence);
+        void SetCmdSettings(int isSpecialKey, int specialKeyIndex, QKeySequence keySequence);
         int GetIsSpecialKey();
         int GetSpecialKeyIndex();
         QKeySequence GetKeySequence();

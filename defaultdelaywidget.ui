@@ -111,6 +111,11 @@
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>checkBox</tabstop>
+  <tabstop>amountBox</tabstop>
+  <tabstop>timeScaleBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

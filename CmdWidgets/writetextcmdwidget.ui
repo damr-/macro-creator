@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
+    <width>400</width>
     <height>30</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>350</width>
+    <width>400</width>
     <height>30</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>350</width>
+    <width>400</width>
     <height>30</height>
    </size>
   </property>
@@ -43,7 +43,7 @@
     <string>Write</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="textEdit">
+  <widget class="QLineEdit" name="textLineEdit">
    <property name="geometry">
     <rect>
      <x>80</x>
@@ -65,7 +65,115 @@
     <bool>false</bool>
    </property>
   </widget>
+  <widget class="QCheckBox" name="randomTextCheckBox">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>5</y>
+     <width>71</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Random</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="randomAmountSpinBox">
+   <property name="geometry">
+    <rect>
+     <x>75</x>
+     <y>5</y>
+     <width>25</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="buttonSymbols">
+    <enum>QAbstractSpinBox::NoButtons</enum>
+   </property>
+   <property name="minimum">
+    <number>1</number>
+   </property>
+   <property name="maximum">
+    <number>999</number>
+   </property>
+   <property name="value">
+    <number>1</number>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="possibleCharsLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>5</y>
+     <width>75</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="maxLength">
+    <number>100</number>
+   </property>
+   <property name="placeholderText">
+    <string>used chars</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="usingTextLabel">
+   <property name="geometry">
+    <rect>
+     <x>103</x>
+     <y>5</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>character using</string>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="toolButton">
+   <property name="geometry">
+    <rect>
+     <x>275</x>
+     <y>5</y>
+     <width>20</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="popupMode">
+    <enum>QToolButton::InstantPopup</enum>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextOnly</enum>
+   </property>
+   <property name="arrowType">
+    <enum>Qt::DownArrow</enum>
+   </property>
+  </widget>
+  <zorder>writeTextLabel</zorder>
+  <zorder>textLineEdit</zorder>
+  <zorder>randomTextCheckBox</zorder>
+  <zorder>randomAmountSpinBox</zorder>
+  <zorder>usingTextLabel</zorder>
+  <zorder>possibleCharsLineEdit</zorder>
+  <zorder>toolButton</zorder>
  </widget>
+ <tabstops>
+  <tabstop>randomAmountSpinBox</tabstop>
+  <tabstop>randomTextCheckBox</tabstop>
+  <tabstop>textLineEdit</tabstop>
+  <tabstop>possibleCharsLineEdit</tabstop>
+  <tabstop>toolButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

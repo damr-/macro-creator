@@ -17,10 +17,11 @@ class DelayCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
+        int GetCmdStrLen();
 
         int GetAmount();
         int GetTimeScale();
-        void SetWaitSettings(int GetAmount, int GetTimeScale);
+        void SetCmdSettings(int GetAmount, int GetTimeScale);
 
         static const int AmountIdx = 1;
         static const int ScaleIdx = 2;

@@ -22,12 +22,17 @@ SetCursorPosCmdWidget::~SetCursorPosCmdWidget()
 
 void SetCursorPosCmdWidget::CopyTo(CmdWidget *other)
 {
-    qobject_cast<SetCursorPosCmdWidget*>(other)->SetCoordinates(GetX(), GetY());
+    qobject_cast<SetCursorPosCmdWidget*>(other)->SetCmdSettings(GetX(), GetY());
 }
 
 QString SetCursorPosCmdWidget::GetCmdString()
 {
     return QString::number(int(CmdType::CURPOS)) +  "|" + QString::number(GetX()) + "|" + QString::number(GetY());
+}
+
+int SetCursorPosCmdWidget::GetCmdStrLen()
+{
+    return 3;
 }
 
 int SetCursorPosCmdWidget::GetX()
@@ -40,7 +45,7 @@ int SetCursorPosCmdWidget::GetY()
     return ui->yCoord->value();
 }
 
-void SetCursorPosCmdWidget::SetCoordinates(int x, int y)
+void SetCursorPosCmdWidget::SetCmdSettings(int x, int y)
 {
     ui->xCoord->setValue(x);
     ui->yCoord->setValue(y);

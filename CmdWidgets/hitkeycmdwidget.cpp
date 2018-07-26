@@ -27,12 +27,17 @@ HitKeyCmdWidget::~HitKeyCmdWidget()
 
 void HitKeyCmdWidget::CopyTo(CmdWidget *other)
 {
-    qobject_cast<HitKeyCmdWidget*>(other)->SetSettings(GetIsSpecialKey(), GetSpecialKeyIndex(), GetKeySequence());
+    qobject_cast<HitKeyCmdWidget*>(other)->SetCmdSettings(GetIsSpecialKey(), GetSpecialKeyIndex(), GetKeySequence());
 }
 
 QString HitKeyCmdWidget::GetCmdString()
 {
     return QString::number(int(cmdType)) + "|" + QString::number(GetIsSpecialKey()) + "|" + QString::number(GetSpecialKeyIndex()) + "|" + GetKeySequence().toString();
+}
+
+int HitKeyCmdWidget::GetCmdStrLen()
+{
+    return 4;
 }
 
 bool HitKeyCmdWidget::IsValidCmd()
@@ -43,7 +48,7 @@ bool HitKeyCmdWidget::IsValidCmd()
         return !ui->keySequenceEdit->keySequence().isEmpty();
 }
 
-void HitKeyCmdWidget::SetSettings(int isSpecialKey, int specialKeyIndex, QKeySequence keySequence)
+void HitKeyCmdWidget::SetCmdSettings(int isSpecialKey, int specialKeyIndex, QKeySequence keySequence)
 {
     ui->specialKeyCheckBox->setChecked(isSpecialKey);
     ui->specialKeyComboBox->setCurrentIndex(specialKeyIndex);
