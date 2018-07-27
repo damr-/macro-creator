@@ -491,7 +491,7 @@ bool MainWindow::fillCommandListWidget(QStringList commandListStrings)
 
                 qobject_cast<PressKeyCmdWidget*>(newWidget)->SetCmdSettings(
                             mod,
-                            list[PressKeyCmdWidget::KeyTypeIdx].toInt(),
+                            KeyType(list[PressKeyCmdWidget::KeyTypeIdx].toInt()),
                             list[PressKeyCmdWidget::LetterIdx],
                             list[PressKeyCmdWidget::SeqLetterIdx],
                             list[PressKeyCmdWidget::SpcKeyIndexIdx].toInt());

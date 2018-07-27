@@ -117,7 +117,7 @@ void Commands::PressKey(QStringList cmd)
     bool ctrl = cmd[PressKeyCmdWidget::ModCTRLIdx].toInt();
     bool shift = cmd[PressKeyCmdWidget::ModSHIFTIdx].toInt();
     bool alt = cmd[PressKeyCmdWidget::ModALTIdx].toInt();
-    int keyType = cmd[PressKeyCmdWidget::KeyTypeIdx].toInt();
+    KeyType keyType = KeyType(cmd[PressKeyCmdWidget::KeyTypeIdx].toInt());
     QString letter = cmd[PressKeyCmdWidget::LetterIdx];
     QString keySequLetter = cmd[PressKeyCmdWidget::SeqLetterIdx];
     int specialKeyIndex = cmd[PressKeyCmdWidget::SpcKeyIndexIdx].toInt();
@@ -129,15 +129,15 @@ void Commands::PressKey(QStringList cmd)
     if(alt)
         KeyboardUtilities::PressSpecialKey("Alt");
 
-    if(keyType == 0)
+    if(keyType == KeyType::LETTER)
     {
         KeyboardUtilities::WriteText(letter.toStdString());
     }
-    else if(keyType == 1)
+    else if(keyType == KeyType::KEYDET)
     {
         KeyboardUtilities::PARSpecialKey(keySequLetter.toStdString());
     }
-    else
+    else if(keyType == KeyType::SPECKEY)
     {
         if(specialKeyIndex == 1)
             KeyboardUtilities::PARSpecialKey("Tab");

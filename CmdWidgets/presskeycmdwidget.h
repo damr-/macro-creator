@@ -7,6 +7,14 @@ namespace Ui {
 class PressKeyCmdWidget;
 }
 
+enum KeyType
+{
+    NOTHING = 0,
+    LETTER = 1,
+    KEYDET = 2,
+    SPECKEY = 3
+};
+
 class PressKeyCmdWidget : public CmdWidget
 {
     Q_OBJECT
@@ -43,9 +51,9 @@ class PressKeyCmdWidget : public CmdWidget
             static const int ALTIdx = 2;
         };
 
-        void SetCmdSettings(Modifiers modifiers, int keyType, QString letter, QString keySequenceLetter, int specialKeyIndex);
+        void SetCmdSettings(Modifiers modifiers, KeyType keyType, QString letter, QString keySequenceLetter, int specialKeyIndex);
         Modifiers GetModifiers();
-        int GetKeyType();
+        KeyType GetKeyType();
         QString GetLetter();
         QString GetKeySequenceLetter();
         int GetSpecialKeyIndex();

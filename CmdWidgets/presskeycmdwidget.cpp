@@ -1,8 +1,6 @@
 #include "presskeycmdwidget.h"
 #include "ui_presskeycmdwidget.h"
 
-#include <QDebug>
-
 PressKeyCmdWidget::PressKeyCmdWidget(QWidget *parent) :
     CmdWidget(parent),
     ui(new Ui::PressKeyCmdWidget)
@@ -59,15 +57,18 @@ int PressKeyCmdWidget::GetCmdStrLen()
 
 bool PressKeyCmdWidget::IsValidCmd()
 {
-    if(GetKeyType() == 0)
-        return ui->letterLineEdit->text().isEmpty() == false;
-    else if(GetKeyType() == 1)
+    KeyType keyType = GetKeyType();
+
+    if(keyType == KeyType::LETTER)
+        return !ui->letterLineEdit->text().isEmpty();
+    else if(keyType == KeyType::KEYDET)
         return !ui->keySequenceEdit->keySequence().isEmpty();
-    else
+    else if(keyType == KeyType::SPECKEY)
         return ui->specialKeyComboBox->currentIndex() > 0;
+    return true;
 }
 
-void PressKeyCmdWidget::SetCmdSettings(Modifiers modifiers, int keyType, QString letter, QString keySequenceLetter, int specialKeyIndex)
+void PressKeyCmdWidget::SetCmdSettings(Modifiers modifiers, KeyType keyType, QString letter, QString keySequenceLetter, int specialKeyIndex)
 {
     if(modifiers.CTRL)
         ui->modifierListWidget->item(0)->setCheckState(Qt::CheckState::Checked);
@@ -76,7 +77,7 @@ void PressKeyCmdWidget::SetCmdSettings(Modifiers modifiers, int keyType, QString
     if(modifiers.ALT)
         ui->modifierListWidget->item(2)->setCheckState(Qt::CheckState::Checked);
 
-    ui->keyTypeComboBox->setCurrentIndex(keyType);
+    ui->keyTypeComboBox->setCurrentIndex(int(keyType));
     ui->letterLineEdit->setText(letter);
     ui->keySequenceEdit->setKeySequence(QKeySequence::fromString(keySequenceLetter));
     ui->specialKeyComboBox->setCurrentIndex(specialKeyIndex);
@@ -96,9 +97,9 @@ PressKeyCmdWidget::Modifiers PressKeyCmdWidget::GetModifiers()
     return mod;
 }
 
-int PressKeyCmdWidget::GetKeyType()
+KeyType PressKeyCmdWidget::GetKeyType()
 {
-    return ui->keyTypeComboBox->currentIndex();
+    return KeyType(ui->keyTypeComboBox->currentIndex());
 }
 
 QString PressKeyCmdWidget::GetLetter()
@@ -119,7 +120,19 @@ int PressKeyCmdWidget::GetSpecialKeyIndex()
 void PressKeyCmdWidget::truncateKeySequence()
 {
     QKeySequence sequence(ui->keySequenceEdit->keySequence()[0]);
-    QString letter = sequence.toString().split('+').last();
+
+    QString seq = sequence.toString();
+
+    if(seq == "+")
+        return;
+
+    QString letter = seq.split('+').last();
+
+    if(letter == "|" || letter == "F7")
+    {
+        ui->keySequenceEdit->clear();
+        return;
+    }
     ui->keySequenceEdit->setKeySequence(QKeySequence::fromString(letter));
 }
 
@@ -132,20 +145,20 @@ void PressKeyCmdWidget::updateVisibility()
 {
     int keyTypeIndex = ui->keyTypeComboBox->currentIndex();
 
-    if(keyTypeIndex == 0)
+    if(keyTypeIndex == KeyType::LETTER)
         ui->letterLineEdit->raise();
-    ui->letterLineEdit->setVisible(keyTypeIndex == 0);
+    ui->letterLineEdit->setVisible(keyTypeIndex == KeyType::LETTER);
 
 
-    if(keyTypeIndex == 1)
+    if(keyTypeIndex == KeyType::KEYDET)
     {
         ui->keySequenceEdit->raise();
         ui->keySequenceClearButton->raise();
     }
-    ui->keySequenceEdit->setVisible(keyTypeIndex == 1);
-    ui->keySequenceClearButton->setVisible(keyTypeIndex == 1);
+    ui->keySequenceEdit->setVisible(keyTypeIndex == KeyType::KEYDET);
+    ui->keySequenceClearButton->setVisible(keyTypeIndex == KeyType::KEYDET);
 
-    if(keyTypeIndex == 2)
+    if(keyTypeIndex == KeyType::SPECKEY)
         ui->specialKeyComboBox->raise();
-    ui->specialKeyComboBox->setVisible(keyTypeIndex == 2);
+    ui->specialKeyComboBox->setVisible(keyTypeIndex == KeyType::SPECKEY);
 }
