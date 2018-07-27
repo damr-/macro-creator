@@ -16,6 +16,7 @@
 #include <QTimer>
 #include <QPushButton>
 #include <QDebug>
+#include <QScreen>
 
 #include "defaultdelaywidget.h"
 
@@ -38,6 +39,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+
+    //Figure out and set maximum possible size for the window
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect rect = screen->geometry();
+    QSize maxSize = QSize(rect.width(), rect.height());
+    setMaximumSize(maxSize);
 
     //CheckKey Timer
     QTimer *timer = new QTimer(this);
@@ -262,9 +269,11 @@ void MainWindow::checkUserKeyInput()
 
 void MainWindow::newMacro()
 {
+    canRunMacro = false;
     MainWindow *m = new MainWindow();
     if(close())
         m->show();
+    canRunMacro = true;
 }
 
 void MainWindow::openMacro()
@@ -277,17 +286,22 @@ void MainWindow::openMacro()
     if(fileName.length() == 0)
     {
         ui->statusBar->showMessage("Opening aborted", 3000);
+        canRunMacro = true;
+        setUnsavedChanges(false);
+        newMacro();
         return;
     }
 
-    macroName = fileName;
-
+    //Save currently opened macro if necessary
     if(hasUnsavedChanges){
         UnsavedChangesMessageResult result = UnsavedChangesMessageResult::Cancel;
         QMessageBox* msgbox = showUnsavedChangesWarning(result);
 
         if(result == UnsavedChangesMessageResult::Cancel){
             ui->statusBar->showMessage("Opening aborted", 3000);
+            canRunMacro = true;
+            setUnsavedChanges(false);
+            newMacro();
             return;
         }
         if(result == UnsavedChangesMessageResult::Save)
@@ -295,13 +309,19 @@ void MainWindow::openMacro()
         msgbox->close();
     }
 
+    macroName = fileName;
+
     if(!tryLoadCmdsFromFile(fullFilePath))
+    {
+        canRunMacro = true;
+        setUnsavedChanges(false);
+        newMacro();
         return;
+    }
 
     ui->statusBar->showMessage("Opened " + fullFilePath, 3000);
     isUnsavedMacro = false;
     setUnsavedChanges(false);
-    RefreshWindowTitle();
     ui->actionFSaveAs->setEnabled(true);    
     canRunMacro = true;
 }
