@@ -13,7 +13,6 @@ map<string, BYTE> KeyboardUtilities::byteCodes =
     pair<string, BYTE>("Return", 0x0D),
     pair<string, BYTE>("Shift", 0x10),
     pair<string, BYTE>("Ctrl", 0x11),
-    pair<string, BYTE>("Alt", 0x12),
     pair<string, BYTE>("Pause", 0x13),
     pair<string, BYTE>("CapsLock", 0x14),
     pair<string, BYTE>("Escape", 0x1B),
@@ -91,6 +90,8 @@ map<string, BYTE> KeyboardUtilities::byteCodes =
 
     pair<string, BYTE>("NumLock", 0x90),
     pair<string, BYTE>("Scroll Lock", 0x91),
+
+    pair<string, BYTE>("Alt", 0xA4),
 };
 
 void KeyboardUtilities::WriteText(string text)

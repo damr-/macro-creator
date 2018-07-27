@@ -15,6 +15,7 @@ PressKeyCmdWidget::PressKeyCmdWidget(QWidget *parent) :
 
     connect(ui->keyTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateVisibility()));
 
+    connect(ui->modifierListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(emitCommandChangedSignal()));
     connect(ui->keyTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCommandChangedSignal()));
     connect(ui->letterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(emitCommandChangedSignal()));
     connect(ui->keySequenceEdit, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(emitCommandChangedSignal()));
@@ -131,10 +132,20 @@ void PressKeyCmdWidget::updateVisibility()
 {
     int keyTypeIndex = ui->keyTypeComboBox->currentIndex();
 
+    if(keyTypeIndex == 0)
+        ui->letterLineEdit->raise();
     ui->letterLineEdit->setVisible(keyTypeIndex == 0);
 
+
+    if(keyTypeIndex == 1)
+    {
+        ui->keySequenceEdit->raise();
+        ui->keySequenceClearButton->raise();
+    }
     ui->keySequenceEdit->setVisible(keyTypeIndex == 1);
     ui->keySequenceClearButton->setVisible(keyTypeIndex == 1);
 
+    if(keyTypeIndex == 2)
+        ui->specialKeyComboBox->raise();
     ui->specialKeyComboBox->setVisible(keyTypeIndex == 2);
 }

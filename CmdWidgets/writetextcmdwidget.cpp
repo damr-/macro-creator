@@ -121,7 +121,13 @@ void WriteTextCmdWidget::SetCmdSettings(bool isRandom, QString possibleChars, in
 
 void WriteTextCmdWidget::updateVisibility()
 {
+    if(GetIsRandom())
+        ui->textLineEdit->lower();
+    else
+        ui->textLineEdit->raise();
+
     ui->textLineEdit->setVisible(!GetIsRandom());
+
     ui->possibleCharsLineEdit->setVisible(GetIsRandom());
     ui->randomAmountSpinBox->setVisible(GetIsRandom());
     ui->randomL2->setVisible(GetIsRandom());
