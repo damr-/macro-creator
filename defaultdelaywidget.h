@@ -25,9 +25,10 @@ public:
 
     DefaultDelaySettings *GetSettings();
     void SetSettings(DefaultDelaySettings *settings);
+    void Reset();
 
 signals:
-    void SettingsChanged(DefaultDelaySettings *settings);
+    void SettingsChanged();
 
 private slots:
     void Toggle();

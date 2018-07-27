@@ -4,19 +4,20 @@
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
-#include <QList>
 #include <QDir>
+#include <QDebug>
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QList>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QScreen>
 #include <QScrollBar>
 #include <QSignalMapper>
 #include <QStringList>
+#include <QTextStream>
 #include <QTimer>
-#include <QPushButton>
-#include <QDebug>
-#include <QScreen>
 
 #include "defaultdelaywidget.h"
 
@@ -129,20 +130,20 @@ MainWindow::MainWindow(QWidget *parent) :
     //disable actions by default
     handleSelectionChanged();
 
-    //start with unnamed project
-    macroName = "unnamed";
-    macroPath = QDir::currentPath();
-    setUnsavedChanges(false);
-    isUnsavedMacro = true;
-    ui->actionFSaveAs->setEnabled(false);
-
     //Setup default delay widget
     defaultDelayWidget = new DefaultDelayWidget(this);
     ui->toolBar->addWidget(defaultDelayWidget);
-    connect(defaultDelayWidget, SIGNAL(SettingsChanged(DefaultDelaySettings*)), this, SLOT(setUnsavedChanges()));
+    connect(defaultDelayWidget, &DefaultDelayWidget::SettingsChanged, [=](){ setUnsavedChanges(true); });
 
-    isMacroRunning = false;
-    canRunMacro = true;
+    //start with unnamed macro
+    setupBlankMacro();
+
+    //Store default window properties
+    show();
+    defX = x();
+    defY = y();
+    defW = width();
+    defH = height();
 }
 
 MainWindow::~MainWindow()
@@ -267,69 +268,42 @@ void MainWindow::checkUserKeyInput()
     }
 }
 
-void MainWindow::newMacro()
+void MainWindow::setupBlankMacro()
 {
-    canRunMacro = false;
-    MainWindow *m = new MainWindow();
-    if(close())
-        m->show();
-    canRunMacro = true;
+    macroName = "unnamed";
+    macroPath = QDir::currentPath();
+    isUnsavedMacro = true;
+
+    ui->actionFSaveAs->setEnabled(false);
+
+    ui->commandList->clear();
+    ui->statusBar->clearMessage();
+
+    defaultDelayWidget->Reset();
+    setUnsavedChanges(false);
 }
 
-void MainWindow::openMacro()
+void MainWindow::newMacro()
 {
-    canRunMacro = false;
-
-    QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open macro"), macroPath, fileInfo);
-
-    QString fileName = QFileInfo(fullFilePath).baseName();
-    if(fileName.length() == 0)
+    if(hasUnsavedChanges)
     {
-        ui->statusBar->showMessage("Opening aborted", 3000);
-        canRunMacro = true;
-        setUnsavedChanges(false);
-        newMacro();
-        return;
-    }
-
-    //Save currently opened macro if necessary
-    if(hasUnsavedChanges){
         UnsavedChangesMessageResult result = UnsavedChangesMessageResult::Cancel;
         QMessageBox* msgbox = showUnsavedChangesWarning(result);
 
-        if(result == UnsavedChangesMessageResult::Cancel){
-            ui->statusBar->showMessage("Opening aborted", 3000);
-            canRunMacro = true;
-            setUnsavedChanges(false);
-            newMacro();
+        if(result == UnsavedChangesMessageResult::Cancel)
             return;
-        }
         if(result == UnsavedChangesMessageResult::Save)
             saveMacro();
         msgbox->close();
     }
 
-    macroName = fileName;
-
-    if(!tryLoadCmdsFromFile(fullFilePath))
-    {
-        canRunMacro = true;
-        setUnsavedChanges(false);
-        newMacro();
-        return;
-    }
-
-    ui->statusBar->showMessage("Opened " + fullFilePath, 3000);
-    isUnsavedMacro = false;
-    setUnsavedChanges(false);
-    ui->actionFSaveAs->setEnabled(true);    
-    canRunMacro = true;
+    setupBlankMacro();
+    move(defX, defY);
+    resize(defW, defH);
 }
 
 void MainWindow::saveMacro()
 {
-    canRunMacro = false;
-
     QString pathPlusFileName = getFullFilePath(macroPath, macroName);
 
     if(isUnsavedMacro){
@@ -355,17 +329,20 @@ void MainWindow::saveMacro()
     QTextStream output(&file);
     QString out;
 
+    //Write window properties
     out.append(QString::number(x()) + "|" +
                QString::number(y()) + "|" +
                QString::number(width()) + "|" +
                QString::number(height()) + "|" +
                QString::number(isMaximized()) + "\n");
 
+    //Write default delay settings
     DefaultDelaySettings *settings = defaultDelayWidget->GetSettings();
     out.append(QString::number(settings->enabled) + "|" +
                QString::number(settings->amount) + "|" +
                QString::number(settings->timeScale) + "\n");
 
+    //Write commands
     for(int i = 0; i < ui->commandList->count(); ++i)
     {
         out.append(getCmdString(i));
@@ -377,13 +354,56 @@ void MainWindow::saveMacro()
 
     setUnsavedChanges(false);
     ui->statusBar->showMessage("Saved macro to " + pathPlusFileName, 3000);
-    canRunMacro = true;
 }
 
 void MainWindow::saveMacroAs()
 {
     isUnsavedMacro = true;
     saveMacro();
+}
+
+void MainWindow::openMacro()
+{
+    QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open macro"), macroPath, fileInfo);
+
+    QString fileName = QFileInfo(fullFilePath).baseName();
+    if(fileName.length() == 0)
+    {
+        ui->statusBar->showMessage("Opening aborted", 3000);
+        setUnsavedChanges(false);
+        newMacro();
+        return;
+    }
+
+    if(hasUnsavedChanges)
+    {
+        UnsavedChangesMessageResult result = UnsavedChangesMessageResult::Cancel;
+        QMessageBox* msgbox = showUnsavedChangesWarning(result);
+
+        if(result == UnsavedChangesMessageResult::Cancel){
+            ui->statusBar->showMessage("Opening aborted", 3000);
+            setUnsavedChanges(false);
+            newMacro();
+            return;
+        }
+        if(result == UnsavedChangesMessageResult::Save)
+            saveMacro();
+        msgbox->close();
+    }
+
+    macroName = fileName;
+
+    if(!tryLoadCmdsFromFile(fullFilePath))
+    {
+        setUnsavedChanges(false);
+        newMacro();
+        return;
+    }
+
+    ui->statusBar->showMessage("Opened " + fullFilePath, 3000);
+    isUnsavedMacro = false;
+    setUnsavedChanges(false);
+    ui->actionFSaveAs->setEnabled(true);
 }
 
 bool MainWindow::tryLoadCmdsFromFile(QString filename)
@@ -460,8 +480,6 @@ bool MainWindow::tryLoadCmdsFromFile(QString filename)
 
 bool MainWindow::fillCommandListWidget(QStringList commandListStrings)
 {
-    ui->commandList->clear();
-
     for(int i = 0; i < commandListStrings.size(); i++)
     {
         QStringList list = commandListStrings.at(i).split("|");
@@ -540,20 +558,10 @@ bool MainWindow::fillCommandListWidget(QStringList commandListStrings)
     return true;
 }
 
-void MainWindow::RefreshWindowTitle()
-{
-    setWindowTitle(macroName + (hasUnsavedChanges ? "*" : "") + " - Personal Macro");
-}
-
-void MainWindow::setUnsavedChanges()
-{
-    setUnsavedChanges(true);
-}
-
-void MainWindow::setUnsavedChanges(bool newUnsavedChanges)
+void MainWindow::setUnsavedChanges(bool newUnsavedChanges = true)
 {
     hasUnsavedChanges = newUnsavedChanges;
-    RefreshWindowTitle();
+    setWindowTitle(macroName + (hasUnsavedChanges ? "*" : "") + " - Personal Macro");
 }
 
 QString MainWindow::getCmdString(int commandListIndex)
@@ -565,7 +573,7 @@ QString MainWindow::getCmdString(int commandListIndex)
 
 void MainWindow::tryRunMacro()
 {
-    if(!canRunMacro || isMacroRunning)
+    if(isMacroRunning)
         return;
 
     if(ui->commandList->count() == 0)
@@ -589,16 +597,16 @@ void MainWindow::tryRunMacro()
     selectRow(0);
     setWindowTitle(macroName + " - Running");
     setWindowOpacity(0.75);
-    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowTransparentForInput);// | Qt::WindowDoesNotAcceptFocus);
+    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowTransparentForInput);
     show();
 
     ExecuteCommands();
 
     setWindowOpacity(1);
-    setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint & ~Qt::WindowTransparentForInput);// & ~Qt::WindowDoesNotAcceptFocus);
+    setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint & ~Qt::WindowTransparentForInput);
     show();
 
-    RefreshWindowTitle();
+    setWindowTitle(macroName + " - Personal Macro");
     activateWindow();
     setFocus();
     raise();

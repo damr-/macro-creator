@@ -29,10 +29,11 @@ public:
     ~MainWindow();
 
 private slots:
-    //For catching the mouse position
+    //For catching the mouse position and the key to run the macro
     void checkUserKeyInput();
 
     //File Actions
+    void setupBlankMacro();
     void newMacro();
     void saveMacro();
     void saveMacroAs();
@@ -46,8 +47,9 @@ private slots:
     void handleRowMoved(QModelIndex, int, int, QModelIndex, int);
     CmdWidget *addNewCommand(int cmdType);
     void addCmdListItem(QListWidgetItem *item, CmdWidget *itemWidget, int row);
+    void setUnsavedChanges(bool newUnsavedChanges);
 
-    //List editing
+    //Commandlist editing
     void copySelected();
     void cutSelected();
     void pasteClipboard();
@@ -59,15 +61,14 @@ private slots:
     void selectRow(int row);
 
     void handleCommandSettingChanged();
-    void setUnsavedChanges();
 
 private:
     Ui::MainWindow *ui;
     DefaultDelayWidget *defaultDelayWidget;
     QMenu contextMenu;
+    int defX, defY, defW, defH;
 
     //Running Macro
-    bool canRunMacro;
     bool isMacroRunning;
     int AllCommandsValid();
     void ExecuteCommands();
@@ -82,9 +83,7 @@ private:
 
     bool isUnsavedMacro;
     bool hasUnsavedChanges;
-    void setUnsavedChanges(bool newUnsavedChanges);
     void closeEvent(QCloseEvent *event);
-    void RefreshWindowTitle();
     QMessageBox *showUnsavedChangesWarning(UnsavedChangesMessageResult &result);
     void showMessage(QString title, QString message, QMessageBox::Icon type);
 

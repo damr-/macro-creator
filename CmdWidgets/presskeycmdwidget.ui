@@ -319,8 +319,12 @@
   <zorder>keySequenceClearButton</zorder>
  </widget>
  <tabstops>
+  <tabstop>modifierListWidget</tabstop>
+  <tabstop>keyTypeComboBox</tabstop>
+  <tabstop>letterLineEdit</tabstop>
   <tabstop>keySequenceEdit</tabstop>
   <tabstop>keySequenceClearButton</tabstop>
+  <tabstop>specialKeyComboBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

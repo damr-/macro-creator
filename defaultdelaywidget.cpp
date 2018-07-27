@@ -35,6 +35,15 @@ void DefaultDelayWidget::SetSettings(DefaultDelaySettings *settings)
     ui->timeScaleBox->setCurrentIndex(settings->timeScale);
 }
 
+void DefaultDelayWidget::Reset()
+{
+    DefaultDelaySettings *settings = new DefaultDelaySettings();
+    settings->enabled = false;
+    settings->amount = 250;
+    settings->timeScale = 1;
+    SetSettings(settings);
+}
+
 void DefaultDelayWidget::Toggle()
 {
     bool enabled = !ui->amountBox->isEnabled();
@@ -45,5 +54,5 @@ void DefaultDelayWidget::Toggle()
 
 void DefaultDelayWidget::EmitSettingsChanged()
 {
-    emit SettingsChanged(GetSettings());
+    emit SettingsChanged();
 }
