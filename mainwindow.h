@@ -95,8 +95,8 @@ private:
     QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + "." + this->fileExtension; }
 
     bool tryLoadCmdsFromFile(QString pathPlusFilename);
-    bool fillCommandListWidget(QStringList commandListStrings);
-    QString getCmdString(int commandListIndex);
+    QList<QListWidgetItem *> fillCommandListWidget(QStringList cmdListStrings, int startRow, bool &success);
+    QString getCmdString(int cmdListIndex);
 };
 
 #endif // MAINWINDOW_H

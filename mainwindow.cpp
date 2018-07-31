@@ -3,6 +3,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QClipboard>
 #include <QCloseEvent>
 #include <QDir>
 #include <QDebug>
@@ -467,7 +468,9 @@ bool MainWindow::tryLoadCmdsFromFile(QString filename)
             commandListStrings.append(line);
     }while(!line.isNull());
 
-    if(!fillCommandListWidget(commandListStrings))
+    bool success;
+    QList<QListWidgetItem *> newItems = fillCommandListWidget(commandListStrings, 0, success);
+    if(!success)
     {
         showMessage("Error", filename + " is corrupted.\nAborted opening process.", QMessageBox::Icon::Critical);
         ui->statusBar->showMessage("Opening aborted", 3000);
@@ -478,12 +481,15 @@ bool MainWindow::tryLoadCmdsFromFile(QString filename)
     return true;
 }
 
-bool MainWindow::fillCommandListWidget(QStringList commandListStrings)
+QList<QListWidgetItem *> MainWindow::fillCommandListWidget(QStringList cmdListStrings, int startRow, bool &success)
 {
-    for(int i = 0; i < commandListStrings.size(); i++)
+    QList<QListWidgetItem *> newItems;
+    success = false;
+
+    for(int i = 0; i < cmdListStrings.size(); i++)
     {
-        QStringList list = commandListStrings.at(i).split("|");
-        CmdType commandTypeIndex = CmdType(list[0].toInt());
+        QStringList list = cmdListStrings.at(i).split("|");
+        CmdType commandTypeIndex = CmdType(list[CmdWidget::CmdTypeIdx].toInt());
 
         QListWidgetItem *newItem = new QListWidgetItem();
         CmdWidget *newWidget = CmdWidget::GetNewCommandWidget(commandTypeIndex);
@@ -491,7 +497,7 @@ bool MainWindow::fillCommandListWidget(QStringList commandListStrings)
         if(list.length() != newWidget->GetCmdStrLen())
         {
             ui->commandList->clear();
-            return false;
+            return newItems;
         }
 
         switch(commandTypeIndex){
@@ -550,12 +556,15 @@ bool MainWindow::fillCommandListWidget(QStringList commandListStrings)
                 break;
             }
         }
-        addCmdListItem(newItem, newWidget, i);
+        addCmdListItem(newItem, newWidget, startRow + i);
+        newItems.append(newItem);
     }
 
     updateRowNumbers();
-    ui->commandList->setCurrentRow(ui->commandList->count() - 1);
-    return true;
+    selectRow(ui->commandList->row(newItems.last()));
+
+    success = true;
+    return newItems;
 }
 
 void MainWindow::setUnsavedChanges(bool newUnsavedChanges = true)
@@ -564,9 +573,9 @@ void MainWindow::setUnsavedChanges(bool newUnsavedChanges = true)
     setWindowTitle(macroName + (hasUnsavedChanges ? "*" : "") + " - Personal Macro");
 }
 
-QString MainWindow::getCmdString(int commandListIndex)
+QString MainWindow::getCmdString(int cmdListIndex)
 {
-    QListWidgetItem* item = ui->commandList->item(commandListIndex);
+    QListWidgetItem* item = ui->commandList->item(cmdListIndex);
     QWidget* itemWidget = ui->commandList->itemWidget(item);
     return qobject_cast<CmdWidget*>(itemWidget)->GetCmdString();
 }
@@ -671,6 +680,64 @@ void MainWindow::showContextMenu(const QPoint &pos)
     contextMenu.exec(globalPos);
 }
 
+void MainWindow::copySelected()
+{
+    if(ui->commandList->selectedItems().size() == 0)
+        return;
+
+    //TODO selection seems to be depending on selection order, but the cmds should be ordered by row number
+
+    QClipboard *clipboard = QApplication::clipboard();
+    QList<QListWidgetItem *> selectedItems = ui->commandList->selectedItems();
+
+    QString clipBoardText = "";
+
+    for (int i = 0, total = selectedItems.size(); i < total; i++)
+    {
+        QListWidgetItem *item = selectedItems.at(i);
+        CmdWidget *selectedItemWidget = qobject_cast<CmdWidget*>(ui->commandList->itemWidget(item));
+        QString cmdStr = selectedItemWidget->GetCmdString();
+        clipBoardText.append(cmdStr + ";");
+    }
+
+    //Remove trailing ';'
+    clipBoardText.chop(1);
+
+    clipboard->setText(clipBoardText);
+}
+
+void MainWindow::cutSelected()
+{
+    copySelected();
+    deleteSelected();
+}
+
+void MainWindow::pasteClipboard()
+{
+    QClipboard *clipboard = QApplication::clipboard();
+
+    QString text = clipboard->text();
+
+    if(text.isEmpty())
+        return;
+
+    QStringList cmds = text.split(';');
+    bool success;
+    QList<QListWidgetItem *> newItems = fillCommandListWidget(cmds, ui->commandList->currentRow() + 1, success);
+
+    if(!success)
+        return;
+
+    selectRow(ui->commandList->row(newItems.at(0)));
+
+    QListWidgetItem *i;
+    foreach(i, newItems)
+        i->setSelected(true);
+
+    updateRowNumbers();
+    setUnsavedChanges(true);
+}
+
 void MainWindow::deleteSelected()
 {
     while(ui->commandList->selectedItems().length() > 0)
@@ -692,18 +759,18 @@ void MainWindow::duplicateSelected()
     QList<QListWidgetItem *> newItems;
     for (int i = 0, total = selectedItems.size(); i < total; ++i)
     {
-        QListWidgetItem *item = static_cast<QListWidgetItem *>(selectedItems.at(i));
-        QListWidgetItem *newItem = new QListWidgetItem();
+        QListWidgetItem *item = selectedItems.at(i);
 
         CmdWidget *selectedItemWidget = qobject_cast<CmdWidget*>(ui->commandList->itemWidget(item));
-        CmdType selectedItemCommandType = selectedItemWidget->GetCmdType();
+        CmdType selectedItemCmdType = selectedItemWidget->GetCmdType();
 
         //create new widget
-        CmdWidget *newWidget = CmdWidget::GetNewCommandWidget(selectedItemCommandType);
+        CmdWidget *newWidget = CmdWidget::GetNewCommandWidget(selectedItemCmdType);
 
         //copy widget values to new one
         selectedItemWidget->CopyTo(newWidget);
 
+        QListWidgetItem *newItem = new QListWidgetItem();
         addCmdListItem(newItem, newWidget, ui->commandList->row(item) + 1);
         newItems.append(newItem);
     }
@@ -729,21 +796,6 @@ void MainWindow::updateRowNumbers()
     }
 }
 
-void MainWindow::copySelected()
-{
-
-}
-
-void MainWindow::cutSelected()
-{
-
-}
-
-void MainWindow::pasteClipboard()
-{
-
-}
-
 CmdWidget* MainWindow::addNewCommand(int cmdType)
 {
     CmdWidget *itemWidget = CmdWidget::GetNewCommandWidget(CmdType(cmdType));
@@ -759,6 +811,9 @@ CmdWidget* MainWindow::addNewCommand(int cmdType)
     selectRow(row);
     updateRowNumbers();
     setUnsavedChanges(true);
+
+    //TODO fix issue when adding commands and then selecting multiple cmds with 'Shift': wrong items get selected
+
     return itemWidget;
 }
 
@@ -781,11 +836,11 @@ void MainWindow::handleSelectionChanged()
 
     ui->actionEDuplicate->setEnabled(itemSelected);
     ui->actionEDelete->setEnabled(itemSelected);
+    ui->actionECopy->setEnabled(itemSelected);
+    ui->actionECut->setEnabled(itemSelected);
 
-    //TODO
-    ui->actionECopy->setEnabled(false);
-    ui->actionECut->setEnabled(false);
-    ui->actionEPaste->setEnabled(false);
+    QClipboard *clipboard = QApplication::clipboard();
+    ui->actionEPaste->setEnabled(!clipboard->text().isEmpty());
 }
 
 void MainWindow::selectRow(int row)
