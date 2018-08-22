@@ -11,8 +11,8 @@ ScrollCmdWidget::ScrollCmdWidget(QWidget *parent) :
 
     connect(ui->amountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(scrollAmountChanged(int)));
 
-    connect(ui->amountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
-    connect(ui->directionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCommandChangedSignal()));
+    connect(ui->amountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->directionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCmdChangedSignal()));
 }
 
 ScrollCmdWidget::~ScrollCmdWidget()
@@ -28,11 +28,6 @@ void ScrollCmdWidget::CopyTo(CmdWidget *other)
 QString ScrollCmdWidget::GetCmdString()
 {
     return QString::number(int(cmdType)) + "|" + QString::number(GetAmount()) + "|" + QString::number(GetDirection());
-}
-
-int ScrollCmdWidget::GetCmdStrLen()
-{
-    return 3;
 }
 
 int ScrollCmdWidget::GetAmount()

@@ -42,11 +42,11 @@ private slots:
     //Macro Actions
     void tryRunMacro();
 
-    //NEW METHODS
     void showContextMenu(const QPoint&);
-    void handleRowMoved(QModelIndex, int, int, QModelIndex, int);
-    CmdWidget *addNewCommand(int cmdType);
+
+    CmdWidget *addNewCmd(int cmdType);
     void addCmdListItem(QListWidgetItem *item, CmdWidget *itemWidget, int row);
+
     void setUnsavedChanges(bool newUnsavedChanges);
 
     //Commandlist editing
@@ -57,10 +57,11 @@ private slots:
     void duplicateSelected();
     void updateRowNumbers();
 
+    void handleRowMoved(QModelIndex, int, int, QModelIndex, int);
     void handleSelectionChanged();
     void selectRow(int row);
 
-    void handleCommandSettingChanged();
+    void handleCmdSettingChanged(CmdWidget *widget);
 
 private:
     Ui::MainWindow *ui;
@@ -70,9 +71,12 @@ private:
 
     //Running Macro
     bool isMacroRunning;
-    int AllCommandsValid();
-    void ExecuteCommands();
-    void ExecuteCommand(QString cmd);
+    int AllCmdsValid();
+    void ExecuteCmds();
+    void SaveOrRestoreGotoTotalAmounts(bool save);
+
+    //Function for comparing two cmds
+    QList<QListWidgetItem *> GetSortedSelectedItems();
 
     //Unsafed changes
     enum UnsavedChangesMessageResult {
@@ -81,7 +85,7 @@ private:
         Cancel = 2
     };
 
-    bool isMacroWithoutSaveFile;
+    bool hasNoSafeFile;
     bool hasUnsavedChanges;
     void closeEvent(QCloseEvent *event);
     QMessageBox *showUnsavedChangesWarning(UnsavedChangesMessageResult &result);
@@ -95,8 +99,7 @@ private:
     QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + "." + this->fileExtension; }
 
     bool tryLoadCmdsFromFile(QString pathPlusFilename);
-    QList<QListWidgetItem *> fillCommandListWidget(QStringList cmdListStrings, int startRow, bool &success);
-    QString getCmdString(int cmdListIndex);
+    QList<QListWidgetItem *> fillCmdListWidget(QStringList cmdListStrings, int startRow, bool &success);
 };
 
 #endif // MAINWINDOW_H

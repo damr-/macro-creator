@@ -13,7 +13,7 @@ RunExeCmdWidget::RunExeCmdWidget(QWidget *parent) :
 
     connect(ui->selectFileButton, SIGNAL(clicked()), this, SLOT(chooseExe()));
 
-    connect(ui->exeName, SIGNAL(textChanged(QString)), this, SLOT(emitCommandChangedSignal()));
+    connect(ui->exeName, SIGNAL(textChanged(QString)), this, SLOT(emitCmdChangedSignal()));
 }
 
 RunExeCmdWidget::~RunExeCmdWidget()
@@ -29,11 +29,6 @@ void RunExeCmdWidget::CopyTo(CmdWidget *other)
 QString RunExeCmdWidget::GetCmdString()
 {
     return QString::number(int(cmdType)) + "|" + GetFilePath();
-}
-
-int RunExeCmdWidget::GetCmdStrLen()
-{
-    return 2;
 }
 
 bool RunExeCmdWidget::IsValidCmd()

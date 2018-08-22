@@ -23,9 +23,10 @@
 #include "defaultdelaywidget.h"
 
 #include "commands.h"
+#include "CmdWidgets/delaycmdwidget.h"
+#include "CmdWidgets/gotocmdwidget.h"
 #include "CmdWidgets/clickcmdwidget.h"
 #include "CmdWidgets/setcursorposcmdwidget.h"
-#include "CmdWidgets/delaycmdwidget.h"
 #include "CmdWidgets/dragcmdwidget.h"
 #include "CmdWidgets/writetextcmdwidget.h"
 #include "CmdWidgets/runexecmdwidget.h"
@@ -70,23 +71,25 @@ MainWindow::MainWindow(QWidget *parent) :
     //Menu->Add Actions
     QSignalMapper *addActionsMapper = new QSignalMapper(this);
     connect(ui->action1Delay, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action2Click, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action3CursorPos, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action4Drag, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action5Scroll, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action6PressKey, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action7Write, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action8RunExe, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action2Goto, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action3Click, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action4CursorPos, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action5Drag, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action6Scroll, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action7PressKey, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action8Write, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    connect(ui->action9RunExe, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
 
     addActionsMapper->setMapping(ui->action1Delay, 0);
-    addActionsMapper->setMapping(ui->action2Click, 1);
-    addActionsMapper->setMapping(ui->action3CursorPos, 2);
-    addActionsMapper->setMapping(ui->action4Drag, 3);
-    addActionsMapper->setMapping(ui->action5Scroll, 4);
-    addActionsMapper->setMapping(ui->action6PressKey, 5);
-    addActionsMapper->setMapping(ui->action7Write, 6);
-    addActionsMapper->setMapping(ui->action8RunExe, 7);
-    connect(addActionsMapper, SIGNAL(mapped(int)), this, SLOT(addNewCommand(int)));
+    addActionsMapper->setMapping(ui->action2Goto, 1);
+    addActionsMapper->setMapping(ui->action3Click, 2);
+    addActionsMapper->setMapping(ui->action4CursorPos, 3);
+    addActionsMapper->setMapping(ui->action5Drag, 4);
+    addActionsMapper->setMapping(ui->action6Scroll, 5);
+    addActionsMapper->setMapping(ui->action7PressKey, 6);
+    addActionsMapper->setMapping(ui->action8Write, 7);
+    addActionsMapper->setMapping(ui->action9RunExe, 8);
+    connect(addActionsMapper, SIGNAL(mapped(int)), this, SLOT(addNewCmd(int)));
 
     //Menu->Run Actions
     connect(ui->actionRStart, SIGNAL(triggered(bool)), this, SLOT(tryRunMacro()));
@@ -95,7 +98,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //https://stackoverflow.com/questions/12937812/how-to-create-different-popup-context-menus-for-each-type-of-qtreewidgetitem#
     //TODO: Search bar in context menu when right clicking on command list widget:
     // http://blog.qt.io/blog/2012/12/07/qt-support-28-creating-a-toolbar-widget-that-is-displayed-with-the-context-menu/
-    ui->commandList->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->cmdList->setContextMenuPolicy(Qt::CustomContextMenu);
 
     //Context Menu
     QList<QAction *> editActions;
@@ -116,14 +119,14 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     contextMenu.addMenu("Add")->addActions(addActions);
     contextMenu.addActions(editActions);
-    connect(ui->commandList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
+    connect(ui->cmdList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
     //
 
     //Handle selection of cmds
-    connect(ui->commandList, SIGNAL(itemSelectionChanged()), this, SLOT(handleSelectionChanged()));
+    connect(ui->cmdList, SIGNAL(itemSelectionChanged()), this, SLOT(handleSelectionChanged()));
 
     //react to drag&drop events
-    connect(ui->commandList->model(),
+    connect(ui->cmdList->model(),
             SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
             this,
             SLOT(handleRowMoved(QModelIndex,int,int,QModelIndex,int)));
@@ -233,20 +236,20 @@ void MainWindow::checkUserKeyInput()
     QString posString = "(" + QString::number(x) + "," + QString::number(y) + ")";
     QString statusMsg;
 
-    if(ui->commandList->selectedItems().length() == 0)
+    if(ui->cmdList->selectedItems().length() == 0)
     {
-        CmdWidget *w = addNewCommand(int(CmdType::CURPOS));
+        CmdWidget *w = addNewCmd(int(CmdType::CURPOS));
         qobject_cast<SetCursorPosCmdWidget*>(w)->SetCmdSettings(x, y);
         statusMsg = "Added new 'Cursor Position' command for " + posString;
     }
     else
     {
-        QList<QListWidgetItem *> selItems = ui->commandList->selectedItems();
+        QList<QListWidgetItem *> selItems = ui->cmdList->selectedItems();
         QListWidgetItem *item;
 
         foreach(item, selItems)
         {
-            CmdWidget *widget = qobject_cast<CmdWidget*>(ui->commandList->itemWidget(item));
+            CmdWidget *widget = qobject_cast<CmdWidget*>(ui->cmdList->itemWidget(item));
 
             switch(widget->GetCmdType())
             {
@@ -275,11 +278,11 @@ void MainWindow::setupBlankMacro()
 {
     macroName = "unnamed";
     macroPath = QDir::currentPath();
-    isMacroWithoutSaveFile = true;
+    hasNoSafeFile = true;
 
     ui->actionFSaveAs->setEnabled(false);
 
-    ui->commandList->clear();
+    ui->cmdList->clear();
     ui->statusBar->clearMessage();
 
     defaultDelayWidget->Reset();
@@ -309,7 +312,7 @@ void MainWindow::saveMacro()
 {
     QString pathPlusFileName = getFullFilePath(macroPath, macroName);
 
-    if(isMacroWithoutSaveFile){
+    if(hasNoSafeFile){
         pathPlusFileName = QFileDialog::getSaveFileName(this, tr("Save the macro as..."), macroPath, fileInfo);
 
         QString fileName = QFileInfo(pathPlusFileName).baseName();
@@ -319,7 +322,7 @@ void MainWindow::saveMacro()
             return;
         }
         macroName = fileName;
-        isMacroWithoutSaveFile = false;
+        hasNoSafeFile = false;
     }
 
     QFile file(pathPlusFileName);
@@ -346,9 +349,13 @@ void MainWindow::saveMacro()
                QString::number(settings->timeScale) + "\n");
 
     //Write commands
-    for(int i = 0; i < ui->commandList->count(); ++i)
+    for(int i = 0; i < ui->cmdList->count(); ++i)
     {
-        out.append(getCmdString(i));
+        QListWidgetItem* item = ui->cmdList->item(i);
+        QWidget* itemWidget = ui->cmdList->itemWidget(item);
+        QString cmdString = qobject_cast<CmdWidget*>(itemWidget)->GetCmdString();
+
+        out.append(cmdString);
         out.append("\n");
     }
 
@@ -361,7 +368,7 @@ void MainWindow::saveMacro()
 
 void MainWindow::saveMacroAs()
 {
-    isMacroWithoutSaveFile = true;
+    hasNoSafeFile = true;
     saveMacro();
 }
 
@@ -404,14 +411,14 @@ void MainWindow::openMacro()
     }
 
     ui->statusBar->showMessage("Opened " + fullFilePath, 3000);
-    isMacroWithoutSaveFile = false;
+    hasNoSafeFile = false;
     setUnsavedChanges(false);
     ui->actionFSaveAs->setEnabled(true);
 }
 
 bool MainWindow::tryLoadCmdsFromFile(QString filename)
 {
-    ui->commandList->clear();
+    ui->cmdList->clear();
 
     QFile file(filename);
 
@@ -453,7 +460,6 @@ bool MainWindow::tryLoadCmdsFromFile(QString filename)
         file.close();
         return false;
     }
-
     DefaultDelaySettings *settings = new DefaultDelaySettings();
     settings->enabled = options[0].toInt();
     settings->amount = options[1].toInt();
@@ -461,17 +467,17 @@ bool MainWindow::tryLoadCmdsFromFile(QString filename)
     defaultDelayWidget->SetSettings(settings);
 
     //Load rest of commands
-    QStringList commandListStrings;
+    QStringList cmdListStrings;
     QString line;
     do
     {
         line = input.readLine().trimmed();
         if(line.length() > 0)
-            commandListStrings.append(line);
+            cmdListStrings.append(line);
     }while(!line.isNull());
 
     bool success;
-    QList<QListWidgetItem *> newItems = fillCommandListWidget(commandListStrings, 0, success);
+    QList<QListWidgetItem *> newItems = fillCmdListWidget(cmdListStrings, 0, success);
     if(!success)
     {
         showMessage("Error", filename + " is corrupted.\nAborted opening process.", QMessageBox::Icon::Critical);
@@ -483,87 +489,92 @@ bool MainWindow::tryLoadCmdsFromFile(QString filename)
     return true;
 }
 
-QList<QListWidgetItem *> MainWindow::fillCommandListWidget(QStringList cmdListStrings, int startRow, bool &success)
+QList<QListWidgetItem *> MainWindow::fillCmdListWidget(QStringList cmdListStrings, int startRow, bool &success)
 {
     QList<QListWidgetItem *> newItems;
     success = false;
 
     for(int i = 0; i < cmdListStrings.size(); i++)
     {
-        QStringList list = cmdListStrings.at(i).split("|");
-        CmdType commandTypeIndex = CmdType(list[CmdWidget::CmdTypeIdx].toInt());
+        QStringList cmdStr = cmdListStrings.at(i).split("|");
+        CmdType cmdTypeIndex = CmdType(cmdStr[CmdWidget::CmdTypeIdx].toInt());
 
-        QListWidgetItem *newItem = new QListWidgetItem();
-        CmdWidget *newWidget = CmdWidget::GetNewCommandWidget(commandTypeIndex);
+        CmdWidget *newWidget = CmdWidget::GetNewCmdWidget(cmdTypeIndex);
 
-        if(list.length() != newWidget->GetCmdStrLen())
+        if(cmdStr.length() != newWidget->GetCmdStringLen())
         {
-            ui->commandList->clear();
+            ui->cmdList->clear();
             return newItems;
         }
 
-        switch(commandTypeIndex){
+        switch(cmdTypeIndex){
             case CmdType::DELAY:
                 qobject_cast<DelayCmdWidget*>(newWidget)->SetCmdSettings(
-                            list[DelayCmdWidget::AmountIdx].toInt(),
-                            list[DelayCmdWidget::ScaleIdx].toInt());
+                            cmdStr[DelayCmdWidget::AmountIdx].toInt(),
+                            cmdStr[DelayCmdWidget::ScaleIdx].toInt());
+                break;
+            case CmdType::GOTO:
+                qobject_cast<GotoCmdWidget *>(newWidget)->SetCmdSettings(
+                            cmdStr[GotoCmdWidget::TargetRowIdx].toInt(),
+                            cmdStr[GotoCmdWidget::AmountIdx].toInt());
                 break;
             case CmdType::CLICK:
                 qobject_cast<ClickCmdWidget*>(newWidget)->SetCmdSettings(
-                            list[ClickCmdWidget::AmountIdx].toInt(),
-                            static_cast<ClickType>(list[ClickCmdWidget::TypeIdx].toInt()));
+                            cmdStr[ClickCmdWidget::AmountIdx].toInt(),
+                            static_cast<ClickType>(cmdStr[ClickCmdWidget::TypeIdx].toInt()));
                 break;
             case CmdType::CURPOS:
                 qobject_cast<SetCursorPosCmdWidget*>(newWidget)->SetCmdSettings(
-                            list[SetCursorPosCmdWidget::XIdx].toInt(),
-                            list[SetCursorPosCmdWidget::YIdx].toInt());
+                            cmdStr[SetCursorPosCmdWidget::XIdx].toInt(),
+                            cmdStr[SetCursorPosCmdWidget::YIdx].toInt());
                 break;
             case CmdType::DRAG:
                 qobject_cast<DragCmdWidget*>(newWidget)->SetCmdSettings(
-                            list[DragCmdWidget::XIdx].toInt(),
-                            list[DragCmdWidget::YIdx].toInt());
+                            cmdStr[DragCmdWidget::XIdx].toInt(),
+                            cmdStr[DragCmdWidget::YIdx].toInt());
                 break;
             case CmdType::SCROLL:
                 qobject_cast<ScrollCmdWidget*>(newWidget)->SetCmdSettings(
-                            list[ScrollCmdWidget::AmountIdx].toInt(),
-                            list[ScrollCmdWidget::DirIdx].toInt());
+                            cmdStr[ScrollCmdWidget::AmountIdx].toInt(),
+                            cmdStr[ScrollCmdWidget::DirIdx].toInt());
                 break;
             case CmdType::PRESSKEY:
             {
                 PressKeyCmdWidget::Modifiers mod = PressKeyCmdWidget::Modifiers(
-                            list[PressKeyCmdWidget::ModCTRLIdx].toInt(),
-                            list[PressKeyCmdWidget::ModSHIFTIdx].toInt(),
-                            list[PressKeyCmdWidget::ModALTIdx].toInt());
+                            cmdStr[PressKeyCmdWidget::ModCTRLIdx].toInt(),
+                            cmdStr[PressKeyCmdWidget::ModSHIFTIdx].toInt(),
+                            cmdStr[PressKeyCmdWidget::ModALTIdx].toInt());
 
                 qobject_cast<PressKeyCmdWidget*>(newWidget)->SetCmdSettings(
                             mod,
-                            KeyType(list[PressKeyCmdWidget::KeyTypeIdx].toInt()),
-                            list[PressKeyCmdWidget::LetterIdx],
-                            list[PressKeyCmdWidget::SeqLetterIdx],
-                            list[PressKeyCmdWidget::SpcKeyIndexIdx].toInt());
+                            KeyType(cmdStr[PressKeyCmdWidget::KeyTypeIdx].toInt()),
+                            cmdStr[PressKeyCmdWidget::LetterIdx],
+                            cmdStr[PressKeyCmdWidget::SeqLetterIdx],
+                            cmdStr[PressKeyCmdWidget::SpcKeyIndexIdx].toInt());
                 break;
             }
             case CmdType::WRITETEXT:
                 qobject_cast<WriteTextCmdWidget*>(newWidget)->SetCmdSettings(
-                            list[WriteTextCmdWidget::TypeIdx].toInt(),
-                            list[WriteTextCmdWidget::CharsIdx],
-                            list[WriteTextCmdWidget::AmountIdx].toInt(),
-                            list[WriteTextCmdWidget::TextIdx]);
+                            cmdStr[WriteTextCmdWidget::TypeIdx].toInt(),
+                            cmdStr[WriteTextCmdWidget::CharsIdx],
+                            cmdStr[WriteTextCmdWidget::AmountIdx].toInt(),
+                            cmdStr[WriteTextCmdWidget::TextIdx]);
                 break;
             case CmdType::RUNEXE:
             {
-                QString path = list[RunExeCmdWidget::PathIdx];
+                QString path = cmdStr[RunExeCmdWidget::PathIdx];
                 path = path.length() == 0 ? "" : path;
                 qobject_cast<RunExeCmdWidget*>(newWidget)->SetCmdSettings(path);
                 break;
             }
         }
+        QListWidgetItem *newItem = new QListWidgetItem();
         addCmdListItem(newItem, newWidget, startRow + i);
         newItems.append(newItem);
     }
 
     updateRowNumbers();
-    selectRow(ui->commandList->row(newItems.last()));
+    selectRow(ui->cmdList->row(newItems.last()));
 
     success = true;
     return newItems;
@@ -575,25 +586,18 @@ void MainWindow::setUnsavedChanges(bool newUnsavedChanges = true)
     setWindowTitle(macroName + (hasUnsavedChanges ? "*" : "") + " - Personal Macro");
 }
 
-QString MainWindow::getCmdString(int cmdListIndex)
-{
-    QListWidgetItem* item = ui->commandList->item(cmdListIndex);
-    QWidget* itemWidget = ui->commandList->itemWidget(item);
-    return qobject_cast<CmdWidget*>(itemWidget)->GetCmdString();
-}
-
 void MainWindow::tryRunMacro()
 {
     if(isMacroRunning)
         return;
 
-    if(ui->commandList->count() == 0)
+    if(ui->cmdList->count() == 0)
     {
         showMessage("Error", "Macro is empty", QMessageBox::Icon::Critical);
         return;
     }
 
-    int result = AllCommandsValid();
+    int result = AllCmdsValid();
     if(result != -1)
     {
         QString msg = QString("Possible error in row " + QString::number(result + 1));
@@ -604,6 +608,8 @@ void MainWindow::tryRunMacro()
         return;
     }
 
+    SaveOrRestoreGotoTotalAmounts(true);
+
     isMacroRunning = true;
     selectRow(0);
     setWindowTitle(macroName + " - Running");
@@ -611,7 +617,7 @@ void MainWindow::tryRunMacro()
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowTransparentForInput);
     show();
 
-    ExecuteCommands();
+    ExecuteCmds();
 
     setWindowOpacity(1);
     setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint & ~Qt::WindowTransparentForInput);
@@ -622,29 +628,34 @@ void MainWindow::tryRunMacro()
     setFocus();
     raise();
     isMacroRunning = false;
+    SaveOrRestoreGotoTotalAmounts(false);
+
+    //This is only because setting the amount in the Goto commands makes the program think there have been unsaved changes.
+    setUnsavedChanges(false);
 }
 
-int MainWindow::AllCommandsValid()
+int MainWindow::AllCmdsValid()
 {
     QListWidgetItem *item;
 
-    for(int i = 0, total = ui->commandList->count(); i < total; i++)
+    for(int i = 0, total = ui->cmdList->count(); i < total; i++)
     {
-        item = ui->commandList->item(i);
-        CmdWidget *widget = qobject_cast<CmdWidget *>(ui->commandList->itemWidget(item));
+        item = ui->cmdList->item(i);
+        CmdWidget *widget = qobject_cast<CmdWidget *>(ui->cmdList->itemWidget(item));
         if(!widget->IsValidCmd())
             return i;
     }
     return -1;
 }
 
-void MainWindow::ExecuteCommands()
+void MainWindow::ExecuteCmds()
 {
     bool paused = false;
     DefaultDelaySettings *s = defaultDelayWidget->GetSettings();
 
-    for(int i = 0, total = ui->commandList->count(); i < total; i++)
+    for(int i = 0, total = ui->cmdList->count(); i < total; i++)
     {
+        //Check for user input
         if(GetAsyncKeyState(VK_F7) && paused)
         {
             setWindowTitle(macroName + " - Running");
@@ -657,48 +668,94 @@ void MainWindow::ExecuteCommands()
         }
         if(GetAsyncKeyState(VK_F9))
             break;
+        //
 
-        if(!paused)
-        {
-            selectRow(i);
-            qApp->processEvents();
-
-            Commands::ExecuteCommand(getCmdString(i));
-
-            if(s->enabled)
-                Sleep(DWORD(s->amount) * (s->timeScale == 0 ? 1000 : 1));
-        }
-        else
+        if(paused)
         {
             i--;
             qApp->processEvents();
+            continue;
+        }
+
+        selectRow(i);
+        qApp->processEvents();
+
+        QListWidgetItem* item = ui->cmdList->item(i);
+        CmdWidget *widget = qobject_cast<CmdWidget*>(ui->cmdList->itemWidget(item));
+
+        if(widget->GetCmdType() != CmdType::GOTO)
+        {
+            Commands::ExecuteCmd(widget->GetCmdString());
+        }
+        else
+        {
+            GotoCmdWidget *gotoWidget = qobject_cast<GotoCmdWidget *>(widget);
+            int amount = gotoWidget->GetAmount();
+            if(amount != 0)
+            {
+                int targetRow = gotoWidget->GetTargetRow();
+                i = targetRow - 2; // -1 for 0 based index and -1 to remove i++ due to for-loop
+
+                if(amount > 0)
+                    gotoWidget->SetCmdSettings(targetRow, amount - 1);
+            }
+        }
+
+        if(s->enabled)
+            Sleep(DWORD(s->amount) * (s->timeScale == 0 ? 1000 : 1));
+    }
+}
+
+void MainWindow::SaveOrRestoreGotoTotalAmounts(bool save)
+{
+    for(int i = 0, total = ui->cmdList->count(); i < total; i++)
+    {
+        QListWidgetItem* item = ui->cmdList->item(i);
+        CmdWidget *widget = qobject_cast<CmdWidget*>(ui->cmdList->itemWidget(item));
+
+        if(widget->GetCmdType() == CmdType::GOTO)
+        {
+            GotoCmdWidget *gotoWidget = qobject_cast<GotoCmdWidget *>(widget);
+            if(save)
+                gotoWidget->TotalAmount = gotoWidget->GetAmount();
+            else
+                gotoWidget->SetCmdSettings(gotoWidget->GetTargetRow(), gotoWidget->TotalAmount);
         }
     }
 }
 
+QList<QListWidgetItem *> MainWindow::GetSortedSelectedItems()
+{
+    QList<QListWidgetItem *> selectedItems = ui->cmdList->selectedItems();
+
+    std::sort(selectedItems.begin(), selectedItems.end(),
+              [this](QListWidgetItem *a, QListWidgetItem *b){
+                CmdWidget *aw = qobject_cast<CmdWidget *>(ui->cmdList->itemWidget(a));
+                CmdWidget *bw = qobject_cast<CmdWidget *>(ui->cmdList->itemWidget(b));
+                return aw->GetRowNumber() < bw->GetRowNumber();
+    });
+    return selectedItems;
+}
+
 void MainWindow::showContextMenu(const QPoint &pos)
 {
-    QPoint globalPos = ui->commandList->mapToGlobal(pos);
+    QPoint globalPos = ui->cmdList->mapToGlobal(pos);
     contextMenu.exec(globalPos);
 }
 
 void MainWindow::copySelected()
 {
-    if(ui->commandList->selectedItems().size() == 0)
+    if(ui->cmdList->selectedItems().size() == 0)
         return;
 
-    //TODO selection seems to be depending on selection order
-    //Solution: sort selected objects by row number
-
-    QClipboard *clipboard = QApplication::clipboard();
-    QList<QListWidgetItem *> selectedItems = ui->commandList->selectedItems();
+    QList<QListWidgetItem *> selectedItems = GetSortedSelectedItems();
 
     QString clipBoardText = "";
 
     for (int i = 0, total = selectedItems.size(); i < total; i++)
     {
         QListWidgetItem *item = selectedItems.at(i);
-        CmdWidget *selectedItemWidget = qobject_cast<CmdWidget*>(ui->commandList->itemWidget(item));
+        CmdWidget *selectedItemWidget = qobject_cast<CmdWidget*>(ui->cmdList->itemWidget(item));
         QString cmdStr = selectedItemWidget->GetCmdString();
         clipBoardText.append(cmdStr + ";");
     }
@@ -706,6 +763,7 @@ void MainWindow::copySelected()
     //Remove trailing ';'
     clipBoardText.chop(1);
 
+    QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(clipBoardText);
 }
 
@@ -725,13 +783,14 @@ void MainWindow::pasteClipboard()
         return;
 
     QStringList cmds = text.split(';');
+
     bool success;
-    QList<QListWidgetItem *> newItems = fillCommandListWidget(cmds, ui->commandList->currentRow() + 1, success);
+    QList<QListWidgetItem *> newItems = fillCmdListWidget(cmds, ui->cmdList->currentRow() + 1, success);
 
     if(!success)
         return;
 
-    selectRow(ui->commandList->row(newItems.at(0)));
+    selectRow(ui->cmdList->row(newItems.at(0)));
 
     QListWidgetItem *i;
     foreach(i, newItems)
@@ -743,9 +802,9 @@ void MainWindow::pasteClipboard()
 
 void MainWindow::deleteSelected()
 {
-    while(ui->commandList->selectedItems().length() > 0)
+    while(ui->cmdList->selectedItems().length() > 0)
     {
-        QListWidgetItem *item = ui->commandList->selectedItems().at(0);
+        QListWidgetItem *item = ui->cmdList->selectedItems().at(0);
         delete item;
     }
     setUnsavedChanges(true);
@@ -754,31 +813,31 @@ void MainWindow::deleteSelected()
 
 void MainWindow::duplicateSelected()
 {
-    if(ui->commandList->selectedItems().size() == 0)
+    if(ui->cmdList->selectedItems().size() == 0)
         return;
 
-    QList<QListWidgetItem *> selectedItems = ui->commandList->selectedItems();
+    QList<QListWidgetItem *> selectedItems = GetSortedSelectedItems();
 
     QList<QListWidgetItem *> newItems;
     for (int i = 0, total = selectedItems.size(); i < total; ++i)
     {
         QListWidgetItem *item = selectedItems.at(i);
 
-        CmdWidget *selectedItemWidget = qobject_cast<CmdWidget*>(ui->commandList->itemWidget(item));
+        CmdWidget *selectedItemWidget = qobject_cast<CmdWidget*>(ui->cmdList->itemWidget(item));
         CmdType selectedItemCmdType = selectedItemWidget->GetCmdType();
 
         //create new widget
-        CmdWidget *newWidget = CmdWidget::GetNewCommandWidget(selectedItemCmdType);
+        CmdWidget *newWidget = CmdWidget::GetNewCmdWidget(selectedItemCmdType);
 
         //copy widget values to new one
         selectedItemWidget->CopyTo(newWidget);
 
         QListWidgetItem *newItem = new QListWidgetItem();
-        addCmdListItem(newItem, newWidget, ui->commandList->row(item) + 1);
+        addCmdListItem(newItem, newWidget, ui->cmdList->row(item) + 1);
         newItems.append(newItem);
     }
 
-    selectRow(ui->commandList->row(newItems.at(0)));
+    selectRow(ui->cmdList->row(newItems.at(0)));
 
     QListWidgetItem *i;
     foreach(i, newItems)
@@ -791,23 +850,23 @@ void MainWindow::duplicateSelected()
 void MainWindow::updateRowNumbers()
 {
     QListWidgetItem *item;
-    for(int i = 0, total = ui->commandList->count(); i < total; i++)
+    for(int i = 0, total = ui->cmdList->count(); i < total; i++)
     {
-        item = ui->commandList->item(i);
-        CmdWidget *widget = qobject_cast<CmdWidget *>(ui->commandList->itemWidget(item));
+        item = ui->cmdList->item(i);
+        CmdWidget *widget = qobject_cast<CmdWidget *>(ui->cmdList->itemWidget(item));
         widget->SetRowNumber(i + 1);
     }
 }
 
-CmdWidget* MainWindow::addNewCommand(int cmdType)
+CmdWidget* MainWindow::addNewCmd(int cmdType)
 {
-    CmdWidget *itemWidget = CmdWidget::GetNewCommandWidget(CmdType(cmdType));
+    CmdWidget *itemWidget = CmdWidget::GetNewCmdWidget(CmdType(cmdType));
 
     QListWidgetItem *item = new QListWidgetItem();
 
-    int row = ui->commandList->currentRow() + 1;
-    if(ui->commandList->selectedItems().isEmpty())
-        row = ui->commandList->count();
+    int row = ui->cmdList->currentRow() + 1;
+    if(ui->cmdList->selectedItems().isEmpty())
+        row = ui->cmdList->count();
 
     addCmdListItem(item, itemWidget, row);
 
@@ -822,34 +881,39 @@ CmdWidget* MainWindow::addNewCommand(int cmdType)
 
 void MainWindow::addCmdListItem(QListWidgetItem *item, CmdWidget *itemWidget, int row)
 {
-    ui->commandList->insertItem(row, item);
-    ui->commandList->setItemWidget(item, itemWidget);
+    ui->cmdList->insertItem(row, item);
+    ui->cmdList->setItemWidget(item, itemWidget);
     item->setSizeHint(QSize(0, itemWidget->height()));
-    connect(itemWidget, SIGNAL(commandChanged()), this, SLOT(handleCommandSettingChanged()));
+    connect(itemWidget, SIGNAL(cmdChanged(CmdWidget*)), this, SLOT(handleCmdSettingChanged(CmdWidget*)));
 }
 
-void MainWindow::handleCommandSettingChanged()
+void MainWindow::handleCmdSettingChanged(CmdWidget *widget)
 {
     setUnsavedChanges(true);
+
+    if(widget->GetCmdType() == CmdType::GOTO)
+        qobject_cast<GotoCmdWidget *>(widget)->ValidateRowNumber(ui->cmdList->count());
 }
 
 void MainWindow::handleSelectionChanged()
 {
-    bool itemSelected = ui->commandList->selectedItems().count() > 0;
+    bool itemSelected = ui->cmdList->selectedItems().count() > 0;
 
     ui->actionEDuplicate->setEnabled(itemSelected);
     ui->actionEDelete->setEnabled(itemSelected);
     ui->actionECopy->setEnabled(itemSelected);
     ui->actionECut->setEnabled(itemSelected);
 
-    QClipboard *clipboard = QApplication::clipboard();
-    ui->actionEPaste->setEnabled(!clipboard->text().isEmpty());
+    ui->actionEPaste->setEnabled(false);
+    //TODO
+    //QClipboard *clipboard = QApplication::clipboard();
+    //ui->actionEPaste->setEnabled(!clipboard->text().isEmpty());
 }
 
 void MainWindow::selectRow(int row)
 {
-    ui->commandList->clearSelection();
-    ui->commandList->setCurrentRow(row);
+    ui->cmdList->clearSelection();
+    ui->cmdList->setCurrentRow(row);
 }
 
 void MainWindow::handleRowMoved(QModelIndex, int, int, QModelIndex, int)

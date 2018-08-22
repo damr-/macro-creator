@@ -17,29 +17,31 @@
 #define SCROLLUP 120
 #define SCROLLDOWN -120
 
-void Commands::ExecuteCommand(QString command)
+void Commands::ExecuteCmd(QString cmd)
 {
-    QStringList cmd = command.split("|");
-    CmdType type = static_cast<CmdType>(cmd[CmdWidget::CmdTypeIdx].toInt());
+    QStringList cmdParts = cmd.split("|");
+    CmdType type = static_cast<CmdType>(cmdParts[CmdWidget::CmdTypeIdx].toInt());
 
     switch(type)
     {
-    case CmdType::DELAY:
-        Delay(cmd); break;
-    case CmdType::CLICK:
-        Click(cmd); break;
-    case CmdType::CURPOS:
-        CursorPos(cmd); break;
-    case CmdType::DRAG:
-        Drag(cmd); break;
-    case CmdType::SCROLL:
-        Scroll(cmd); break;
-    case CmdType::PRESSKEY:
-        PressKey(cmd); break;
-    case CmdType::WRITETEXT:
-        WriteText(cmd); break;
-    case CmdType::RUNEXE:
-        RunExe(cmd); break;
+        case CmdType::DELAY:
+            Delay(cmdParts); break;
+        case CmdType::GOTO:
+            break;
+        case CmdType::CLICK:
+            Click(cmdParts); break;
+        case CmdType::CURPOS:
+            CursorPos(cmdParts); break;
+        case CmdType::DRAG:
+            Drag(cmdParts); break;
+        case CmdType::SCROLL:
+            Scroll(cmdParts); break;
+        case CmdType::PRESSKEY:
+            PressKey(cmdParts); break;
+        case CmdType::WRITETEXT:
+            WriteText(cmdParts); break;
+        case CmdType::RUNEXE:
+            RunExe(cmdParts); break;
     }
 }
 

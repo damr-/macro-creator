@@ -17,7 +17,6 @@ class RunExeCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
-        int GetCmdStrLen();
         bool IsValidCmd();
 
         QString GetFilePath();

@@ -11,8 +11,8 @@ DragCmdWidget::DragCmdWidget(QWidget *parent) :
 
     cmdType = CmdType::DRAG;
 
-    connect(ui->xCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
-    connect(ui->yCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));    
+    connect(ui->xCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->yCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
 }
 
 DragCmdWidget::~DragCmdWidget()
@@ -28,11 +28,6 @@ void DragCmdWidget::CopyTo(CmdWidget *other)
 QString DragCmdWidget::GetCmdString()
 {
     return QString::number(int(cmdType)) + "|" + QString::number(GetX()) + "|" + QString::number(GetY());
-}
-
-int DragCmdWidget::GetCmdStrLen()
-{
-    return 3;
 }
 
 int DragCmdWidget::GetX()

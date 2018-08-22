@@ -17,15 +17,17 @@ class CmdWidget : public QWidget
         explicit CmdWidget(QWidget *parent = nullptr);
         ~CmdWidget();
 
-        virtual void CopyTo(CmdWidget *other) = 0;
-        virtual int GetCmdStrLen() = 0;
+        virtual void CopyTo(CmdWidget *other) = 0;        
         virtual QString GetCmdString() = 0;
         virtual bool IsValidCmd();
 
+        int GetCmdStringLen();
+
         CmdType GetCmdType();
         void SetRowNumber(int number);
+        int GetRowNumber();
 
-        static CmdWidget* GetNewCommandWidget(CmdType cmdType);
+        static CmdWidget* GetNewCmdWidget(CmdType cmdType);
 
         static const int CmdTypeIdx = 0;
 
@@ -33,12 +35,12 @@ class CmdWidget : public QWidget
         CmdType cmdType;
 
     protected slots:
-        void emitCommandChangedSignal();
+        void emitCmdChangedSignal();
 
     signals:
-        void commandChanged();
+        void cmdChanged(CmdWidget *);
 
-	private:
+    private:
         Ui::CmdWidget *ui;
 };
 

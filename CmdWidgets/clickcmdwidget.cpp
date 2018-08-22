@@ -16,8 +16,8 @@ ClickCmdWidget::ClickCmdWidget(QWidget *parent) :
 
     connect(ui->clickAmountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(clickAmountChanged(int)));
 
-    connect(ui->clickAmountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
-    connect(ui->clickTypeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCommandChangedSignal()));
+    connect(ui->clickAmountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->clickTypeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCmdChangedSignal()));
 }
 
 ClickCmdWidget::~ClickCmdWidget()
@@ -25,25 +25,9 @@ ClickCmdWidget::~ClickCmdWidget()
     delete ui;
 }
 
-void ClickCmdWidget::SetCmdSettings(int amount, ClickType clickType)
-{
-    ui->clickAmountSpinBox->setValue(amount);
-    ui->clickTypeBox->setCurrentIndex(int(clickType));
-}
-
-void ClickCmdWidget::clickAmountChanged(int amount)
-{
-    ui->clickLabel->setText(amount > 1 ? "clicks" : "click");
-}
-
 void ClickCmdWidget::CopyTo(CmdWidget *other)
 {
     qobject_cast<ClickCmdWidget*>(other)->SetCmdSettings(GetClickAmount(), GetClickType());
-}
-
-int ClickCmdWidget::GetCmdStrLen()
-{
-    return 3;
 }
 
 QString ClickCmdWidget::GetCmdString()
@@ -59,4 +43,15 @@ int ClickCmdWidget::GetClickAmount()
 ClickType ClickCmdWidget::GetClickType()
 {
     return ClickType(ui->clickTypeBox->currentIndex());
+}
+
+void ClickCmdWidget::SetCmdSettings(int amount, ClickType clickType)
+{
+    ui->clickAmountSpinBox->setValue(amount);
+    ui->clickTypeBox->setCurrentIndex(int(clickType));
+}
+
+void ClickCmdWidget::clickAmountChanged(int amount)
+{
+    ui->clickLabel->setText(amount > 1 ? "clicks" : "click");
 }

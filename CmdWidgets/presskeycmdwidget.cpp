@@ -13,11 +13,11 @@ PressKeyCmdWidget::PressKeyCmdWidget(QWidget *parent) :
 
     connect(ui->keyTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateVisibility()));
 
-    connect(ui->modifierListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(emitCommandChangedSignal()));
-    connect(ui->keyTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCommandChangedSignal()));
-    connect(ui->letterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(emitCommandChangedSignal()));
-    connect(ui->keySequenceEdit, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(emitCommandChangedSignal()));
-    connect(ui->specialKeyComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCommandChangedSignal()));
+    connect(ui->modifierListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->keyTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->letterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->keySequenceEdit, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->specialKeyComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCmdChangedSignal()));
 
     connect(ui->keySequenceEdit, SIGNAL(editingFinished()), this, SLOT(truncateKeySequence()));
     connect(ui->keySequenceEdit, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(truncateKeySequence()));
@@ -50,11 +50,6 @@ QString PressKeyCmdWidget::GetCmdString()
             QString::number(GetSpecialKeyIndex());
 }
 
-int PressKeyCmdWidget::GetCmdStrLen()
-{
-    return 8;
-}
-
 bool PressKeyCmdWidget::IsValidCmd()
 {
     KeyType keyType = GetKeyType();
@@ -66,21 +61,6 @@ bool PressKeyCmdWidget::IsValidCmd()
     else if(keyType == KeyType::SPECKEY)
         return ui->specialKeyComboBox->currentIndex() > 0;
     return true;
-}
-
-void PressKeyCmdWidget::SetCmdSettings(Modifiers modifiers, KeyType keyType, QString letter, QString keySequenceLetter, int specialKeyIndex)
-{
-    if(modifiers.CTRL)
-        ui->modifierListWidget->item(0)->setCheckState(Qt::CheckState::Checked);
-    if(modifiers.SHIFT)
-        ui->modifierListWidget->item(1)->setCheckState(Qt::CheckState::Checked);
-    if(modifiers.ALT)
-        ui->modifierListWidget->item(2)->setCheckState(Qt::CheckState::Checked);
-
-    ui->keyTypeComboBox->setCurrentIndex(int(keyType));
-    ui->letterLineEdit->setText(letter);
-    ui->keySequenceEdit->setKeySequence(QKeySequence::fromString(keySequenceLetter));
-    ui->specialKeyComboBox->setCurrentIndex(specialKeyIndex);
 }
 
 PressKeyCmdWidget::Modifiers PressKeyCmdWidget::GetModifiers()
@@ -115,6 +95,21 @@ QString PressKeyCmdWidget::GetKeySequenceLetter()
 int PressKeyCmdWidget::GetSpecialKeyIndex()
 {
     return ui->specialKeyComboBox->currentIndex();
+}
+
+void PressKeyCmdWidget::SetCmdSettings(Modifiers modifiers, KeyType keyType, QString letter, QString keySequenceLetter, int specialKeyIndex)
+{
+    if(modifiers.CTRL)
+        ui->modifierListWidget->item(0)->setCheckState(Qt::CheckState::Checked);
+    if(modifiers.SHIFT)
+        ui->modifierListWidget->item(1)->setCheckState(Qt::CheckState::Checked);
+    if(modifiers.ALT)
+        ui->modifierListWidget->item(2)->setCheckState(Qt::CheckState::Checked);
+
+    ui->keyTypeComboBox->setCurrentIndex(int(keyType));
+    ui->letterLineEdit->setText(letter);
+    ui->keySequenceEdit->setKeySequence(QKeySequence::fromString(keySequenceLetter));
+    ui->specialKeyComboBox->setCurrentIndex(specialKeyIndex);
 }
 
 void PressKeyCmdWidget::truncateKeySequence()

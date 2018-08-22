@@ -15,10 +15,10 @@ WriteTextCmdWidget::WriteTextCmdWidget(QWidget *parent) :
 
     cmdType = CmdType::WRITETEXT;
 
-    connect(ui->textLineEdit, SIGNAL(textChanged(QString)), this, SLOT(emitCommandChangedSignal()));
-    connect(ui->textTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCommandChangedSignal()));
-    connect(ui->randomAmountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
-    connect(ui->possibleCharsLineEdit, SIGNAL(textChanged(QString)), this, SLOT(emitCommandChangedSignal()));
+    connect(ui->textLineEdit, SIGNAL(textChanged(QString)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->textTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->randomAmountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->possibleCharsLineEdit, SIGNAL(textChanged(QString)), this, SLOT(emitCmdChangedSignal()));
 
     connect(ui->textTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateVisibility()));
 
@@ -79,11 +79,6 @@ void WriteTextCmdWidget::CopyTo(CmdWidget *other)
 QString WriteTextCmdWidget::GetCmdString()
 {
     return QString::number(int(cmdType)) + "|" + QString::number(GetIsRandom()) + "|" + GetPossibleChars() + "|" + QString::number(GetRandomAmount()) + "|" +  GetText();
-}
-
-int WriteTextCmdWidget::GetCmdStrLen()
-{
-    return 5;
 }
 
 bool WriteTextCmdWidget::IsValidCmd()

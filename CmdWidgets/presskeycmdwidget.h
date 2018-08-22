@@ -25,7 +25,6 @@ class PressKeyCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
-        int GetCmdStrLen();
         bool IsValidCmd();
 
         class Modifiers
@@ -51,12 +50,12 @@ class PressKeyCmdWidget : public CmdWidget
             static const int ALTIdx = 2;
         };
 
-        void SetCmdSettings(Modifiers modifiers, KeyType keyType, QString letter, QString keySequenceLetter, int specialKeyIndex);
         Modifiers GetModifiers();
         KeyType GetKeyType();
         QString GetLetter();
         QString GetKeySequenceLetter();
         int GetSpecialKeyIndex();
+        void SetCmdSettings(Modifiers modifiers, KeyType keyType, QString letter, QString keySequenceLetter, int specialKeyIndex);
 
         static const int ModCTRLIdx = 1;
         static const int ModSHIFTIdx = 2;

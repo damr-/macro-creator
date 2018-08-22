@@ -54,7 +54,7 @@
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>
       <item>
-       <widget class="QListWidget" name="commandList">
+       <widget class="QListWidget" name="cmdList">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -167,13 +167,15 @@
      <string>Add</string>
     </property>
     <addaction name="action1Delay"/>
-    <addaction name="action2Click"/>
-    <addaction name="action3CursorPos"/>
-    <addaction name="action4Drag"/>
-    <addaction name="action5Scroll"/>
-    <addaction name="action6PressKey"/>
-    <addaction name="action7Write"/>
-    <addaction name="action8RunExe"/>
+    <addaction name="action2Goto"/>
+    <addaction name="separator"/>
+    <addaction name="action3Click"/>
+    <addaction name="action4CursorPos"/>
+    <addaction name="action5Drag"/>
+    <addaction name="action6Scroll"/>
+    <addaction name="action7PressKey"/>
+    <addaction name="action8Write"/>
+    <addaction name="action9RunExe"/>
    </widget>
    <widget class="QMenu" name="menuRun">
     <property name="title">
@@ -344,26 +346,12 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="action2Click">
+  <action name="action3Click">
    <property name="text">
     <string>Click</string>
    </property>
    <property name="toolTip">
     <string>Add a 'Mouse click' command</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+2</string>
-   </property>
-   <property name="shortcutVisibleInContextMenu">
-    <bool>true</bool>
-   </property>
-  </action>
-  <action name="action3CursorPos">
-   <property name="text">
-    <string>Cursor position</string>
-   </property>
-   <property name="toolTip">
-    <string>Add a command to set the curor position</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+3</string>
@@ -372,12 +360,12 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="action4Drag">
+  <action name="action4CursorPos">
    <property name="text">
-    <string>Drag</string>
+    <string>Cursor position</string>
    </property>
    <property name="toolTip">
-    <string>Add a command to drag the mouse cursor</string>
+    <string>Add a command to set the curor position</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+4</string>
@@ -386,12 +374,12 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="action5Scroll">
+  <action name="action5Drag">
    <property name="text">
-    <string>Scroll</string>
+    <string>Drag</string>
    </property>
    <property name="toolTip">
-    <string>Add a command to scroll the mouse wheel</string>
+    <string>Add a command to drag the mouse cursor</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+5</string>
@@ -400,26 +388,12 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="action7Write">
+  <action name="action6Scroll">
    <property name="text">
-    <string>Write text</string>
+    <string>Scroll</string>
    </property>
    <property name="toolTip">
-    <string>Add a command to write a text</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+7</string>
-   </property>
-   <property name="shortcutVisibleInContextMenu">
-    <bool>true</bool>
-   </property>
-  </action>
-  <action name="action6PressKey">
-   <property name="text">
-    <string>Press key</string>
-   </property>
-   <property name="toolTip">
-    <string>Add a command to press a key</string>
+    <string>Add a command to scroll the mouse wheel</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+6</string>
@@ -428,12 +402,12 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="action8RunExe">
+  <action name="action8Write">
    <property name="text">
-    <string>Run .exe</string>
+    <string>Write text</string>
    </property>
    <property name="toolTip">
-    <string>Add a command to run an '.exe'</string>
+    <string>Add a command to write a text</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+8</string>
@@ -442,9 +416,37 @@
     <bool>true</bool>
    </property>
   </action>
+  <action name="action7PressKey">
+   <property name="text">
+    <string>Press key</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a command to press a key</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+7</string>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="action9RunExe">
+   <property name="text">
+    <string>Run .exe</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a command to run an '.exe'</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+9</string>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>true</bool>
+   </property>
+  </action>
   <action name="actionRStart">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset>
      <normaloff>:/resources/images/resources/images/i_start.png</normaloff>:/resources/images/resources/images/i_start.png</iconset>
    </property>
    <property name="text">
@@ -468,6 +470,17 @@
    </property>
    <property name="toolTip">
     <string>Stop the macro</string>
+   </property>
+  </action>
+  <action name="action2Goto">
+   <property name="text">
+    <string>Goto</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a Goto command</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+2</string>
    </property>
   </action>
  </widget>

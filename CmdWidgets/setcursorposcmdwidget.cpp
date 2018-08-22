@@ -11,8 +11,8 @@ SetCursorPosCmdWidget::SetCursorPosCmdWidget(QWidget *parent) :
 
     cmdType = CmdType::CURPOS;
 
-    connect(ui->xCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
-    connect(ui->yCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCommandChangedSignal()));
+    connect(ui->xCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->yCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
 }
 
 SetCursorPosCmdWidget::~SetCursorPosCmdWidget()
@@ -28,11 +28,6 @@ void SetCursorPosCmdWidget::CopyTo(CmdWidget *other)
 QString SetCursorPosCmdWidget::GetCmdString()
 {
     return QString::number(int(CmdType::CURPOS)) +  "|" + QString::number(GetX()) + "|" + QString::number(GetY());
-}
-
-int SetCursorPosCmdWidget::GetCmdStrLen()
-{
-    return 3;
 }
 
 int SetCursorPosCmdWidget::GetX()

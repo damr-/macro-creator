@@ -17,7 +17,6 @@ class ScrollCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
-        int GetCmdStrLen();
 
         int GetAmount();
         int GetDirection();

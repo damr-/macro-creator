@@ -1,25 +1,25 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include <QString>
 #include <QStringList>
 
 enum CmdType
 {
     DELAY = 0,
-    CLICK = 1,
-    CURPOS = 2,
-    DRAG = 3,
-    SCROLL = 4,
-    PRESSKEY = 5,
-    WRITETEXT = 6,
-    RUNEXE = 7
+    GOTO = 1,
+    CLICK = 2,
+    CURPOS = 3,
+    DRAG = 4,
+    SCROLL = 5,
+    PRESSKEY = 6,
+    WRITETEXT = 7,
+    RUNEXE = 8
 };
 
 class Commands
 {
 public:
-    static void ExecuteCommand(QString command);
+    static void ExecuteCmd(QString cmd);
 
 private:
     static void Click(QStringList cmd);
