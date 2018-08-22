@@ -37,10 +37,6 @@
   <property name="windowTitle">
    <string>Personal Macro</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="resources.qrc">
-    <normaloff>:/resources/images/resources/favicon.jpg</normaloff>:/resources/images/resources/favicon.jpg</iconset>
-  </property>
   <property name="windowOpacity">
    <double>1.000000000000000</double>
   </property>
@@ -462,10 +458,16 @@
    <property name="text">
     <string>Pause</string>
    </property>
+   <property name="toolTip">
+    <string>Pause the macro</string>
+   </property>
   </action>
   <action name="actionRStop">
    <property name="text">
     <string>Stop</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop the macro</string>
    </property>
   </action>
  </widget>

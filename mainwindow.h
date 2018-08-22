@@ -81,7 +81,7 @@ private:
         Cancel = 2
     };
 
-    bool isUnsavedMacro;
+    bool isMacroWithoutSaveFile;
     bool hasUnsavedChanges;
     void closeEvent(QCloseEvent *event);
     QMessageBox *showUnsavedChangesWarning(UnsavedChangesMessageResult &result);

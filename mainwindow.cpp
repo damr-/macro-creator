@@ -217,63 +217,65 @@ void MainWindow::showMessage(QString title, QString message, QMessageBox::Icon t
 
 void MainWindow::checkUserKeyInput()
 {
-    if(GetAsyncKeyState(VK_F6) && !isMacroRunning)
-    {
-        POINT cursorPos;
-        GetCursorPos(&cursorPos);
-
-        LONG x = cursorPos.x;
-        LONG y = cursorPos.y;
-
-        if(ui->commandList->selectedItems().length() == 0)
-        {
-            CmdWidget *w = addNewCommand(int(CmdType::CURPOS));
-            SetCursorPosCmdWidget* widget = qobject_cast<SetCursorPosCmdWidget*>(w);
-            widget->SetCmdSettings(x, y);
-            ui->statusBar->showMessage("Added new 'Cursor position' command for (" + QString::number(x) + "," + QString::number(y) + ")", 5000);
-        }
-        else
-        {
-            QList<QListWidgetItem *> selItems = ui->commandList->selectedItems();
-            QListWidgetItem *item;
-
-            foreach(item, selItems)
-            {
-                CmdWidget *widget = qobject_cast<CmdWidget*>(ui->commandList->itemWidget(item));
-
-                switch(widget->GetCmdType())
-                {
-                    case CmdType::CURPOS:
-                        qobject_cast<SetCursorPosCmdWidget*>(widget)->SetCmdSettings(x, y);
-                        ui->statusBar->showMessage("Updated 'Cursor position': (" + QString::number(x) + "," + QString::number(y) + ")", 5000);
-                        break;
-                    case CmdType::DRAG:
-                        qobject_cast<DragCmdWidget*>(widget)->SetCmdSettings(x, y);
-                        ui->statusBar->showMessage("Updated 'Drag': (" + QString::number(x) + "," + QString::number(y) + ")", 5000);
-                        break;
-                    default:
-                        ui->statusBar->showMessage("Select nothing, a 'Cursor Position' or a 'Drag' command.", 5000);
-                        break;
-                }
-            }
-
-            if(selItems.length() > 1)
-            {
-                ui->statusBar->showMessage("Updated all selected 'Cursor position' and 'Drag' to (" + QString::number(x) + "," + QString::number(y) + ")", 5000);
-            }
-        }
-    }
     if(GetAsyncKeyState(VK_F7))
     {
         tryRunMacro();
     }
+    if(!GetAsyncKeyState(VK_F6) || isMacroRunning)
+        return;
+
+    POINT cursorPos;
+    GetCursorPos(&cursorPos);
+
+    LONG x = cursorPos.x;
+    LONG y = cursorPos.y;
+
+    QString posString = "(" + QString::number(x) + "," + QString::number(y) + ")";
+    QString statusMsg;
+
+    if(ui->commandList->selectedItems().length() == 0)
+    {
+        CmdWidget *w = addNewCommand(int(CmdType::CURPOS));
+        qobject_cast<SetCursorPosCmdWidget*>(w)->SetCmdSettings(x, y);
+        statusMsg = "Added new 'Cursor Position' command for " + posString;
+    }
+    else
+    {
+        QList<QListWidgetItem *> selItems = ui->commandList->selectedItems();
+        QListWidgetItem *item;
+
+        foreach(item, selItems)
+        {
+            CmdWidget *widget = qobject_cast<CmdWidget*>(ui->commandList->itemWidget(item));
+
+            switch(widget->GetCmdType())
+            {
+                case CmdType::CURPOS:
+                    qobject_cast<SetCursorPosCmdWidget*>(widget)->SetCmdSettings(x, y);
+                    statusMsg = "Updated 'Cursor position': " + posString;
+                    break;
+                case CmdType::DRAG:
+                    qobject_cast<DragCmdWidget*>(widget)->SetCmdSettings(x, y);
+                    statusMsg = "Updated 'Drag': " + posString;
+                    break;
+                default:
+                    statusMsg = "Select nothing, a 'Cursor Position' or a 'Drag' command.";
+                    break;
+            }
+        }
+
+        if(selItems.length() > 1)
+            statusMsg = "Updated all selected 'Cursor Position' and 'Drag' to " + posString;
+    }
+
+    ui->statusBar->showMessage(statusMsg, 5000);
 }
 
 void MainWindow::setupBlankMacro()
 {
     macroName = "unnamed";
     macroPath = QDir::currentPath();
-    isUnsavedMacro = true;
+    isMacroWithoutSaveFile = true;
 
     ui->actionFSaveAs->setEnabled(false);
 
@@ -307,7 +309,7 @@ void MainWindow::saveMacro()
 {
     QString pathPlusFileName = getFullFilePath(macroPath, macroName);
 
-    if(isUnsavedMacro){
+    if(isMacroWithoutSaveFile){
         pathPlusFileName = QFileDialog::getSaveFileName(this, tr("Save the macro as..."), macroPath, fileInfo);
 
         QString fileName = QFileInfo(pathPlusFileName).baseName();
@@ -317,7 +319,7 @@ void MainWindow::saveMacro()
             return;
         }
         macroName = fileName;
-        isUnsavedMacro = false;
+        isMacroWithoutSaveFile = false;
     }
 
     QFile file(pathPlusFileName);
@@ -359,7 +361,7 @@ void MainWindow::saveMacro()
 
 void MainWindow::saveMacroAs()
 {
-    isUnsavedMacro = true;
+    isMacroWithoutSaveFile = true;
     saveMacro();
 }
 
@@ -402,7 +404,7 @@ void MainWindow::openMacro()
     }
 
     ui->statusBar->showMessage("Opened " + fullFilePath, 3000);
-    isUnsavedMacro = false;
+    isMacroWithoutSaveFile = false;
     setUnsavedChanges(false);
     ui->actionFSaveAs->setEnabled(true);
 }
@@ -685,7 +687,8 @@ void MainWindow::copySelected()
     if(ui->commandList->selectedItems().size() == 0)
         return;
 
-    //TODO selection seems to be depending on selection order, but the cmds should be ordered by row number
+    //TODO selection seems to be depending on selection order
+    //Solution: sort selected objects by row number
 
     QClipboard *clipboard = QApplication::clipboard();
     QList<QListWidgetItem *> selectedItems = ui->commandList->selectedItems();
