@@ -20,6 +20,7 @@ class WriteTextCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
+        void ToggleLocked();
         bool IsValidCmd();
 
         int GetIsRandom();
@@ -28,10 +29,10 @@ class WriteTextCmdWidget : public CmdWidget
         QString GetText();
         void SetCmdSettings(bool isRandom, QString possibleChars, int randomAmount, QString text);
 
-        static const int TypeIdx = 1;
-        static const int CharsIdx = 2;
-        static const int AmountIdx = 3;
-        static const int TextIdx = 4;
+        static const int TypeIdx = 3;
+        static const int CharsIdx = 4;
+        static const int AmountIdx = 5;
+        static const int TextIdx = 6;
 
     private slots:
         void updateVisibility();

@@ -17,13 +17,14 @@ class ScrollCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
+        void ToggleLocked();
 
         int GetAmount();
         int GetDirection();
         void SetCmdSettings(int amount, int direction);
 
-        static const int AmountIdx = 1;
-        static const int DirIdx = 2;
+        static const int AmountIdx = 3;
+        static const int DirIdx = 4;
 
     private:
         Ui::ScrollCmdWidget *ui;

@@ -17,13 +17,20 @@ class DragCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
+        void ToggleLocked();
 
         int GetX();
         int GetY();
         void SetCmdSettings(int x, int y);
 
-        static const int XIdx = 1;
-        static const int YIdx = 2;
+        static const int XIdx = 3;
+        static const int YIdx = 4;
+
+    protected:
+        bool eventFilter(QObject *object, QEvent *event);
+
+    signals:
+        void showPosHint(bool, int, int);
 
     private:
         Ui::DragCmdWidget *ui;

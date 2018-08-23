@@ -17,6 +17,7 @@ class GotoCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
+        void ToggleLocked();
         bool IsValidCmd();
 
         int GetTargetRow();
@@ -27,8 +28,8 @@ class GotoCmdWidget : public CmdWidget
 
         int TotalAmount;
 
-        static const int TargetRowIdx = 1;
-        static const int AmountIdx = 2;
+        static const int TargetRowIdx = 3;
+        static const int AmountIdx = 4;
 
     private slots:
         void amountChanged(int amount);

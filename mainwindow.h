@@ -10,8 +10,10 @@
 #include <QMenu>
 #include <QMessageBox>
 
-#include "CmdWidgets/cmdwidget.h"
+#include "commands.h"
 #include "defaultdelaywidget.h"
+#include "poshint.h"
+#include "CmdWidgets/cmdwidget.h"
 
 #define DELAY_OPTIONS_LEN 3
 #define WINDOW_OPTIONS_LEN 5
@@ -56,6 +58,9 @@ class MainWindow : public QMainWindow
         void pasteClipboard();
         void deleteSelected();
         void duplicateSelected();
+
+        void toggleSelectionState(StateType type);
+
         void updateRowNumbers();
 
         void handleRowMoved(QModelIndex, int, int, QModelIndex, int);
@@ -63,10 +68,12 @@ class MainWindow : public QMainWindow
         void selectRow(int row);
 
         void handleCmdSettingChanged(CmdWidget *widget);
+        void showPosHint(bool visible, int x, int y);
 
     private:
         Ui::MainWindow *ui;
         DefaultDelayWidget *defaultDelayWidget;
+        PosHint *posHint = new PosHint();
         QMenu contextMenu;
         int defX, defY, defW, defH;
 

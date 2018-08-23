@@ -23,12 +23,21 @@ RunExeCmdWidget::~RunExeCmdWidget()
 
 void RunExeCmdWidget::CopyTo(CmdWidget *other)
 {
-    qobject_cast<RunExeCmdWidget*>(other)->SetCmdSettings(GetFilePath());
+    RunExeCmdWidget *widget = qobject_cast<RunExeCmdWidget*>(other);
+    widget->SetCmdSettings(GetFilePath());
+    CmdWidget::CopyTo(widget);
 }
 
 QString RunExeCmdWidget::GetCmdString()
 {
-    return QString::number(int(cmdType)) + "|" + GetFilePath();
+    return CmdWidget::GetCmdString() + "|" + GetFilePath();
+}
+
+void RunExeCmdWidget::ToggleLocked()
+{
+    CmdWidget::ToggleLocked();
+    ui->exeName->setEnabled(!isLocked);
+    ui->selectFileButton->setEnabled(!isLocked);
 }
 
 bool RunExeCmdWidget::IsValidCmd()

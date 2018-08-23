@@ -17,13 +17,14 @@ class DelayCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
+        void ToggleLocked();
 
         int GetAmount();
         int GetTimeScale();
         void SetCmdSettings(int amount, int timeScale);
 
-        static const int AmountIdx = 1;
-        static const int ScaleIdx = 2;
+        static const int AmountIdx = 3;
+        static const int ScaleIdx = 4;
 
     private:
         Ui::DelayCmdWidget *ui;

@@ -19,26 +19,33 @@ class CmdWidget : public QWidget
 
         virtual void CopyTo(CmdWidget *other) = 0;        
         virtual QString GetCmdString() = 0;
-        virtual bool IsValidCmd();
+        virtual void ToggleLocked() = 0;
 
-        int GetCmdStringLen();
+        virtual bool IsValidCmd();
 
         CmdType GetCmdType();
         void SetRowNumber(int number);
         int GetRowNumber();
+        int GetCmdStringLen();
+        void ToggleEnabled();
+        void SetCmdStates(bool isLocked, bool isDisabled);
 
         static CmdWidget* GetNewCmdWidget(CmdType cmdType);
 
         static const int CmdTypeIdx = 0;
+        static const int LockedStateIdx = 1;
+        static const int DisabledStateIdx = 2;
 
     protected:
         CmdType cmdType;
+        bool isLocked;
 
     protected slots:
         void emitCmdChangedSignal();
+        void unlock();
 
     signals:
-        void cmdChanged(CmdWidget *);
+        void cmdChanged(CmdWidget*);
 
     private:
         Ui::CmdWidget *ui;

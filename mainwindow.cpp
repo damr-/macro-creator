@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QAction>
 #include <QApplication>
 #include <QClipboard>
 #include <QCloseEvent>
@@ -10,8 +9,6 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QList>
-#include <QMessageBox>
 #include <QPushButton>
 #include <QScreen>
 #include <QScrollBar>
@@ -20,9 +17,6 @@
 #include <QTextStream>
 #include <QTimer>
 
-#include "defaultdelaywidget.h"
-
-#include "commands.h"
 #include "CmdWidgets/delaycmdwidget.h"
 #include "CmdWidgets/gotocmdwidget.h"
 #include "CmdWidgets/clickcmdwidget.h"
@@ -33,8 +27,6 @@
 #include "CmdWidgets/presskeycmdwidget.h"
 #include "CmdWidgets/scrollcmdwidget.h"
 #include "CmdWidgets/presskeycmdwidget.h"
-
-//#pragma comment(lib, "user32.lib")
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -67,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionEPaste, SIGNAL(triggered()), this, SLOT(pasteClipboard()));
     connect(ui->actionEDelete, SIGNAL(triggered()), this, SLOT(deleteSelected()));
     connect(ui->actionEDuplicate, SIGNAL(triggered()), this, SLOT(duplicateSelected()));
+    connect(ui->actionEToggleLocked, &QAction::triggered, [=](){ toggleSelectionState(StateType::LOCKED); });
+    connect(ui->actionEToggleDisabled, &QAction::triggered, [=](){ toggleSelectionState(StateType::DISABLED); });
 
     //Menu->Add Actions
     QSignalMapper *addActionsMapper = new QSignalMapper(this);
@@ -503,6 +497,8 @@ QList<QListWidgetItem *> MainWindow::fillCmdListWidget(QStringList cmdListString
             return newItems;
         }
 
+        newWidget->SetCmdStates(cmdStr[CmdWidget::LockedStateIdx].toInt(), cmdStr[CmdWidget::DisabledStateIdx].toInt());
+
         switch(cmdTypeIndex){
             case CmdType::DELAY:
                 qobject_cast<DelayCmdWidget*>(newWidget)->SetCmdSettings(
@@ -564,6 +560,7 @@ QList<QListWidgetItem *> MainWindow::fillCmdListWidget(QStringList cmdListString
                 break;
             }
         }
+
         QListWidgetItem *newItem = new QListWidgetItem();
         addCmdListItem(newItem, newWidget, startRow + i);
         newItems.append(newItem);
@@ -657,7 +654,7 @@ void MainWindow::ExecuteCmds()
     isMacroExecutionPaused = false;
     DefaultDelaySettings *defaultDelaySettings = defaultDelayWidget->GetSettings();
 
-    for(int i = 0, total = ui->cmdList->count(); i < total;)
+    for(int i = 0, total = ui->cmdList->count(); i < total; i++)
     {
         //Check for user input
         if(GetAsyncKeyState(VK_F7) && isMacroExecutionPaused)
@@ -676,6 +673,7 @@ void MainWindow::ExecuteCmds()
 
         if(isMacroExecutionPaused)
         {
+            i--;
             qApp->processEvents();
             continue;
         }
@@ -686,14 +684,18 @@ void MainWindow::ExecuteCmds()
         QListWidgetItem* item = ui->cmdList->item(i);
         CmdWidget *widget = qobject_cast<CmdWidget*>(ui->cmdList->itemWidget(item));
 
-        if(widget->GetCmdType() == CmdType::GOTO)
+        if(!widget->isEnabled())
+        {
+            continue;
+        }
+        else if(widget->GetCmdType() == CmdType::GOTO)
         {
             GotoCmdWidget *gotoWidget = qobject_cast<GotoCmdWidget *>(widget);
             int amount = gotoWidget->GetAmount();
             if(amount != 0)
             {
                 int targetRow = gotoWidget->GetTargetRow();
-                i = targetRow - 1; // -1 for 0 based index
+                i = targetRow - 2; // -1 for 0 based index and -1 for the loop's i++
 
                 if(amount > 0)
                     gotoWidget->SetCmdSettings(targetRow, amount - 1);
@@ -702,7 +704,6 @@ void MainWindow::ExecuteCmds()
         else
         {
             Commands::ExecuteCmd(widget->GetCmdString());
-            i++;
         }
 
         if(defaultDelaySettings->enabled)
@@ -863,6 +864,26 @@ void MainWindow::duplicateSelected()
     setUnsavedChanges(true);
 }
 
+void MainWindow::toggleSelectionState(StateType type)
+{
+    QList<QListWidgetItem *> selectedItems = GetSortedSelectedItems();
+    for (int i = 0, total = selectedItems.size(); i < total; i++)
+    {
+        QListWidgetItem *item = selectedItems.at(i);
+        CmdWidget *selectedItemWidget = qobject_cast<CmdWidget*>(ui->cmdList->itemWidget(item));
+
+        switch(type)
+        {
+            case StateType::LOCKED:
+                selectedItemWidget->ToggleLocked();
+                break;
+            case StateType::DISABLED:
+                selectedItemWidget->ToggleEnabled();
+                break;
+        }
+    }
+}
+
 void MainWindow::updateRowNumbers()
 {
     QListWidgetItem *item;
@@ -901,6 +922,17 @@ void MainWindow::addCmdListItem(QListWidgetItem *item, CmdWidget *itemWidget, in
     ui->cmdList->setItemWidget(item, itemWidget);
     item->setSizeHint(QSize(0, itemWidget->height()));
     connect(itemWidget, SIGNAL(cmdChanged(CmdWidget*)), this, SLOT(handleCmdSettingChanged(CmdWidget*)));
+
+    if(itemWidget->GetCmdType() == CmdType::CURPOS)
+    {
+        SetCursorPosCmdWidget *w = qobject_cast<SetCursorPosCmdWidget*>(itemWidget);
+        connect(w, SIGNAL(showPosHint(bool, int, int)), this, SLOT(showPosHint(bool, int, int)));
+    }
+    else if(itemWidget->GetCmdType() == CmdType::DRAG)
+    {
+        DragCmdWidget *w = qobject_cast<DragCmdWidget*>(itemWidget);
+        connect(w, SIGNAL(showPosHint(bool, int, int)), this, SLOT(showPosHint(bool, int, int)));
+    }
 }
 
 void MainWindow::handleCmdSettingChanged(CmdWidget *widget)
@@ -912,6 +944,22 @@ void MainWindow::handleCmdSettingChanged(CmdWidget *widget)
 
     if(widget->GetCmdType() == CmdType::GOTO)
         qobject_cast<GotoCmdWidget *>(widget)->ValidateRowNumber(ui->cmdList->count());
+}
+
+void MainWindow::showPosHint(bool visible, int x, int y)
+{
+    if(!visible && posHint != nullptr)
+    {
+        posHint->close();
+    }
+
+    if(visible)
+    {
+        posHint = new PosHint();
+        posHint->SetPosition(x, y);
+        posHint->show();
+        activateWindow();
+    }
 }
 
 void MainWindow::handleSelectionChanged()

@@ -117,7 +117,7 @@
     </font>
    </property>
    <property name="text">
-    <string>time.</string>
+    <string>time</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

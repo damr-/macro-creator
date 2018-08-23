@@ -161,6 +161,9 @@
     <addaction name="actionEPaste"/>
     <addaction name="actionEDuplicate"/>
     <addaction name="actionEDelete"/>
+    <addaction name="separator"/>
+    <addaction name="actionEToggleLocked"/>
+    <addaction name="actionEToggleDisabled"/>
    </widget>
    <widget class="QMenu" name="menuAdd">
     <property name="title">
@@ -446,8 +449,8 @@
   </action>
   <action name="actionRStart">
    <property name="icon">
-    <iconset>
-     <normaloff>:/resources/images/resources/images/i_start.png</normaloff>:/resources/images/resources/images/i_start.png</iconset>
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/resources/icons/start.png</normaloff>:/resources/icons/resources/icons/start.png</iconset>
    </property>
    <property name="text">
     <string>Start</string>
@@ -481,6 +484,34 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+2</string>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionEToggleLocked">
+   <property name="text">
+    <string>Toggle Locked</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle the lock on the selected command(s).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionEToggleDisabled">
+   <property name="text">
+    <string>Toggle Disabled</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle the disabled state of the selected command(s).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+D</string>
    </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>true</bool>

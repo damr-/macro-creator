@@ -25,6 +25,7 @@ class PressKeyCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
+        void ToggleLocked();
         bool IsValidCmd();
 
         class Modifiers
@@ -57,13 +58,13 @@ class PressKeyCmdWidget : public CmdWidget
         int GetSpecialKeyIndex();
         void SetCmdSettings(Modifiers modifiers, KeyType keyType, QString letter, QString keySequenceLetter, int specialKeyIndex);
 
-        static const int ModCTRLIdx = 1;
-        static const int ModSHIFTIdx = 2;
-        static const int ModALTIdx = 3;
-        static const int KeyTypeIdx = 4;
-        static const int LetterIdx = 5;
-        static const int SeqLetterIdx = 6;
-        static const int SpcKeyIndexIdx = 7;
+        static const int ModCTRLIdx = 3;
+        static const int ModSHIFTIdx = 4;
+        static const int ModALTIdx = 5;
+        static const int KeyTypeIdx = 6;
+        static const int LetterIdx = 7;
+        static const int SeqLetterIdx = 8;
+        static const int SpcKeyIndexIdx = 9;
 
     private slots:
         void truncateKeySequence();

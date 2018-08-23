@@ -12,6 +12,8 @@
 #include "presskeycmdwidget.h"
 #include "runexecmdwidget.h"
 
+#include <QDebug>
+
 CmdWidget* CmdWidget::GetNewCmdWidget(CmdType cmdType)
 {
     switch(cmdType){
@@ -41,6 +43,10 @@ CmdWidget::CmdWidget(QWidget *parent) :
     ui(new Ui::CmdWidget)
 {
     ui->setupUi(this);
+    ui->lockIcon->setVisible(false);
+    isLocked = false;
+
+    connect(ui->lockIcon, SIGNAL(clicked(bool)), this, SLOT(unlock()));
 }
 
 CmdWidget::~CmdWidget()
@@ -48,19 +54,29 @@ CmdWidget::~CmdWidget()
     delete ui;
 }
 
-int CmdWidget::GetCmdStringLen()
-{
-    return GetCmdString().split("|").length();
-}
-
 QString CmdWidget::GetCmdString()
 {
-    return QString("CmdWidget");
+    return QString::number(int(cmdType)) + "|" + QString::number(isLocked) + "|" + QString::number(!isEnabled());
+}
+
+void CmdWidget::ToggleLocked()
+{
+    isLocked = !isLocked;
+    ui->lockIcon->setVisible(isLocked);
+    emitCmdChangedSignal();
+}
+
+bool CmdWidget::IsValidCmd()
+{
+    return true;
 }
 
 void CmdWidget::CopyTo(CmdWidget *other)
 {
-    other->GetCmdString();
+    if(isLocked)
+        other->ToggleLocked();
+    if(!isEnabled())
+        other->ToggleEnabled();
 }
 
 CmdType CmdWidget::GetCmdType()
@@ -78,12 +94,31 @@ int CmdWidget::GetRowNumber()
     return ui->rowIndexLabel->text().toInt();
 }
 
-bool CmdWidget::IsValidCmd()
+int CmdWidget::GetCmdStringLen()
 {
-    return true;
+    return GetCmdString().split("|").length();
+}
+
+void CmdWidget::ToggleEnabled()
+{
+    this->setEnabled(!this->isEnabled());
+    emitCmdChangedSignal();
+}
+
+void CmdWidget::SetCmdStates(bool isLocked, bool isDisabled)
+{
+    if((isLocked && !this->isLocked) || (!isLocked && this->isLocked))
+        ToggleLocked();
+    if((isDisabled && this->isEnabled()) || (!isDisabled && !this->isEnabled()))
+        ToggleEnabled();
 }
 
 void CmdWidget::emitCmdChangedSignal()
 {
     emit cmdChanged(this);
+}
+
+void CmdWidget::unlock()
+{
+    ToggleLocked();
 }

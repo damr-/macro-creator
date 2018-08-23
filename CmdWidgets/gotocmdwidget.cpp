@@ -22,17 +22,26 @@ GotoCmdWidget::~GotoCmdWidget()
 
 void GotoCmdWidget::CopyTo(CmdWidget *other)
 {
-    qobject_cast<GotoCmdWidget*>(other)->SetCmdSettings(GetTargetRow(), GetAmount());
+    GotoCmdWidget *widget = qobject_cast<GotoCmdWidget*>(other);
+    widget->SetCmdSettings(GetTargetRow(), GetAmount());
+    CmdWidget::CopyTo(widget);
 }
 
 QString GotoCmdWidget::GetCmdString()
 {
-    return QString::number(int(cmdType)) + "|" + QString::number(GetTargetRow()) + "|" + QString::number(int(GetAmount()));
+    return CmdWidget::GetCmdString() + "|" + QString::number(GetTargetRow()) + "|" + QString::number(int(GetAmount()));
+}
+
+void GotoCmdWidget::ToggleLocked()
+{
+    CmdWidget::ToggleLocked();
+    ui->rowBox->setEnabled(!isLocked);
+    ui->amountBox->setEnabled(!isLocked);
 }
 
 bool GotoCmdWidget::IsValidCmd()
 {
-    return GetAmount() != 0 && GetTargetRow() != GetRowNumber();
+    return GetAmount() != 0 && GetTargetRow() < GetRowNumber();
 }
 
 int GotoCmdWidget::GetTargetRow()
@@ -53,11 +62,17 @@ void GotoCmdWidget::SetCmdSettings(int targetRow, int amount)
 
 void GotoCmdWidget::ValidateRowNumber(int cmdListRowCount)
 {
+    int newTargetRow = GetTargetRow();
+
     if(GetTargetRow() > cmdListRowCount)
-        ui->rowBox->setValue(cmdListRowCount);
+        newTargetRow = cmdListRowCount;
+    if(GetTargetRow() > GetRowNumber())
+        newTargetRow = GetRowNumber();
+
+    ui->rowBox->setValue(newTargetRow);
 }
 
 void GotoCmdWidget::amountChanged(int amount)
 {
-    ui->timesLabel->setText(amount == 1 ? "time." : "times.");
+    ui->timesLabel->setText(amount == 1 ? "time" : "times");
 }

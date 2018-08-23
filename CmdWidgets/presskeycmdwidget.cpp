@@ -33,14 +33,16 @@ PressKeyCmdWidget::~PressKeyCmdWidget()
 
 void PressKeyCmdWidget::CopyTo(CmdWidget *other)
 {
-    qobject_cast<PressKeyCmdWidget*>(other)->SetCmdSettings(GetModifiers(), GetKeyType(), GetLetter(), GetKeySequenceLetter(), GetSpecialKeyIndex());
+    PressKeyCmdWidget *widget = qobject_cast<PressKeyCmdWidget*>(other);
+    widget->SetCmdSettings(GetModifiers(), GetKeyType(), GetLetter(), GetKeySequenceLetter(), GetSpecialKeyIndex());
+    CmdWidget::CopyTo(widget);
 }
 
 QString PressKeyCmdWidget::GetCmdString()
 {
     Modifiers mod = GetModifiers();
 
-    return QString::number(int(cmdType)) + "|" +
+    return CmdWidget::GetCmdString() + "|" +
             QString::number(mod.CTRL) + "|" +
             QString::number(mod.SHIFT) + "|" +
             QString::number(mod.ALT) + "|" +
@@ -48,6 +50,17 @@ QString PressKeyCmdWidget::GetCmdString()
             GetLetter() + "|" +
             GetKeySequenceLetter() + "|" +
             QString::number(GetSpecialKeyIndex());
+}
+
+void PressKeyCmdWidget::ToggleLocked()
+{
+    CmdWidget::ToggleLocked();
+    ui->modifierListWidget->setEnabled(!isLocked);
+    ui->keyTypeComboBox->setEnabled(!isLocked);
+    ui->letterLineEdit->setEnabled(!isLocked);
+    ui->keySequenceEdit->setEnabled(!isLocked);
+    ui->keySequenceClearButton->setEnabled(!isLocked);
+    ui->specialKeyComboBox->setEnabled(!isLocked);
 }
 
 bool PressKeyCmdWidget::IsValidCmd()

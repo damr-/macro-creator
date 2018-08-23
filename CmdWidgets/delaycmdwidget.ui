@@ -25,7 +25,7 @@
   <property name="windowTitle">
    <string>DelayCmdWidget</string>
   </property>
-  <widget class="QLabel" name="label_18">
+  <widget class="QLabel" name="waitForLabel">
    <property name="geometry">
     <rect>
      <x>40</x>
@@ -46,7 +46,7 @@
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QSpinBox" name="waitTime">
+  <widget class="QSpinBox" name="delayAmount">
    <property name="geometry">
     <rect>
      <x>91</x>
@@ -76,7 +76,7 @@
     <number>1</number>
    </property>
   </widget>
-  <widget class="QComboBox" name="waitTimeType">
+  <widget class="QComboBox" name="delayTimeType">
    <property name="geometry">
     <rect>
      <x>136</x>

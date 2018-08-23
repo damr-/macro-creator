@@ -73,12 +73,24 @@ WriteTextCmdWidget::~WriteTextCmdWidget()
 
 void WriteTextCmdWidget::CopyTo(CmdWidget *other)
 {
-    qobject_cast<WriteTextCmdWidget*>(other)->SetCmdSettings(GetIsRandom(), GetPossibleChars(), GetRandomAmount(), GetText());
+    WriteTextCmdWidget *widget = qobject_cast<WriteTextCmdWidget*>(other);
+    widget->SetCmdSettings(GetIsRandom(), GetPossibleChars(), GetRandomAmount(), GetText());
+    CmdWidget::CopyTo(widget);
 }
 
 QString WriteTextCmdWidget::GetCmdString()
 {
-    return QString::number(int(cmdType)) + "|" + QString::number(GetIsRandom()) + "|" + GetPossibleChars() + "|" + QString::number(GetRandomAmount()) + "|" +  GetText();
+    return CmdWidget::GetCmdString() + "|" + QString::number(GetIsRandom()) + "|" + GetPossibleChars() + "|" + QString::number(GetRandomAmount()) + "|" +  GetText();
+}
+
+void WriteTextCmdWidget::ToggleLocked()
+{
+    CmdWidget::ToggleLocked();
+    ui->textTypeComboBox->setEnabled(!isLocked);
+    ui->possibleCharsLineEdit->setEnabled(!isLocked);
+    ui->randomAmountSpinBox->setEnabled(!isLocked);
+    ui->textLineEdit->setEnabled(!isLocked);
+    ui->toolButton->setEnabled(!isLocked);
 }
 
 bool WriteTextCmdWidget::IsValidCmd()

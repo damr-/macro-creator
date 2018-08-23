@@ -17,12 +17,13 @@ class RunExeCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
+        void ToggleLocked();
         bool IsValidCmd();
 
         QString GetFilePath();
         void SetCmdSettings(QString filePath);
 
-        static const int PathIdx = 1;
+        static const int PathIdx = 3;
 
     private slots:
         void chooseExe();

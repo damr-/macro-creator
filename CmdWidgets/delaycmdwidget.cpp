@@ -13,8 +13,8 @@ DelayCmdWidget::DelayCmdWidget(QWidget *parent) :
 
     SetCmdSettings(1, 0);
 
-    connect(ui->waitTime, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
-    connect(ui->waitTimeType, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->delayAmount, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->delayTimeType, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCmdChangedSignal()));
 }
 
 DelayCmdWidget::~DelayCmdWidget()
@@ -26,25 +26,33 @@ void DelayCmdWidget::CopyTo(CmdWidget *other)
 {
     DelayCmdWidget *widget = qobject_cast<DelayCmdWidget*>(other);
     widget->SetCmdSettings(GetAmount(), GetTimeScale());
+    CmdWidget::CopyTo(widget);
 }
 
 QString DelayCmdWidget::GetCmdString()
 {
-    return QString::number(int(cmdType)) + "|" + QString::number(GetAmount()) + "|" + QString::number(GetTimeScale());
+    return CmdWidget::GetCmdString() + "|" + QString::number(GetAmount()) + "|" + QString::number(GetTimeScale());
+}
+
+void DelayCmdWidget::ToggleLocked()
+{
+    CmdWidget::ToggleLocked();
+    ui->delayAmount->setEnabled(!isLocked);
+    ui->delayTimeType->setEnabled(!isLocked);
 }
 
 int DelayCmdWidget::GetAmount()
 {
-    return ui->waitTime->value();
+    return ui->delayAmount->value();
 }
 
 int DelayCmdWidget::GetTimeScale()
 {
-    return ui->waitTimeType->currentIndex();
+    return ui->delayTimeType->currentIndex();
 }
 
 void DelayCmdWidget::SetCmdSettings(int amount, int timeScale)
 {
-    ui->waitTime->setValue(amount);
-    ui->waitTimeType->setCurrentIndex(timeScale);
+    ui->delayAmount->setValue(amount);
+    ui->delayTimeType->setCurrentIndex(timeScale);
 }

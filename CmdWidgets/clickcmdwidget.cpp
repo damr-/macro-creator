@@ -27,12 +27,21 @@ ClickCmdWidget::~ClickCmdWidget()
 
 void ClickCmdWidget::CopyTo(CmdWidget *other)
 {
-    qobject_cast<ClickCmdWidget*>(other)->SetCmdSettings(GetClickAmount(), GetClickType());
+    ClickCmdWidget *widget = qobject_cast<ClickCmdWidget*>(other);
+    widget->SetCmdSettings(GetClickAmount(), GetClickType());
+    CmdWidget::CopyTo(widget);
 }
 
 QString ClickCmdWidget::GetCmdString()
 {
-    return QString::number(int(cmdType)) + "|" + QString::number(GetClickAmount()) + "|" + QString::number(int(GetClickType()));
+    return CmdWidget::GetCmdString() + "|" + QString::number(GetClickAmount()) + "|" + QString::number(int(GetClickType()));
+}
+
+void ClickCmdWidget::ToggleLocked()
+{
+    CmdWidget::ToggleLocked();
+    ui->clickAmountSpinBox->setEnabled(!isLocked);
+    ui->clickTypeBox->setEnabled(!isLocked);
 }
 
 int ClickCmdWidget::GetClickAmount()
