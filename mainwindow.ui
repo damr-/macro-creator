@@ -482,6 +482,9 @@
    <property name="shortcut">
     <string>Ctrl+2</string>
    </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>true</bool>
+   </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

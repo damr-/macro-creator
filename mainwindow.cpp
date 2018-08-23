@@ -380,8 +380,6 @@ void MainWindow::openMacro()
     if(fileName.length() == 0)
     {
         ui->statusBar->showMessage("Opening aborted", 3000);
-        setUnsavedChanges(false);
-        newMacro();
         return;
     }
 
@@ -392,8 +390,6 @@ void MainWindow::openMacro()
 
         if(result == UnsavedChangesMessageResult::Cancel){
             ui->statusBar->showMessage("Opening aborted", 3000);
-            setUnsavedChanges(false);
-            newMacro();
             return;
         }
         if(result == UnsavedChangesMessageResult::Save)
@@ -405,15 +401,15 @@ void MainWindow::openMacro()
 
     if(!tryLoadCmdsFromFile(fullFilePath))
     {
-        setUnsavedChanges(false);
         newMacro();
+        setUnsavedChanges(false);
         return;
     }
 
     ui->statusBar->showMessage("Opened " + fullFilePath, 3000);
     hasNoSafeFile = false;
-    setUnsavedChanges(false);
     ui->actionFSaveAs->setEnabled(true);
+    setUnsavedChanges(false);
 }
 
 bool MainWindow::tryLoadCmdsFromFile(QString filename)
@@ -492,7 +488,6 @@ bool MainWindow::tryLoadCmdsFromFile(QString filename)
 QList<QListWidgetItem *> MainWindow::fillCmdListWidget(QStringList cmdListStrings, int startRow, bool &success)
 {
     QList<QListWidgetItem *> newItems;
-    success = false;
 
     for(int i = 0; i < cmdListStrings.size(); i++)
     {
@@ -504,6 +499,7 @@ QList<QListWidgetItem *> MainWindow::fillCmdListWidget(QStringList cmdListString
         if(cmdStr.length() != newWidget->GetCmdStringLen())
         {
             ui->cmdList->clear();
+            success = false;
             return newItems;
         }
 
@@ -583,7 +579,16 @@ QList<QListWidgetItem *> MainWindow::fillCmdListWidget(QStringList cmdListString
 void MainWindow::setUnsavedChanges(bool newUnsavedChanges = true)
 {
     hasUnsavedChanges = newUnsavedChanges;
-    setWindowTitle(macroName + (hasUnsavedChanges ? "*" : "") + " - Personal Macro");
+    updateWindowTitle();
+}
+
+void MainWindow::updateWindowTitle()
+{
+    QString suffix = "Personal Macro";
+    if(isMacroRunning)
+        suffix = isMacroExecutionPaused ? "Paused" : "Running";
+
+    setWindowTitle(macroName + (hasUnsavedChanges ? "*" : "") + " - " + suffix);
 }
 
 void MainWindow::tryRunMacro()
@@ -609,29 +614,28 @@ void MainWindow::tryRunMacro()
     }
 
     SaveOrRestoreGotoTotalAmounts(true);
+    selectRow(0);
 
     isMacroRunning = true;
-    selectRow(0);
-    setWindowTitle(macroName + " - Running");
+    updateWindowTitle();
+
     setWindowOpacity(0.75);
-    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowTransparentForInput);
+    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus);
     show();
 
     ExecuteCmds();
 
     setWindowOpacity(1);
-    setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint & ~Qt::WindowTransparentForInput);
+    setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint & ~Qt::WindowTransparentForInput & ~Qt::WindowDoesNotAcceptFocus);
     show();
 
-    setWindowTitle(macroName + " - Personal Macro");
     activateWindow();
     setFocus();
     raise();
-    isMacroRunning = false;
-    SaveOrRestoreGotoTotalAmounts(false);
 
-    //This is only because setting the amount in the Goto commands makes the program think there have been unsaved changes.
-    setUnsavedChanges(false);
+    SaveOrRestoreGotoTotalAmounts(false);
+    isMacroRunning = false;
+    updateWindowTitle();
 }
 
 int MainWindow::AllCmdsValid()
@@ -650,29 +654,28 @@ int MainWindow::AllCmdsValid()
 
 void MainWindow::ExecuteCmds()
 {
-    bool paused = false;
-    DefaultDelaySettings *s = defaultDelayWidget->GetSettings();
+    isMacroExecutionPaused = false;
+    DefaultDelaySettings *defaultDelaySettings = defaultDelayWidget->GetSettings();
 
-    for(int i = 0, total = ui->cmdList->count(); i < total; i++)
+    for(int i = 0, total = ui->cmdList->count(); i < total;)
     {
         //Check for user input
-        if(GetAsyncKeyState(VK_F7) && paused)
-        {
-            setWindowTitle(macroName + " - Running");
-            paused = false;
+        if(GetAsyncKeyState(VK_F7) && isMacroExecutionPaused)
+        {            
+            isMacroExecutionPaused = false;
+            updateWindowTitle();
         }
-        if(GetAsyncKeyState(VK_F8) && !paused)
+        if(GetAsyncKeyState(VK_F8) && !isMacroExecutionPaused)
         {
-            setWindowTitle(macroName + " - Paused");
-            paused = true;
+            isMacroExecutionPaused = true;
+            updateWindowTitle();
         }
         if(GetAsyncKeyState(VK_F9))
             break;
         //
 
-        if(paused)
+        if(isMacroExecutionPaused)
         {
-            i--;
             qApp->processEvents();
             continue;
         }
@@ -683,26 +686,27 @@ void MainWindow::ExecuteCmds()
         QListWidgetItem* item = ui->cmdList->item(i);
         CmdWidget *widget = qobject_cast<CmdWidget*>(ui->cmdList->itemWidget(item));
 
-        if(widget->GetCmdType() != CmdType::GOTO)
-        {
-            Commands::ExecuteCmd(widget->GetCmdString());
-        }
-        else
+        if(widget->GetCmdType() == CmdType::GOTO)
         {
             GotoCmdWidget *gotoWidget = qobject_cast<GotoCmdWidget *>(widget);
             int amount = gotoWidget->GetAmount();
             if(amount != 0)
             {
                 int targetRow = gotoWidget->GetTargetRow();
-                i = targetRow - 2; // -1 for 0 based index and -1 to remove i++ due to for-loop
+                i = targetRow - 1; // -1 for 0 based index
 
                 if(amount > 0)
                     gotoWidget->SetCmdSettings(targetRow, amount - 1);
             }
         }
+        else
+        {
+            Commands::ExecuteCmd(widget->GetCmdString());
+            i++;
+        }
 
-        if(s->enabled)
-            Sleep(DWORD(s->amount) * (s->timeScale == 0 ? 1000 : 1));
+        if(defaultDelaySettings->enabled)
+            Sleep(DWORD(defaultDelaySettings->amount) * (defaultDelaySettings->timeScale == 0 ? 1000 : 1));
     }
 }
 
@@ -751,7 +755,6 @@ void MainWindow::copySelected()
     QList<QListWidgetItem *> selectedItems = GetSortedSelectedItems();
 
     QString clipBoardText = "";
-
     for (int i = 0, total = selectedItems.size(); i < total; i++)
     {
         QListWidgetItem *item = selectedItems.at(i);
@@ -777,15 +780,28 @@ void MainWindow::pasteClipboard()
 {
     QClipboard *clipboard = QApplication::clipboard();
 
-    QString text = clipboard->text();
-
-    if(text.isEmpty())
+    if(clipboard->text().isEmpty())
         return;
 
-    QStringList cmds = text.split(';');
+    QStringList cmds = clipboard->text().split(';');
 
-    bool success;
-    QList<QListWidgetItem *> newItems = fillCmdListWidget(cmds, ui->cmdList->currentRow() + 1, success);
+    bool success = true;
+
+    QString cmd;
+    foreach(cmd, cmds)
+    {
+        if(!cmd.contains('|'))
+            success = false;
+    }
+
+    if(!success)
+        return;
+
+    int row = ui->cmdList->currentRow() + 1;
+    if(ui->cmdList->selectedItems().isEmpty())
+        row = ui->cmdList->count();
+
+    QList<QListWidgetItem *> newItems = fillCmdListWidget(cmds, row, success);
 
     if(!success)
         return;
@@ -889,6 +905,9 @@ void MainWindow::addCmdListItem(QListWidgetItem *item, CmdWidget *itemWidget, in
 
 void MainWindow::handleCmdSettingChanged(CmdWidget *widget)
 {
+    if(isMacroRunning)
+        return;
+
     setUnsavedChanges(true);
 
     if(widget->GetCmdType() == CmdType::GOTO)
@@ -904,10 +923,8 @@ void MainWindow::handleSelectionChanged()
     ui->actionECopy->setEnabled(itemSelected);
     ui->actionECut->setEnabled(itemSelected);
 
-    ui->actionEPaste->setEnabled(false);
-    //TODO
-    //QClipboard *clipboard = QApplication::clipboard();
-    //ui->actionEPaste->setEnabled(!clipboard->text().isEmpty());
+    QClipboard *clipboard = QApplication::clipboard();
+    ui->actionEPaste->setEnabled(!clipboard->text().isEmpty());
 }
 
 void MainWindow::selectRow(int row)

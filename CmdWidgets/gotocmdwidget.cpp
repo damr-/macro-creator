@@ -32,7 +32,7 @@ QString GotoCmdWidget::GetCmdString()
 
 bool GotoCmdWidget::IsValidCmd()
 {
-    return ui->amountBox->value() != 0;
+    return GetAmount() != 0 && GetTargetRow() != GetRowNumber();
 }
 
 int GotoCmdWidget::GetTargetRow()
