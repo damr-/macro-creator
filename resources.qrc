@@ -5,5 +5,9 @@
         <file>resources/icons/lock.png</file>
         <file>resources/icons/crosshair.png</file>
         <file>resources/icons/start.png</file>
+        <file>resources/icons/delete.png</file>
+        <file>resources/icons/open.png</file>
+        <file>resources/icons/quit.png</file>
+        <file>resources/favicon.ico</file>
     </qresource>
 </RCC>

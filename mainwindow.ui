@@ -37,6 +37,10 @@
   <property name="windowTitle">
    <string>Personal Macro</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/resources/icons/resources/favicon.ico</normaloff>:/resources/icons/resources/favicon.ico</iconset>
+  </property>
   <property name="windowOpacity">
    <double>1.000000000000000</double>
   </property>
@@ -180,18 +184,9 @@
     <addaction name="action8Write"/>
     <addaction name="action9RunExe"/>
    </widget>
-   <widget class="QMenu" name="menuRun">
-    <property name="title">
-     <string>Run</string>
-    </property>
-    <addaction name="actionRStart"/>
-    <addaction name="actionRPause"/>
-    <addaction name="actionRStop"/>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuAdd"/>
-   <addaction name="menuRun"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="sizeGripEnabled">
@@ -239,6 +234,10 @@
    </property>
   </action>
   <action name="actionFExit">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/resources/icons/quit.png</normaloff>:/resources/icons/resources/icons/quit.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
@@ -265,8 +264,15 @@
    </property>
   </action>
   <action name="actionFOpen">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/resources/icons/open.png</normaloff>:/resources/icons/resources/icons/open.png</iconset>
+   </property>
    <property name="text">
     <string>Open</string>
+   </property>
+   <property name="toolTip">
+    <string>Open an already existing macro</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -276,13 +282,23 @@
    <property name="text">
     <string>Save As...</string>
    </property>
+   <property name="toolTip">
+    <string>Save the macro to a new file</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionEDelete">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/resources/icons/delete.png</normaloff>:/resources/icons/resources/icons/delete.png</iconset>
+   </property>
    <property name="text">
     <string>Delete</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete the selected command(s)</string>
    </property>
    <property name="shortcut">
     <string>Del</string>
@@ -295,6 +311,9 @@
    <property name="text">
     <string>Duplicate</string>
    </property>
+   <property name="toolTip">
+    <string>Duplicate the selected command(s)</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
    </property>
@@ -305,6 +324,9 @@
   <action name="actionECopy">
    <property name="text">
     <string>Copy</string>
+   </property>
+   <property name="toolTip">
+    <string>Cop ythe selected command(s)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
