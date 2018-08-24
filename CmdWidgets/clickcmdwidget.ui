@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>ClickCmdWidget</string>
   </property>
   <widget class="QComboBox" name="clickTypeBox">
    <property name="geometry">

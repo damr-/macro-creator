@@ -116,16 +116,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->cmdList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
     //
 
-    //Handle selection of cmds
+    //React to selection of commands
     connect(ui->cmdList, SIGNAL(itemSelectionChanged()), this, SLOT(handleSelectionChanged()));
 
-    //react to drag&drop events
+    //React to drag&drop events
     connect(ui->cmdList->model(),
             SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
             this,
             SLOT(handleRowMoved(QModelIndex,int,int,QModelIndex,int)));
 
-    //disable actions by default
+    //Disable actions by default
     handleSelectionChanged();
 
     //Setup default delay widget
@@ -214,10 +214,12 @@ void MainWindow::showMessage(QString title, QString message, QMessageBox::Icon t
 
 void MainWindow::checkUserKeyInput()
 {
+
     if(GetAsyncKeyState(VK_F7))
     {
         tryRunMacro();
     }
+
     if(!GetAsyncKeyState(VK_F6) || isMacroRunning)
         return;
 
@@ -943,7 +945,9 @@ void MainWindow::handleCmdSettingChanged(CmdWidget *widget)
     setUnsavedChanges(true);
 
     if(widget->GetCmdType() == CmdType::GOTO)
+    {
         qobject_cast<GotoCmdWidget *>(widget)->ValidateRowNumber(ui->cmdList->count());
+    }
 }
 
 void MainWindow::showPosHint(bool visible, int x, int y)
@@ -973,6 +977,9 @@ void MainWindow::handleSelectionChanged()
 
     QClipboard *clipboard = QApplication::clipboard();
     ui->actionEPaste->setEnabled(!clipboard->text().isEmpty());
+
+    ui->actionEToggleDisabled->setEnabled(itemSelected);
+    ui->actionEToggleLocked->setEnabled(itemSelected);
 }
 
 void MainWindow::selectRow(int row)

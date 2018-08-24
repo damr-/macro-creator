@@ -8,7 +8,6 @@ PosHint::PosHint(QWidget *parent) :
     ui->setupUi(this);
 
     setWindowFlags(Qt::FramelessWindowHint |  Qt::WindowStaysOnTopHint | Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus);
-//    setAttribute(Qt::WA_DeleteOnClose);
 
     setStyleSheet("background:transparent;");
     setAttribute(Qt::WA_TranslucentBackground);

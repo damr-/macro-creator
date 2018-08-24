@@ -1,8 +1,6 @@
 #include "defaultdelaywidget.h"
 #include "ui_defaultdelaywidget.h"
 
-#include <QDebug>
-
 DefaultDelayWidget::DefaultDelayWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DefaultDelayWidget)

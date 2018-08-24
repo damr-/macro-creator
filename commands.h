@@ -24,18 +24,18 @@ enum StateType
 
 class Commands
 {
-public:
-    static void ExecuteCmd(QString cmd);
+    public:
+        static void ExecuteCmd(QString cmd);
 
-private:
-    static void Click(QStringList cmd);
-    static void Delay(QStringList cmd);
-    static void CursorPos(QStringList cmd);
-    static void Drag(QStringList cmd);
-    static void Scroll(QStringList cmd);
-    static void PressKey(QStringList cmd);
-    static void WriteText(QStringList cmd);
-    static void RunExe(QStringList cmd);
+    private:
+        static void Click(QStringList cmd);
+        static void Delay(QStringList cmd);
+        static void CursorPos(QStringList cmd);
+        static void Drag(QStringList cmd);
+        static void Scroll(QStringList cmd);
+        static void PressKey(QStringList cmd);
+        static void WriteText(QStringList cmd);
+        static void RunExe(QStringList cmd);
 };
 
 #endif // COMMANDS_H

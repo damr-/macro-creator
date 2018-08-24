@@ -4,7 +4,7 @@
 #include <QWidget>
 
 namespace Ui {
-class DefaultDelayWidget;
+    class DefaultDelayWidget;
 }
 
 class DefaultDelaySettings
@@ -19,22 +19,22 @@ class DefaultDelayWidget : public QWidget
 {
     Q_OBJECT
 
-public:
-    explicit DefaultDelayWidget(QWidget *parent = nullptr);
-    ~DefaultDelayWidget();
+    public:
+        explicit DefaultDelayWidget(QWidget *parent = nullptr);
+        ~DefaultDelayWidget();
 
-    DefaultDelaySettings *GetSettings();
-    void SetSettings(DefaultDelaySettings *settings);
-    void Reset();
+        DefaultDelaySettings *GetSettings();
+        void SetSettings(DefaultDelaySettings *settings);
+        void Reset();
 
-signals:
-    void SettingsChanged();
+    signals:
+        void SettingsChanged();
 
-private slots:
-    void Toggle();
-    void EmitSettingsChanged();
+    private slots:
+        void Toggle();
+        void EmitSettingsChanged();
 
-private:
+    private:
     Ui::DefaultDelayWidget *ui;
 };
 

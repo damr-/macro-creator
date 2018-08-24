@@ -4,8 +4,6 @@
 #include <string>
 #include <windows.h>
 
-#include <QDebug>
-
 map<string, BYTE> KeyboardUtilities::byteCodes =
 {
     pair<string, BYTE>("Backspace", 0x08),

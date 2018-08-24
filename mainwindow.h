@@ -19,7 +19,7 @@
 #define WINDOW_OPTIONS_LEN 5
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -31,7 +31,6 @@ class MainWindow : public QMainWindow
         ~MainWindow();
 
     private slots:
-        //For catching the mouse position and the key to run the macro
         void checkUserKeyInput();
 
         //File Actions
@@ -41,11 +40,11 @@ class MainWindow : public QMainWindow
         void saveMacroAs();
         void openMacro();
 
-        //Macro Actions
         void tryRunMacro();
 
         void showContextMenu(const QPoint&);
 
+        //Adding commands
         CmdWidget *addNewCmd(int cmdType);
         void addCmdListItem(QListWidgetItem *item, CmdWidget *itemWidget, int row);
 
@@ -78,7 +77,7 @@ class MainWindow : public QMainWindow
         int defX, defY, defW, defH;
 
         //Running Macro
-        bool isMacroRunning;
+        bool isMacroRunning = false;
         bool isMacroExecutionPaused;
         int AllCmdsValid();
         void ExecuteCmds();
@@ -86,17 +85,6 @@ class MainWindow : public QMainWindow
 
         QList<QListWidgetItem *> GetSortedSelectedItems();
 
-        //Unsafed changes
-        enum UnsavedChangesMessageResult {
-            Save = 0,
-            DontSave = 1,
-            Cancel = 2
-        };
-
-        bool hasNoSafeFile;
-        bool hasUnsavedChanges;
-        void closeEvent(QCloseEvent *event);
-        QMessageBox *showUnsavedChangesWarning(UnsavedChangesMessageResult &result);
         void showMessage(QString title, QString message, QMessageBox::Icon type);
 
         //Storing data
@@ -105,6 +93,18 @@ class MainWindow : public QMainWindow
         QString fileExtension = "pmac";
         QString fileInfo = "Personal Macro Files (*." + fileExtension + ")";
         QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + "." + this->fileExtension; }
+
+        bool hasNoSafeFile;
+        bool hasUnsavedChanges;
+
+        void closeEvent(QCloseEvent *event);
+
+        enum UnsavedChangesMessageResult {
+            Save = 0,
+            DontSave = 1,
+            Cancel = 2
+        };
+        QMessageBox *showUnsavedChangesWarning(UnsavedChangesMessageResult &result);
 
         bool tryLoadCmdsFromFile(QString pathPlusFilename);
         QList<QListWidgetItem *> fillCmdListWidget(QStringList cmdListStrings, int startRow, bool &success);

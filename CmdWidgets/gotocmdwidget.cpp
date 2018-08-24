@@ -1,6 +1,8 @@
 #include "gotocmdwidget.h"
 #include "ui_gotocmdwidget.h"
 
+#include <QDebug>
+
 GotoCmdWidget::GotoCmdWidget(QWidget *parent) :
     CmdWidget(parent),
     ui(new Ui::GotoCmdWidget)
@@ -61,12 +63,12 @@ void GotoCmdWidget::SetCmdSettings(int targetRow, int amount)
 }
 
 void GotoCmdWidget::ValidateRowNumber(int cmdListRowCount)
-{
+{    
     int newTargetRow = GetTargetRow();
 
-    if(GetTargetRow() > cmdListRowCount)
+    if(newTargetRow > cmdListRowCount)
         newTargetRow = cmdListRowCount;
-    if(GetTargetRow() > GetRowNumber())
+    if(newTargetRow > GetRowNumber())
         newTargetRow = GetRowNumber();
 
     ui->rowBox->setValue(newTargetRow);

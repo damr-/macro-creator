@@ -12,8 +12,6 @@
 #include "presskeycmdwidget.h"
 #include "runexecmdwidget.h"
 
-#include <QDebug>
-
 CmdWidget* CmdWidget::GetNewCmdWidget(CmdType cmdType)
 {
     switch(cmdType){
@@ -34,8 +32,8 @@ CmdWidget* CmdWidget::GetNewCmdWidget(CmdType cmdType)
         case CmdType::PRESSKEY:
             return new PressKeyCmdWidget();
         default:
-            return new DelayCmdWidget();
-    }
+            return new RunExeCmdWidget();
+    }    
 }
 
 CmdWidget::CmdWidget(QWidget *parent) :

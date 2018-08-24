@@ -2,7 +2,6 @@
 
 #include <windows.h>
 #include <QProcess>
-#include <QDebug>
 
 #include "keyboardutilities.h"
 #include "CmdWidgets/clickcmdwidget.h"

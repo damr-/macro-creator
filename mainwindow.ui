@@ -466,6 +466,9 @@
    <property name="toolTip">
     <string>Pause the macro</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionRStop">
    <property name="text">
@@ -473,6 +476,9 @@
    </property>
    <property name="toolTip">
     <string>Stop the macro</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="action2Goto">
