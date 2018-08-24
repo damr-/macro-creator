@@ -209,17 +209,10 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionFNew"/>
-   <addaction name="actionFSave"/>
-   <addaction name="separator"/>
    <addaction name="actionRStart"/>
    <addaction name="separator"/>
   </widget>
   <action name="actionFNew">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/resources/icons/resources/icons/new.png</normaloff>:/resources/icons/resources/icons/new.png</iconset>
-   </property>
    <property name="text">
     <string>New</string>
    </property>
@@ -234,10 +227,6 @@
    </property>
   </action>
   <action name="actionFExit">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/resources/icons/resources/icons/quit.png</normaloff>:/resources/icons/resources/icons/quit.png</iconset>
-   </property>
    <property name="text">
     <string>Exit</string>
    </property>
@@ -249,10 +238,6 @@
    </property>
   </action>
   <action name="actionFSave">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/resources/icons/resources/icons/save.png</normaloff>:/resources/icons/resources/icons/save.png</iconset>
-   </property>
    <property name="text">
     <string>Save</string>
    </property>
@@ -264,10 +249,6 @@
    </property>
   </action>
   <action name="actionFOpen">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/resources/icons/resources/icons/open.png</normaloff>:/resources/icons/resources/icons/open.png</iconset>
-   </property>
    <property name="text">
     <string>Open</string>
    </property>
@@ -290,10 +271,6 @@
    </property>
   </action>
   <action name="actionEDelete">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/resources/icons/resources/icons/delete.png</normaloff>:/resources/icons/resources/icons/delete.png</iconset>
-   </property>
    <property name="text">
     <string>Delete</string>
    </property>
