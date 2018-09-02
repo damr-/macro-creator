@@ -9,8 +9,6 @@ PressKeyCmdWidget::PressKeyCmdWidget(QWidget *parent) :
 
     cmdType = CmdType::PRESSKEY;
 
-    //ui->letterLineEdit->setValidator(new QRegExpValidator(QRegExp("[a-z0-9]"), this));
-
     connect(ui->keyTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateVisibility()));
 
     connect(ui->modifierListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(emitCmdChangedSignal()));

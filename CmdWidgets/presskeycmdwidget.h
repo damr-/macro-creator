@@ -9,10 +9,10 @@ class PressKeyCmdWidget;
 
 enum KeyType
 {
-    NOTHING = 0,
-    LETTER = 1,
-    KEYDET = 2,
-    SPECKEY = 3
+    LETTER = 0,
+    KEYDET = 1,
+    SPECKEY = 2,
+    NOTHING = 3
 };
 
 class PressKeyCmdWidget : public CmdWidget

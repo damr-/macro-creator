@@ -7,6 +7,8 @@ TEMPLATE = app
 
 CONFIG += static
 
+RC_FILE = app.rc
+
 HEADERS  += mainwindow.h \
     commands.h\
     keyboardutilities.h \
@@ -21,7 +23,8 @@ HEADERS  += mainwindow.h \
     CmdWidgets/runexecmdwidget.h \
     CmdWidgets/presskeycmdwidget.h \
     CmdWidgets/gotocmdwidget.h \
-    poshint.h
+    poshint.h \
+    version.h
 
 SOURCES += main.cpp \
     mainwindow.cpp \

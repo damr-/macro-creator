@@ -457,6 +457,12 @@
    <property name="toolTip">
     <string>Start the macro</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionRPause">
    <property name="text">

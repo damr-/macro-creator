@@ -25,28 +25,10 @@
   <property name="windowTitle">
    <string>WriteTextCmdWidget</string>
   </property>
-  <widget class="QLabel" name="writeTextLabel">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>4</y>
-     <width>51</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Write</string>
-   </property>
-  </widget>
   <widget class="QLineEdit" name="textLineEdit">
    <property name="geometry">
     <rect>
-     <x>180</x>
+     <x>190</x>
      <y>5</y>
      <width>150</width>
      <height>20</height>
@@ -65,202 +47,227 @@
     <bool>false</bool>
    </property>
   </widget>
-  <widget class="QSpinBox" name="randomAmountSpinBox">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>230</x>
-     <y>5</y>
-     <width>30</width>
-     <height>20</height>
+     <x>0</x>
+     <y>2</y>
+     <width>151</width>
+     <height>27</height>
     </rect>
    </property>
-   <property name="minimumSize">
-    <size>
-     <width>30</width>
-     <height>20</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>30</width>
-     <height>20</height>
-    </size>
-   </property>
-   <property name="toolTip">
-    <string>The amount of characters randomly written</string>
-   </property>
-   <property name="buttonSymbols">
-    <enum>QAbstractSpinBox::NoButtons</enum>
-   </property>
-   <property name="minimum">
-    <number>1</number>
-   </property>
-   <property name="maximum">
-    <number>999</number>
-   </property>
-   <property name="value">
-    <number>1</number>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="possibleCharsLineEdit">
-   <property name="geometry">
-    <rect>
-     <x>300</x>
-     <y>5</y>
-     <width>150</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>150</width>
-     <height>20</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>150</width>
-     <height>20</height>
-    </size>
-   </property>
-   <property name="toolTip">
-    <string>The characters used for writing a random text</string>
-   </property>
-   <property name="statusTip">
-    <string/>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="maxLength">
-    <number>100</number>
-   </property>
-   <property name="placeholderText">
-    <string>used chars</string>
-   </property>
-  </widget>
-  <widget class="QToolButton" name="toolButton">
-   <property name="geometry">
-    <rect>
-     <x>450</x>
-     <y>6</y>
-     <width>20</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>20</width>
-     <height>20</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>20</width>
-     <height>20</height>
-    </size>
-   </property>
-   <property name="toolTip">
-    <string>Select a preset of characters</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="popupMode">
-    <enum>QToolButton::InstantPopup</enum>
-   </property>
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextOnly</enum>
-   </property>
-   <property name="arrowType">
-    <enum>Qt::DownArrow</enum>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="textTypeComboBox">
-   <property name="geometry">
-    <rect>
-     <x>75</x>
-     <y>3</y>
-     <width>70</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>70</width>
-     <height>25</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>70</width>
-     <height>25</height>
-    </size>
-   </property>
-   <property name="currentIndex">
-    <number>0</number>
-   </property>
-   <property name="maxCount">
-    <number>20</number>
-   </property>
-   <item>
-    <property name="text">
-     <string>given</string>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="spacing">
+     <number>0</number>
     </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>random</string>
-    </property>
-   </item>
+    <item>
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QLabel" name="writeTextLabel">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Write</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="textTypeComboBox">
+      <property name="minimumSize">
+       <size>
+        <width>70</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>70</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="maxCount">
+       <number>20</number>
+      </property>
+      <item>
+       <property name="text">
+        <string>given</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>random</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+   </layout>
   </widget>
-  <widget class="QLabel" name="textLabel">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>160</x>
      <y>5</y>
-     <width>81</width>
-     <height>20</height>
+     <width>311</width>
+     <height>22</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>text of length</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="randomL2">
-   <property name="geometry">
-    <rect>
-     <x>265</x>
-     <y>5</y>
-     <width>35</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>35</width>
-     <height>20</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>35</width>
-     <height>20</height>
-    </size>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>using</string>
-   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QLabel" name="textLabel">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>text of length</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSpinBox" name="randomAmountSpinBox">
+      <property name="minimumSize">
+       <size>
+        <width>30</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>30</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>The amount of characters randomly written</string>
+      </property>
+      <property name="buttonSymbols">
+       <enum>QAbstractSpinBox::NoButtons</enum>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>999</number>
+      </property>
+      <property name="value">
+       <number>1</number>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="randomL2">
+      <property name="minimumSize">
+       <size>
+        <width>35</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>35</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>using</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="possibleCharsLineEdit">
+      <property name="minimumSize">
+       <size>
+        <width>150</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>The characters used for writing a random text</string>
+      </property>
+      <property name="statusTip">
+       <string/>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="maxLength">
+       <number>100</number>
+      </property>
+      <property name="placeholderText">
+       <string>used chars</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QToolButton" name="toolButton">
+      <property name="minimumSize">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Select a preset of characters</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="popupMode">
+       <enum>QToolButton::InstantPopup</enum>
+      </property>
+      <property name="toolButtonStyle">
+       <enum>Qt::ToolButtonTextOnly</enum>
+      </property>
+      <property name="arrowType">
+       <enum>Qt::DownArrow</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <tabstops>
