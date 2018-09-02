@@ -41,6 +41,11 @@ void DelayCmdWidget::ToggleLocked()
     ui->delayTimeType->setEnabled(!isLocked);
 }
 
+void DelayCmdWidget::SetSettings(QStringList settings)
+{
+    SetCmdSettings(settings[AmountIdx].toInt(), settings[ScaleIdx].toInt());
+}
+
 int DelayCmdWidget::GetAmount()
 {
     return ui->delayAmount->value();

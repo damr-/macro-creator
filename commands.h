@@ -8,7 +8,7 @@ enum CmdType
     DELAY = 0,
     GOTO = 1,
     CLICK = 2,
-    CURPOS = 3,
+    SETCURSORPOS = 3,
     DRAG = 4,
     SCROLL = 5,
     PRESSKEY = 6,

@@ -39,6 +39,11 @@ void ScrollCmdWidget::ToggleLocked()
     ui->amountSpinBox->setEnabled(!isLocked);
 }
 
+void ScrollCmdWidget::SetSettings(QStringList settings)
+{
+    SetCmdSettings(settings[AmountIdx].toInt(), settings[DirIdx].toInt());
+}
+
 int ScrollCmdWidget::GetAmount()
 {
     return ui->amountSpinBox->value();

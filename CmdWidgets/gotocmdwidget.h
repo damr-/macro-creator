@@ -18,6 +18,8 @@ class GotoCmdWidget : public CmdWidget
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
         void ToggleLocked();
+        void SetSettings(QStringList settings);
+
         bool IsValidCmd();
 
         int GetTargetRow();

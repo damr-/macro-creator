@@ -234,7 +234,7 @@ void MainWindow::checkUserKeyInput()
 
     if(ui->cmdList->selectedItems().length() == 0)
     {
-        CmdWidget *w = addNewCmd(int(CmdType::CURPOS));
+        CmdWidget *w = addNewCmd(int(CmdType::SETCURSORPOS));
         qobject_cast<SetCursorPosCmdWidget*>(w)->SetCmdSettings(x, y);
         statusMsg = "Added new 'Cursor Position' command for " + posString;
     }
@@ -249,7 +249,7 @@ void MainWindow::checkUserKeyInput()
 
             switch(widget->GetCmdType())
             {
-                case CmdType::CURPOS:
+                case CmdType::SETCURSORPOS:
                     qobject_cast<SetCursorPosCmdWidget*>(widget)->SetCmdSettings(x, y);
                     statusMsg = "Updated 'Cursor position': " + posString;
                     break;
@@ -392,6 +392,7 @@ void MainWindow::openMacro()
     }
 
     macroName = fileName;
+    macroPath = QFileInfo(fullFilePath).absolutePath();
 
     if(!tryLoadCmdsFromFile(fullFilePath))
     {
@@ -412,10 +413,7 @@ bool MainWindow::tryLoadCmdsFromFile(QString filename)
 
     QFile file(filename);
 
-    if(!file.exists())
-        return false;
-
-    if(!file.open(QFile::ReadOnly))
+    if(!file.exists() || !file.open(QFile::ReadOnly))
         return false;
 
     QTextStream input(&file);
@@ -484,9 +482,8 @@ QList<QListWidgetItem *> MainWindow::fillCmdListWidget(QStringList cmdListString
 
     for(int i = 0; i < cmdListStrings.size(); i++)
     {
-        QStringList cmdStr = cmdListStrings.at(i).split("|");
+        QStringList cmdStr = cmdListStrings.at(i).split("|");        
         CmdType cmdTypeIndex = CmdType(cmdStr[CmdWidget::CmdTypeIdx].toInt());
-
         CmdWidget *newWidget = CmdWidget::GetNewCmdWidget(cmdTypeIndex);
 
         if(cmdStr.length() != newWidget->GetCmdStringLen())
@@ -496,69 +493,8 @@ QList<QListWidgetItem *> MainWindow::fillCmdListWidget(QStringList cmdListString
             return newItems;
         }
 
-        newWidget->SetCmdStates(cmdStr[CmdWidget::LockedStateIdx].toInt(), cmdStr[CmdWidget::DisabledStateIdx].toInt());
-
-        switch(cmdTypeIndex){
-            case CmdType::DELAY:
-                qobject_cast<DelayCmdWidget*>(newWidget)->SetCmdSettings(
-                            cmdStr[DelayCmdWidget::AmountIdx].toInt(),
-                            cmdStr[DelayCmdWidget::ScaleIdx].toInt());
-                break;
-            case CmdType::GOTO:
-                qobject_cast<GotoCmdWidget *>(newWidget)->SetCmdSettings(
-                            cmdStr[GotoCmdWidget::TargetRowIdx].toInt(),
-                            cmdStr[GotoCmdWidget::AmountIdx].toInt());
-                break;
-            case CmdType::CLICK:
-                qobject_cast<ClickCmdWidget*>(newWidget)->SetCmdSettings(
-                            cmdStr[ClickCmdWidget::AmountIdx].toInt(),
-                            static_cast<ClickType>(cmdStr[ClickCmdWidget::TypeIdx].toInt()));
-                break;
-            case CmdType::CURPOS:
-                qobject_cast<SetCursorPosCmdWidget*>(newWidget)->SetCmdSettings(
-                            cmdStr[SetCursorPosCmdWidget::XIdx].toInt(),
-                            cmdStr[SetCursorPosCmdWidget::YIdx].toInt());
-                break;
-            case CmdType::DRAG:
-                qobject_cast<DragCmdWidget*>(newWidget)->SetCmdSettings(
-                            cmdStr[DragCmdWidget::XIdx].toInt(),
-                            cmdStr[DragCmdWidget::YIdx].toInt());
-                break;
-            case CmdType::SCROLL:
-                qobject_cast<ScrollCmdWidget*>(newWidget)->SetCmdSettings(
-                            cmdStr[ScrollCmdWidget::AmountIdx].toInt(),
-                            cmdStr[ScrollCmdWidget::DirIdx].toInt());
-                break;
-            case CmdType::PRESSKEY:
-            {
-                PressKeyCmdWidget::Modifiers mod = PressKeyCmdWidget::Modifiers(
-                            cmdStr[PressKeyCmdWidget::ModCTRLIdx].toInt(),
-                            cmdStr[PressKeyCmdWidget::ModSHIFTIdx].toInt(),
-                            cmdStr[PressKeyCmdWidget::ModALTIdx].toInt());
-
-                qobject_cast<PressKeyCmdWidget*>(newWidget)->SetCmdSettings(
-                            mod,
-                            KeyType(cmdStr[PressKeyCmdWidget::KeyTypeIdx].toInt()),
-                            cmdStr[PressKeyCmdWidget::LetterIdx],
-                            cmdStr[PressKeyCmdWidget::SeqLetterIdx],
-                            cmdStr[PressKeyCmdWidget::SpcKeyIndexIdx].toInt());
-                break;
-            }
-            case CmdType::WRITETEXT:
-                qobject_cast<WriteTextCmdWidget*>(newWidget)->SetCmdSettings(
-                            cmdStr[WriteTextCmdWidget::TypeIdx].toInt(),
-                            cmdStr[WriteTextCmdWidget::CharsIdx],
-                            cmdStr[WriteTextCmdWidget::AmountIdx].toInt(),
-                            cmdStr[WriteTextCmdWidget::TextIdx]);
-                break;
-            case CmdType::RUNEXE:
-            {
-                QString path = cmdStr[RunExeCmdWidget::PathIdx];
-                path = path.length() == 0 ? "" : path;
-                qobject_cast<RunExeCmdWidget*>(newWidget)->SetCmdSettings(path);
-                break;
-            }
-        }
+        newWidget->SetStates(cmdStr[CmdWidget::LockedStateIdx].toInt(), cmdStr[CmdWidget::DisabledStateIdx].toInt());
+        newWidget->SetSettings(cmdStr);
 
         QListWidgetItem *newItem = new QListWidgetItem();
         addCmdListItem(newItem, newWidget, startRow + i);
@@ -921,7 +857,7 @@ void MainWindow::addCmdListItem(QListWidgetItem *item, CmdWidget *itemWidget, in
     item->setSizeHint(QSize(0, itemWidget->height()));
     connect(itemWidget, SIGNAL(cmdChanged(CmdWidget*)), this, SLOT(handleCmdSettingChanged(CmdWidget*)));
 
-    if(itemWidget->GetCmdType() == CmdType::CURPOS)
+    if(itemWidget->GetCmdType() == CmdType::SETCURSORPOS)
     {
         SetCursorPosCmdWidget *w = qobject_cast<SetCursorPosCmdWidget*>(itemWidget);
         connect(w, SIGNAL(showPosHint(bool, int, int)), this, SLOT(showPosHint(bool, int, int)));

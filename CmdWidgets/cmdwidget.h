@@ -20,6 +20,7 @@ class CmdWidget : public QWidget
         virtual void CopyTo(CmdWidget *other) = 0;        
         virtual QString GetCmdString() = 0;
         virtual void ToggleLocked() = 0;
+        virtual void SetSettings(QStringList settings) = 0;
 
         virtual bool IsValidCmd();
 
@@ -28,7 +29,7 @@ class CmdWidget : public QWidget
         int GetRowNumber();
         int GetCmdStringLen();
         void ToggleEnabled();
-        void SetCmdStates(bool isLocked, bool isDisabled);
+        void SetStates(bool isLocked, bool isDisabled);
 
         static CmdWidget* GetNewCmdWidget(CmdType cmdType);
 

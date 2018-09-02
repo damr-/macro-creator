@@ -93,6 +93,11 @@ void WriteTextCmdWidget::ToggleLocked()
     ui->toolButton->setEnabled(!isLocked);
 }
 
+void WriteTextCmdWidget::SetSettings(QStringList settings)
+{
+    SetCmdSettings(settings[TypeIdx].toInt(), settings[CharsIdx], settings[AmountIdx].toInt(), settings[TextIdx]);
+}
+
 bool WriteTextCmdWidget::IsValidCmd()
 {
     return (!GetIsRandom() && !GetText().isEmpty()) || (GetIsRandom() && !GetPossibleChars().isEmpty());

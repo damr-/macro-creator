@@ -41,6 +41,11 @@ void DragCmdWidget::ToggleLocked()
     ui->yCoord->setEnabled(!isLocked);
 }
 
+void DragCmdWidget::SetSettings(QStringList settings)
+{
+    SetCmdSettings(settings[XIdx].toInt(), settings[YIdx].toInt());
+}
+
 int DragCmdWidget::GetX()
 {
     return ui->xCoord->value();

@@ -9,7 +9,7 @@ SetCursorPosCmdWidget::SetCursorPosCmdWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    cmdType = CmdType::CURPOS;
+    cmdType = CmdType::SETCURSORPOS;
 
     connect(ui->xCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
     connect(ui->yCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
@@ -39,6 +39,12 @@ void SetCursorPosCmdWidget::ToggleLocked()
     CmdWidget::ToggleLocked();
     ui->xCoord->setEnabled(!isLocked);
     ui->yCoord->setEnabled(!isLocked);
+}
+
+void SetCursorPosCmdWidget::SetSettings(QStringList settings)
+{
+    SetCmdSettings(settings[XIdx].toInt(),
+                   settings[YIdx].toInt());
 }
 
 int SetCursorPosCmdWidget::GetX()

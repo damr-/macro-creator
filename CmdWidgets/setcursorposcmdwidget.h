@@ -18,6 +18,7 @@ class SetCursorPosCmdWidget : public CmdWidget
         void CopyTo(CmdWidget *other);
         QString GetCmdString();
         void ToggleLocked();
+        void SetSettings(QStringList settings);
 
         int GetX();
         int GetY();

@@ -41,6 +41,11 @@ void GotoCmdWidget::ToggleLocked()
     ui->amountBox->setEnabled(!isLocked);
 }
 
+void GotoCmdWidget::SetSettings(QStringList settings)
+{
+    SetCmdSettings(settings[TargetRowIdx].toInt(), settings[AmountIdx].toInt());
+}
+
 bool GotoCmdWidget::IsValidCmd()
 {
     return GetAmount() != 0 && GetTargetRow() < GetRowNumber();

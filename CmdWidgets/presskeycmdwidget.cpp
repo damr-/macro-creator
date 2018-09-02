@@ -63,6 +63,18 @@ void PressKeyCmdWidget::ToggleLocked()
     ui->specialKeyComboBox->setEnabled(!isLocked);
 }
 
+void PressKeyCmdWidget::SetSettings(QStringList settings)
+{
+    PressKeyCmdWidget::Modifiers mod =
+            PressKeyCmdWidget::Modifiers(settings[ModCTRLIdx].toInt(), settings[ModSHIFTIdx].toInt(), settings[ModALTIdx].toInt());
+
+    SetCmdSettings(mod,
+                   KeyType(settings[KeyTypeIdx].toInt()),
+                   settings[LetterIdx],
+                   settings[SeqLetterIdx],
+                   settings[SpcKeyIndexIdx].toInt());
+}
+
 bool PressKeyCmdWidget::IsValidCmd()
 {
     KeyType keyType = GetKeyType();

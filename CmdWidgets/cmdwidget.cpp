@@ -21,7 +21,7 @@ CmdWidget* CmdWidget::GetNewCmdWidget(CmdType cmdType)
             return new GotoCmdWidget();
         case CmdType::CLICK:
             return new ClickCmdWidget();
-        case CmdType::CURPOS:
+        case CmdType::SETCURSORPOS:
             return new SetCursorPosCmdWidget();
         case CmdType::DRAG:
             return new DragCmdWidget();
@@ -50,6 +50,11 @@ CmdWidget::CmdWidget(QWidget *parent) :
 CmdWidget::~CmdWidget()
 {
     delete ui;
+}
+
+void CmdWidget::SetSettings(QStringList settings)
+{
+    settings.first(); //to remove 'unused parameter' warning
 }
 
 QString CmdWidget::GetCmdString()
@@ -103,7 +108,7 @@ void CmdWidget::ToggleEnabled()
     emitCmdChangedSignal();
 }
 
-void CmdWidget::SetCmdStates(bool isLocked, bool isDisabled)
+void CmdWidget::SetStates(bool isLocked, bool isDisabled)
 {
     if((isLocked && !this->isLocked) || (!isLocked && this->isLocked))
         ToggleLocked();

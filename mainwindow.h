@@ -15,7 +15,7 @@
 #include "poshint.h"
 #include "CmdWidgets/cmdwidget.h"
 
-#define DELAY_OPTIONS_LEN 3
+#define DELAY_OPTIONS_LEN 2
 #define WINDOW_OPTIONS_LEN 5
 
 namespace Ui {
@@ -92,7 +92,7 @@ class MainWindow : public QMainWindow
         QString macroPath;
         QString fileExtension = "mccr";
         QString fileInfo = "Macro Creator Files (*." + fileExtension + ")";
-        QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + "." + this->fileExtension; }
+        QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + "." + fileExtension; }
 
         bool hasNoSafeFile;
         bool hasUnsavedChanges;

@@ -44,6 +44,11 @@ void ClickCmdWidget::ToggleLocked()
     ui->clickTypeBox->setEnabled(!isLocked);
 }
 
+void ClickCmdWidget::SetSettings(QStringList settings)
+{
+    SetCmdSettings(settings[AmountIdx].toInt(), static_cast<ClickType>(settings[TypeIdx].toInt()));
+}
+
 int ClickCmdWidget::GetClickAmount()
 {
     return ui->clickAmountSpinBox->value();

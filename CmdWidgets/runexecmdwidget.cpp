@@ -40,6 +40,13 @@ void RunExeCmdWidget::ToggleLocked()
     ui->selectFileButton->setEnabled(!isLocked);
 }
 
+void RunExeCmdWidget::SetSettings(QStringList settings)
+{
+    QString path = settings[PathIdx];
+    path = path.length() == 0 ? "" : path;
+    SetCmdSettings(path);
+}
+
 bool RunExeCmdWidget::IsValidCmd()
 {
     currentFilePath = currentFilePath.trimmed();

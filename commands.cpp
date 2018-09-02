@@ -25,11 +25,10 @@ void Commands::ExecuteCmd(QString cmd)
     {
         case CmdType::DELAY:
             Delay(cmdParts); break;
-        case CmdType::GOTO:
-            break;
+        case CmdType::GOTO: break;
         case CmdType::CLICK:
             Click(cmdParts); break;
-        case CmdType::CURPOS:
+        case CmdType::SETCURSORPOS:
             CursorPos(cmdParts); break;
         case CmdType::DRAG:
             Drag(cmdParts); break;
