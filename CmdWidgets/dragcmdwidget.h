@@ -13,12 +13,12 @@ class DragCmdWidget : public CmdWidget
 
     public:
         explicit DragCmdWidget(QWidget *parent = nullptr);
-        ~DragCmdWidget();
+        ~DragCmdWidget() override;
 
-        void CopyTo(CmdWidget *other);
-        QString GetCmdString();
-        void ToggleLocked();
-        void SetSettings(QStringList settings);
+        void CopyTo(CmdWidget *other) override;
+        QString GetCmdString() override;
+        void ToggleLocked() override;
+        void SetSettings(QStringList settings) override;
 
         int GetX();
         int GetY();

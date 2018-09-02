@@ -36,6 +36,8 @@ class Commands
         static void PressKey(QStringList cmd);
         static void WriteText(QStringList cmd);
         static void RunExe(QStringList cmd);
+
+        static const int INTERNAL_DELAY = 10;
 };
 
 #endif // COMMANDS_H

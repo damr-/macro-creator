@@ -28,12 +28,12 @@ class ClickCmdWidget : public CmdWidget
 
 	public:
         explicit ClickCmdWidget(QWidget *parent = nullptr);
-        ~ClickCmdWidget();
+        ~ClickCmdWidget() override;
 
-        void CopyTo(CmdWidget *other);
-        QString GetCmdString();
-        void ToggleLocked();
-        void SetSettings(QStringList settings);
+        void CopyTo(CmdWidget *other) override;
+        QString GetCmdString() override;
+        void ToggleLocked() override;
+        void SetSettings(QStringList settings) override;
 
         int GetClickAmount();
         ClickType GetClickType();

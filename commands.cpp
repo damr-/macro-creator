@@ -58,33 +58,32 @@ void Commands::Click(QStringList cmd)
     {
         switch(clickType)
         {
-        case(ClickType::Left):
-        {
-            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            break;
+            case(ClickType::Left):
+                mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+                Sleep(INTERNAL_DELAY);
+                mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+                break;
+            case(ClickType::Right):
+                mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
+                Sleep(INTERNAL_DELAY);
+                mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
+                break;
+            case(ClickType::Middle):
+                mouse_event(MOUSEEVENTF_MIDDLEDOWN, 0, 0, 0, 0);
+                Sleep(INTERNAL_DELAY);
+                mouse_event(MOUSEEVENTF_MIDDLEUP, 0, 0, 0, 0);
+                break;
+            case(ClickType::DoubleLeft):
+                mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+                Sleep(INTERNAL_DELAY);
+                mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+                Sleep(INTERNAL_DELAY);
+                mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+                Sleep(INTERNAL_DELAY);
+                mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+                break;
         }
-        case(ClickType::Right):
-        {
-            mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
-            mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
-            break;
-        }
-        case(ClickType::Middle):
-        {
-            mouse_event(MOUSEEVENTF_MIDDLEDOWN, 0, 0, 0, 0);
-            mouse_event(MOUSEEVENTF_MIDDLEUP, 0, 0, 0, 0);
-            break;
-        }
-        case(ClickType::DoubleLeft):
-        {
-            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            break;
-        }
-        }
+        Sleep(INTERNAL_DELAY);
     }
 }
 
@@ -96,9 +95,9 @@ void Commands::CursorPos(QStringList cmd)
 void Commands::Drag(QStringList cmd)
 {
     mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-    Sleep(10);
+    Sleep(INTERNAL_DELAY);
     SetCursorPos(cmd[DragCmdWidget::XIdx].toInt(), cmd[DragCmdWidget::YIdx].toInt());
-    Sleep(10);
+    Sleep(INTERNAL_DELAY);
     mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
 }
 
@@ -108,7 +107,7 @@ void Commands::Scroll(QStringList cmd)
     for(int i = 0, amount = cmd[ScrollCmdWidget::AmountIdx].toInt(); i <= amount; ++i)
     {
         mouse_event(MOUSEEVENTF_WHEEL, 0, 0, direction, 0);
-        Sleep(10);
+        Sleep(INTERNAL_DELAY);
     }
 }
 
@@ -129,6 +128,8 @@ void Commands::PressKey(QStringList cmd)
     if(alt)
         KeyboardUtilities::PressSpecialKey("Alt");
 
+    Sleep(INTERNAL_DELAY);
+
     if(keyType == KeyType::LETTER)
     {
         KeyboardUtilities::WriteText(letter.toStdString());
@@ -144,6 +145,8 @@ void Commands::PressKey(QStringList cmd)
         else if(specialKeyIndex == 1)
             KeyboardUtilities::PARSpecialKey("Print");
     }
+
+    Sleep(INTERNAL_DELAY);
 
     if(ctrl)
         KeyboardUtilities::ReleaseSpecialKey("Ctrl");

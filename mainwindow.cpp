@@ -251,11 +251,11 @@ void MainWindow::checkUserKeyInput()
             {
                 case CmdType::SETCURSORPOS:
                     qobject_cast<SetCursorPosCmdWidget*>(widget)->SetCmdSettings(x, y);
-                    statusMsg = "Updated 'Cursor position': " + posString;
+                    statusMsg = "Updated 'Cursor position' to " + posString;
                     break;
                 case CmdType::DRAG:
                     qobject_cast<DragCmdWidget*>(widget)->SetCmdSettings(x, y);
-                    statusMsg = "Updated 'Drag': " + posString;
+                    statusMsg = "Updated 'Drag' to " + posString;
                     break;
                 default:
                     statusMsg = "Select nothing, a 'Cursor Position' or a 'Drag' command.";

@@ -13,12 +13,12 @@ class SetCursorPosCmdWidget : public CmdWidget
 
     public:
         explicit SetCursorPosCmdWidget(QWidget *parent = nullptr);
-        ~SetCursorPosCmdWidget();
+        ~SetCursorPosCmdWidget() override;
 
-        void CopyTo(CmdWidget *other);
-        QString GetCmdString();
-        void ToggleLocked();
-        void SetSettings(QStringList settings);
+        void CopyTo(CmdWidget *other) override;
+        QString GetCmdString() override;
+        void ToggleLocked() override;
+        void SetSettings(QStringList settings) override;
 
         int GetX();
         int GetY();
@@ -28,7 +28,7 @@ class SetCursorPosCmdWidget : public CmdWidget
         static const int YIdx = 4;
 
     protected:
-        bool eventFilter(QObject *object, QEvent *event);
+        bool eventFilter(QObject *object, QEvent *event) override;
 
     signals:
         void showPosHint(bool, int, int);

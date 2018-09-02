@@ -13,12 +13,12 @@ class DelayCmdWidget : public CmdWidget
 
     public:
         explicit DelayCmdWidget(QWidget *parent = nullptr);
-        ~DelayCmdWidget();
+        ~DelayCmdWidget() override;
 
-        void CopyTo(CmdWidget *other);
-        QString GetCmdString();
-        void ToggleLocked();
-        void SetSettings(QStringList settings);
+        void CopyTo(CmdWidget *other) override;
+        QString GetCmdString() override;
+        void ToggleLocked() override;
+        void SetSettings(QStringList settings) override;
 
         int GetAmount();
         int GetTimeScale();

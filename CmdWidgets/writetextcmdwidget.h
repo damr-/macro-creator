@@ -16,14 +16,14 @@ class WriteTextCmdWidget : public CmdWidget
 
     public:
         explicit WriteTextCmdWidget(QWidget *parent = nullptr);
-        ~WriteTextCmdWidget();
+        ~WriteTextCmdWidget() override;
 
-        void CopyTo(CmdWidget *other);
-        QString GetCmdString();
-        void ToggleLocked();
-        void SetSettings(QStringList settings);
+        void CopyTo(CmdWidget *other) override;
+        QString GetCmdString() override;
+        void ToggleLocked() override;
+        void SetSettings(QStringList settings) override;
 
-        bool IsValidCmd();
+        bool IsValidCmd() override;
 
         int GetIsRandom();
         QString GetPossibleChars();
