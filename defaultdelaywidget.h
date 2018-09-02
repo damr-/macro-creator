@@ -10,9 +10,11 @@ namespace Ui {
 class DefaultDelaySettings
 {
 public:
-    bool enabled;
     int amount;
     int timeScale;
+
+    static const int AmountIdx = 0;
+    static const int TimeScaleIdx = 1;
 };
 
 class DefaultDelayWidget : public QWidget
@@ -31,7 +33,6 @@ class DefaultDelayWidget : public QWidget
         void SettingsChanged();
 
     private slots:
-        void Toggle();
         void EmitSettingsChanged();
 
     private:

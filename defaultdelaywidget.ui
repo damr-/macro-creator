@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>180</width>
+    <width>160</width>
     <height>25</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>180</width>
+    <width>160</width>
     <height>25</height>
    </size>
   </property>
@@ -31,26 +31,13 @@
   <property name="windowTitle">
    <string>DefaultDelayWidget</string>
   </property>
-  <widget class="QCheckBox" name="checkBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>3</y>
-     <width>91</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Default delay</string>
-   </property>
-  </widget>
   <widget class="QComboBox" name="timeScaleBox">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>
-     <x>135</x>
+     <x>112</x>
      <y>3</y>
      <width>40</width>
      <height>20</height>
@@ -84,11 +71,11 @@
   </widget>
   <widget class="QSpinBox" name="amountBox">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>77</x>
      <y>3</y>
      <width>35</width>
      <height>20</height>
@@ -110,9 +97,24 @@
     <number>250</number>
    </property>
   </widget>
+  <widget class="QLabel" name="delayLabel">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>3</y>
+     <width>65</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>The amount of time between two commands.</string>
+   </property>
+   <property name="text">
+    <string>Default delay</string>
+   </property>
+  </widget>
  </widget>
  <tabstops>
-  <tabstop>checkBox</tabstop>
   <tabstop>amountBox</tabstop>
   <tabstop>timeScaleBox</tabstop>
  </tabstops>

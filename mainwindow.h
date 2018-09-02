@@ -90,8 +90,8 @@ class MainWindow : public QMainWindow
         //Storing data
         QString macroName;
         QString macroPath;
-        QString fileExtension = "pmac";
-        QString fileInfo = "Personal Macro Files (*." + fileExtension + ")";
+        QString fileExtension = "mccr";
+        QString fileInfo = "Macro Creator Files (*." + fileExtension + ")";
         QString getFullFilePath(QString filePath, QString fileName) { return filePath + "/" + fileName + "." + this->fileExtension; }
 
         bool hasNoSafeFile;

@@ -1,0 +1,21 @@
+How to build Qt statically (done with version 5.11.1, installed at "D:\Qt")
+(cf comment from march '18: https://stackoverflow.com/a/49461678)
+
+- Download source: http://download.qt.io/official_releases/qt/5.11/5.11.1/single/qt-everywhere-src-5.11.1.zip
+- Unzip and rename the folder to "5.11.1-static" (now we have a folder "D:\Qt\5.11.1-static\")
+
+- Add the following two directories to the PATH environment variable:
+		-- D:\Qt\Tools\mingw530_32\opt\bin;
+		-- D:\Qt\Tools\mingw530_32\bin;
+
+- Open cmd and enter:
+	-- cd "D:\Qt\5.11.1-static"
+	-- configure -static -static-runtime -debug-and-release -platform win32-g++ -prefix %cd% -qt-zlib -qt-pcre -qt-libpng -qt-libjpeg -qt-freetype -opengl desktop -no-sql-sqlite -no-openssl -opensource -confirm-license -make libs -nomake tools -nomake examples -nomake tests
+	-- mingw32-make -k -j4        (4 ... number of parallel threads used)	
+	-- mingw32-make -k install
+    -- mingw32-make -k clean 
+
+- In QtCreator, add a new QtVersion, a new Kit and change the Kit used by your project  
+  (cf https://wiki.qt.io/Building_a_static_Qt_for_Windows_using_MinGW#Using_the_Qt_static_environment_with_Qt_Creator ,
+    https://wiki.qt.io/How_to_build_a_static_Qt_version_for_Windows_with_gcc#How_to_integrate_static_version_of_Qt_additionally_to_QtCreator)
+	

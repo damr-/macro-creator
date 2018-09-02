@@ -340,8 +340,7 @@ void MainWindow::saveMacro()
 
     //Write default delay settings
     DefaultDelaySettings *settings = defaultDelayWidget->GetSettings();
-    out.append(QString::number(settings->enabled) + "|" +
-               QString::number(settings->amount) + "|" +
+    out.append(QString::number(settings->amount) + "|" +
                QString::number(settings->timeScale) + "\n");
 
     //Write commands
@@ -351,8 +350,7 @@ void MainWindow::saveMacro()
         QWidget* itemWidget = ui->cmdList->itemWidget(item);
         QString cmdString = qobject_cast<CmdWidget*>(itemWidget)->GetCmdString();
 
-        out.append(cmdString);
-        out.append("\n");
+        out.append(cmdString + "\n");
     }
 
     output << out;
@@ -453,9 +451,8 @@ bool MainWindow::tryLoadCmdsFromFile(QString filename)
         return false;
     }
     DefaultDelaySettings *settings = new DefaultDelaySettings();
-    settings->enabled = options[0].toInt();
-    settings->amount = options[1].toInt();
-    settings->timeScale = options[2].toInt();
+    settings->amount = options[DefaultDelaySettings::AmountIdx].toInt();
+    settings->timeScale = options[DefaultDelaySettings::TimeScaleIdx].toInt();
     defaultDelayWidget->SetSettings(settings);
 
     //Load rest of commands
@@ -583,7 +580,7 @@ void MainWindow::setUnsavedChanges(bool newUnsavedChanges = true)
 
 void MainWindow::updateWindowTitle()
 {
-    QString suffix = "Personal Macro";
+    QString suffix = "Macro Creator";
     if(isMacroRunning)
         suffix = isMacroExecutionPaused ? "Paused" : "Running";
 
@@ -708,8 +705,7 @@ void MainWindow::ExecuteCmds()
             Commands::ExecuteCmd(widget->GetCmdString());
         }
 
-        if(defaultDelaySettings->enabled)
-            Sleep(DWORD(defaultDelaySettings->amount) * (defaultDelaySettings->timeScale == 0 ? 1000 : 1));
+        Sleep(DWORD(defaultDelaySettings->amount) * (defaultDelaySettings->timeScale == 0 ? 1000 : 1));
     }
 }
 
