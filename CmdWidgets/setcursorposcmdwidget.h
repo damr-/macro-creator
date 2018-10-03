@@ -22,10 +22,12 @@ class SetCursorPosCmdWidget : public CmdWidget
 
         int GetX();
         int GetY();
-        void SetCmdSettings(int x, int y);
+        bool GetAddClick();
+        void SetCmdSettings(int x, int y, bool addClick);
 
         static const int XIdx = 3;
         static const int YIdx = 4;
+        static const int ClickIdx = 5;
 
     protected:
         bool eventFilter(QObject *object, QEvent *event) override;

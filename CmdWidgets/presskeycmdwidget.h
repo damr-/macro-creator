@@ -9,10 +9,15 @@ class PressKeyCmdWidget;
 
 enum KeyType
 {
-    LETTER = 0,
-    KEYDET = 1,
-    SPECKEY = 2,
-    NOTHING = 3
+    KEY = 0,
+    SPECIAL = 1,
+    NOTHING = 2
+};
+
+enum SpecialKeyType
+{
+    Tab = 0,
+    Print = 1,
 };
 
 class PressKeyCmdWidget : public CmdWidget
@@ -55,18 +60,16 @@ class PressKeyCmdWidget : public CmdWidget
 
         Modifiers GetModifiers();
         KeyType GetKeyType();
-        QString GetLetter();
         QString GetKeySequenceLetter();
         int GetSpecialKeyIndex();
-        void SetCmdSettings(Modifiers modifiers, KeyType keyType, QString letter, QString keySequenceLetter, int specialKeyIndex);
+        void SetCmdSettings(Modifiers modifiers, KeyType keyType, QString keySequenceLetter, int specialKeyIndex);
 
         static const int ModCTRLIdx = 3;
         static const int ModSHIFTIdx = 4;
         static const int ModALTIdx = 5;
         static const int KeyTypeIdx = 6;
-        static const int LetterIdx = 7;
-        static const int SeqLetterIdx = 8;
-        static const int SpcKeyIndexIdx = 9;
+        static const int SeqLetterIdx = 7;
+        static const int SpcKeyIndexIdx = 8;
 
     private slots:
         void truncateKeySequence();

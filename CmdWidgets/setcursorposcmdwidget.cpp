@@ -13,6 +13,7 @@ SetCursorPosCmdWidget::SetCursorPosCmdWidget(QWidget *parent) :
 
     connect(ui->xCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
     connect(ui->yCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->clickCheckBox, SIGNAL(toggled(bool)), this, SLOT(emitCmdChangedSignal()));
 
     ui->coordGroupBox->installEventFilter(this);
 }
@@ -25,13 +26,13 @@ SetCursorPosCmdWidget::~SetCursorPosCmdWidget()
 void SetCursorPosCmdWidget::CopyTo(CmdWidget *other)
 {
     SetCursorPosCmdWidget *widget = qobject_cast<SetCursorPosCmdWidget*>(other);
-    widget->SetCmdSettings(GetX(), GetY());
+    widget->SetCmdSettings(GetX(), GetY(), GetAddClick());
     CmdWidget::CopyTo(widget);
 }
 
 QString SetCursorPosCmdWidget::GetCmdString()
 {
-    return CmdWidget::GetCmdString() + "|" + QString::number(GetX()) + "|" + QString::number(GetY());
+    return CmdWidget::GetCmdString() + "|" + QString::number(GetX()) + "|" + QString::number(GetY()) + "|" + QString::number(GetAddClick());
 }
 
 void SetCursorPosCmdWidget::ToggleLocked()
@@ -39,12 +40,14 @@ void SetCursorPosCmdWidget::ToggleLocked()
     CmdWidget::ToggleLocked();
     ui->xCoord->setEnabled(!isLocked);
     ui->yCoord->setEnabled(!isLocked);
+    ui->clickCheckBox->setEnabled(!isLocked);
 }
 
 void SetCursorPosCmdWidget::SetSettings(QStringList settings)
 {
     SetCmdSettings(settings[XIdx].toInt(),
-                   settings[YIdx].toInt());
+                   settings[YIdx].toInt(),
+                   settings[ClickIdx].toInt());
 }
 
 int SetCursorPosCmdWidget::GetX()
@@ -57,10 +60,16 @@ int SetCursorPosCmdWidget::GetY()
     return ui->yCoord->value();
 }
 
-void SetCursorPosCmdWidget::SetCmdSettings(int x, int y)
+bool SetCursorPosCmdWidget::GetAddClick()
+{
+    return ui->clickCheckBox->isChecked();
+}
+
+void SetCursorPosCmdWidget::SetCmdSettings(int x, int y, bool addClick)
 {
     ui->xCoord->setValue(x);
     ui->yCoord->setValue(y);
+    ui->clickCheckBox->setChecked(addClick);
 }
 
 bool SetCursorPosCmdWidget::eventFilter(QObject *object, QEvent *event)

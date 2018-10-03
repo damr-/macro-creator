@@ -52,7 +52,7 @@
     <rect>
      <x>0</x>
      <y>2</y>
-     <width>151</width>
+     <width>152</width>
      <height>27</height>
     </rect>
    </property>
@@ -77,11 +77,17 @@
      </spacer>
     </item>
     <item>
-     <widget class="QLabel" name="writeTextLabel">
+     <widget class="QLabel" name="writeLabel">
+      <property name="minimumSize">
+       <size>
+        <width>40</width>
+        <height>25</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
-        <width>16777215</width>
-        <height>16777215</height>
+        <width>40</width>
+        <height>25</height>
        </size>
       </property>
       <property name="font">
@@ -108,11 +114,14 @@
         <height>25</height>
        </size>
       </property>
+      <property name="currentText">
+       <string>given</string>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
       <property name="maxCount">
-       <number>20</number>
+       <number>10</number>
       </property>
       <item>
        <property name="text">

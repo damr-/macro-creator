@@ -232,38 +232,46 @@ void MainWindow::checkUserKeyInput()
     QString posString = "(" + QString::number(x) + "," + QString::number(y) + ")";
     QString statusMsg;
 
-    if(ui->cmdList->selectedItems().length() == 0)
+    QList<QListWidgetItem *> selectedItems = ui->cmdList->selectedItems();
+    if(selectedItems.length() == 0)
     {
-        CmdWidget *w = addNewCmd(int(CmdType::SETCURSORPOS));
-        qobject_cast<SetCursorPosCmdWidget*>(w)->SetCmdSettings(x, y);
+        CmdWidget *widget = addNewCmd(int(CmdType::SETCURSORPOS));
+        qobject_cast<SetCursorPosCmdWidget*>(widget)->SetCmdSettings(x, y, false);
         statusMsg = "Added new 'Cursor Position' command for " + posString;
-    }
+    }    
     else
     {
-        QList<QListWidgetItem *> selItems = ui->cmdList->selectedItems();
         QListWidgetItem *item;
-
-        foreach(item, selItems)
+        foreach(item, selectedItems)
         {
             CmdWidget *widget = qobject_cast<CmdWidget*>(ui->cmdList->itemWidget(item));
 
             switch(widget->GetCmdType())
             {
                 case CmdType::SETCURSORPOS:
-                    qobject_cast<SetCursorPosCmdWidget*>(widget)->SetCmdSettings(x, y);
-                    statusMsg = "Updated 'Cursor position' to " + posString;
-                    break;
+                {
+                    SetCursorPosCmdWidget* setCursorPosCmdWidget = qobject_cast<SetCursorPosCmdWidget*>(widget);
+                        setCursorPosCmdWidget->SetCmdSettings(x, y, setCursorPosCmdWidget->GetAddClick());
+                        statusMsg = "Updated 'Cursor position' to " + posString;
+                        break;
+                }
                 case CmdType::DRAG:
                     qobject_cast<DragCmdWidget*>(widget)->SetCmdSettings(x, y);
                     statusMsg = "Updated 'Drag' to " + posString;
                     break;
                 default:
-                    statusMsg = "Select nothing, a 'Cursor Position' or a 'Drag' command.";
+                    //If exactly one item is selected and it's neither a SetCurPos nor a Drag command, add a new SetCurPos command
+                    if(selectedItems.length() == 1)
+                    {
+                        CmdWidget *newWidget = addNewCmd(int(CmdType::SETCURSORPOS));
+                        qobject_cast<SetCursorPosCmdWidget*>(newWidget)->SetCmdSettings(x, y, false);
+                        statusMsg = "Added new 'Cursor Position' command for " + posString;
+                    }
                     break;
             }
         }
 
-        if(selItems.length() > 1)
+        if(selectedItems.length() > 1)
             statusMsg = "Updated all selected 'Cursor Position' and 'Drag' to " + posString;
     }
 

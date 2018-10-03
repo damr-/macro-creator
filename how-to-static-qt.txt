@@ -15,7 +15,7 @@ How to build Qt statically (done with version 5.11.1, installed at "D:\Qt")
 	-- mingw32-make -k install
     -- mingw32-make -k clean 
 
-- In QtCreator, add a new QtVersion, a new Kit and change the Kit used by your project  
-  (cf https://wiki.qt.io/Building_a_static_Qt_for_Windows_using_MinGW#Using_the_Qt_static_environment_with_Qt_Creator ,
-    https://wiki.qt.io/How_to_build_a_static_Qt_version_for_Windows_with_gcc#How_to_integrate_static_version_of_Qt_additionally_to_QtCreator)
+- In QtCreator, add a new QtVersion, a new Kit and change the Kit used by your project ,
+  c.f. https://wiki.qt.io/Building_a_static_Qt_for_Windows_using_MinGW#Using_the_Qt_static_environment_with_Qt_Creator
+   (https://wiki.qt.io/How_to_build_a_static_Qt_version_for_Windows_with_gcc#How_to_integrate_static_version_of_Qt_additionally_to_QtCreator)
 	

@@ -10,6 +10,12 @@ namespace Ui {
 class WriteTextCmdWidget;
 }
 
+enum WriteTextType
+{
+    Given = 0,
+    Random = 1
+};
+
 class WriteTextCmdWidget : public CmdWidget
 {
     Q_OBJECT

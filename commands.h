@@ -1,6 +1,8 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
+#include <windows.h>
+
 #include <QStringList>
 
 enum CmdType
@@ -29,6 +31,7 @@ class Commands
 
     private:
         static void Click(QStringList cmd);
+        static void Click(DWORD buttonDown, DWORD buttonUp);
         static void Delay(QStringList cmd);
         static void CursorPos(QStringList cmd);
         static void Drag(QStringList cmd);
@@ -37,7 +40,7 @@ class Commands
         static void WriteText(QStringList cmd);
         static void RunExe(QStringList cmd);
 
-        static const int INTERNAL_DELAY = 10;
+        static const int INTERNAL_DELAY = 50;
 };
 
 #endif // COMMANDS_H

@@ -13,7 +13,7 @@ map<string, BYTE> KeyboardUtilities::byteCodes =
     pair<string, BYTE>("Ctrl", 0x11),
     pair<string, BYTE>("Pause", 0x13),
     pair<string, BYTE>("CapsLock", 0x14),
-    pair<string, BYTE>("Escape", 0x1B),
+    pair<string, BYTE>("Esc", 0x1B),
     pair<string, BYTE>("Space", 0x20),
     pair<string, BYTE>("PgUp", 0x21),
     pair<string, BYTE>("PgDown", 0x22),

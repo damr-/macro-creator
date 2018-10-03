@@ -1,6 +1,5 @@
 #include "commands.h"
 
-#include <windows.h>
 #include <QProcess>
 
 #include "keyboardutilities.h"
@@ -59,37 +58,37 @@ void Commands::Click(QStringList cmd)
         switch(clickType)
         {
             case(ClickType::Left):
-                mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-                Sleep(INTERNAL_DELAY);
-                mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+                Click(MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
                 break;
             case(ClickType::Right):
-                mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
-                Sleep(INTERNAL_DELAY);
-                mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
+                Click(MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP);
                 break;
             case(ClickType::Middle):
-                mouse_event(MOUSEEVENTF_MIDDLEDOWN, 0, 0, 0, 0);
-                Sleep(INTERNAL_DELAY);
-                mouse_event(MOUSEEVENTF_MIDDLEUP, 0, 0, 0, 0);
+                Click(MOUSEEVENTF_MIDDLEDOWN, MOUSEEVENTF_MIDDLEUP);
                 break;
             case(ClickType::DoubleLeft):
-                mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+                Click(MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
                 Sleep(INTERNAL_DELAY);
-                mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-                Sleep(INTERNAL_DELAY);
-                mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-                Sleep(INTERNAL_DELAY);
-                mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+                Click(MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
                 break;
         }
         Sleep(INTERNAL_DELAY);
     }
 }
 
+void Commands::Click(DWORD buttonDown, DWORD buttonUp)
+{
+    mouse_event(buttonDown, 0, 0, 0, 0);
+    Sleep(INTERNAL_DELAY);
+    mouse_event(buttonUp, 0, 0, 0, 0);
+}
+
 void Commands::CursorPos(QStringList cmd)
 {
     SetCursorPos(cmd[SetCursorPosCmdWidget::XIdx].toInt(), cmd[SetCursorPosCmdWidget::YIdx].toInt());
+    Sleep(INTERNAL_DELAY);
+    if(cmd[SetCursorPosCmdWidget::ClickIdx].toInt())
+        Click(MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
 }
 
 void Commands::Drag(QStringList cmd)
@@ -117,7 +116,6 @@ void Commands::PressKey(QStringList cmd)
     bool shift = cmd[PressKeyCmdWidget::ModSHIFTIdx].toInt();
     bool alt = cmd[PressKeyCmdWidget::ModALTIdx].toInt();
     KeyType keyType = KeyType(cmd[PressKeyCmdWidget::KeyTypeIdx].toInt());
-    QString letter = cmd[PressKeyCmdWidget::LetterIdx];
     QString keySequLetter = cmd[PressKeyCmdWidget::SeqLetterIdx];
     int specialKeyIndex = cmd[PressKeyCmdWidget::SpcKeyIndexIdx].toInt();
 
@@ -130,20 +128,14 @@ void Commands::PressKey(QStringList cmd)
 
     Sleep(INTERNAL_DELAY);
 
-    if(keyType == KeyType::LETTER)
-    {
-        KeyboardUtilities::WriteText(letter.toStdString());
-    }
-    else if(keyType == KeyType::KEYDET)
+    if(keyType == KeyType::KEY)
     {
         KeyboardUtilities::PARSpecialKey(keySequLetter.toStdString());
     }
-    else if(keyType == KeyType::SPECKEY)
+    else if(keyType == KeyType::SPECIAL)
     {
-        if(specialKeyIndex == 1)
-            KeyboardUtilities::PARSpecialKey("Tab");
-        else if(specialKeyIndex == 1)
-            KeyboardUtilities::PARSpecialKey("Print");
+        QString key = (specialKeyIndex == SpecialKeyType::Tab) ? "Tab" : "Print";
+        KeyboardUtilities::PARSpecialKey(key.toStdString());
     }
 
     Sleep(INTERNAL_DELAY);
@@ -158,7 +150,7 @@ void Commands::PressKey(QStringList cmd)
 
 void Commands::WriteText(QStringList cmd)
 {
-    if(cmd[WriteTextCmdWidget::TypeIdx].toInt() == 0)
+    if(cmd[WriteTextCmdWidget::TypeIdx].toInt() == WriteTextType::Given)
         KeyboardUtilities::WriteText(cmd[WriteTextCmdWidget::TextIdx].toStdString());
     else
     {

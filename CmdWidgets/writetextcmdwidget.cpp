@@ -105,7 +105,7 @@ bool WriteTextCmdWidget::IsValidCmd()
 
 int WriteTextCmdWidget::GetIsRandom()
 {
-    return ui->textTypeComboBox->currentIndex() == 1;
+    return ui->textTypeComboBox->currentIndex() == WriteTextType::Random;
 }
 
 QString WriteTextCmdWidget::GetPossibleChars()

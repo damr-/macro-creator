@@ -25,37 +25,6 @@
   <property name="windowTitle">
    <string>PressKeyCmdWidget</string>
   </property>
-  <widget class="QLineEdit" name="letterLineEdit">
-   <property name="geometry">
-    <rect>
-     <x>327</x>
-     <y>3</y>
-     <width>25</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>25</width>
-     <height>25</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>25</width>
-     <height>25</height>
-    </size>
-   </property>
-   <property name="toolTip">
-    <string>The key to press</string>
-   </property>
-   <property name="maxLength">
-    <number>1</number>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
   <widget class="QComboBox" name="specialKeyComboBox">
    <property name="enabled">
     <bool>true</bool>
@@ -69,7 +38,7 @@
     </rect>
    </property>
    <property name="currentText">
-    <string/>
+    <string>Tab</string>
    </property>
    <property name="maxVisibleItems">
     <number>20</number>
@@ -83,11 +52,6 @@
    <property name="modelColumn">
     <number>0</number>
    </property>
-   <item>
-    <property name="text">
-     <string/>
-    </property>
-   </item>
    <item>
     <property name="text">
      <string>Tab</string>
@@ -363,11 +327,6 @@
       </property>
       <item>
        <property name="text">
-        <string>letter</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
         <string>key</string>
        </property>
       </item>
@@ -388,12 +347,10 @@
   <zorder>layoutWidget</zorder>
   <zorder>layoutWidget</zorder>
   <zorder>specialKeyComboBox</zorder>
-  <zorder>letterLineEdit</zorder>
  </widget>
  <tabstops>
   <tabstop>modifierListWidget</tabstop>
   <tabstop>keyTypeComboBox</tabstop>
-  <tabstop>letterLineEdit</tabstop>
   <tabstop>keySequenceEdit</tabstop>
   <tabstop>keySequenceClearButton</tabstop>
   <tabstop>specialKeyComboBox</tabstop>
