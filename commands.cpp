@@ -1,6 +1,10 @@
 #include "commands.h"
 
+#include <QApplication>
+#include <QClipboard>
+#include <QDebug>
 #include <QProcess>
+#include <QRegularExpression>
 
 #include "keyboardutilities.h"
 #include "CmdWidgets/clickcmdwidget.h"
@@ -11,6 +15,7 @@
 #include "CmdWidgets/scrollcmdwidget.h"
 #include "CmdWidgets/setcursorposcmdwidget.h"
 #include "CmdWidgets/writetextcmdwidget.h"
+#include "CmdWidgets/applyregexcmdwidget.h"
 
 #define SCROLLUP 120
 #define SCROLLDOWN -120
@@ -39,14 +44,27 @@ void Commands::ExecuteCmd(QString cmd)
             WriteText(cmdParts); break;
         case CmdType::RUNEXE:
             RunExe(cmdParts); break;
+        case CmdType::REGEX:
+            ApplyRegex(cmdParts); break;
     }
 }
 
 void Commands::Delay(QStringList cmd)
 {
     DWORD amount = DWORD(cmd[DelayCmdWidget::AmountIdx].toInt());
-    DWORD timeScale = (cmd[DelayCmdWidget::ScaleIdx] == "0" ? 1000 : 1);
-    Sleep(amount * timeScale);
+    DWORD timeScale = cmd[DelayCmdWidget::ScaleIdx] == "0" ? 1000 : 1;
+    DWORD timeMS = amount * timeScale;
+
+    DWORD partLengthMS = 1000;
+
+    DWORD parts = timeMS / partLengthMS;
+    DWORD rest = timeMS % partLengthMS;
+
+    for (DWORD i = 0; i < parts; i++) {
+        Sleep(partLengthMS);
+        qApp->processEvents();
+    }
+    Sleep(rest);
 }
 
 void Commands::Click(QStringList cmd)
@@ -72,6 +90,10 @@ void Commands::Click(QStringList cmd)
                 Click(MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
                 break;
         }
+
+        if(i % 50 == 0)
+            qApp->processEvents();
+
         Sleep(INTERNAL_DELAY);
     }
 }
@@ -103,9 +125,14 @@ void Commands::Drag(QStringList cmd)
 void Commands::Scroll(QStringList cmd)
 {
     DWORD direction = (cmd[ScrollCmdWidget::DirIdx] == "0" ? DWORD(SCROLLUP) : DWORD(SCROLLDOWN));
+
     for(int i = 0, amount = cmd[ScrollCmdWidget::AmountIdx].toInt(); i <= amount; ++i)
     {
         mouse_event(MOUSEEVENTF_WHEEL, 0, 0, direction, 0);
+
+        if(i % 50 == 0)
+            qApp->processEvents();
+
         Sleep(INTERNAL_DELAY);
     }
 }
@@ -118,6 +145,7 @@ void Commands::PressKey(QStringList cmd)
     KeyType keyType = KeyType(cmd[PressKeyCmdWidget::KeyTypeIdx].toInt());
     QString keySequLetter = cmd[PressKeyCmdWidget::SeqLetterIdx];
     int specialKeyIndex = cmd[PressKeyCmdWidget::SpcKeyIndexIdx].toInt();
+
 
     if(ctrl)
         KeyboardUtilities::PressSpecialKey("Ctrl");
@@ -150,24 +178,82 @@ void Commands::PressKey(QStringList cmd)
 
 void Commands::WriteText(QStringList cmd)
 {
+    QString text = "";
     if(cmd[WriteTextCmdWidget::TypeIdx].toInt() == WriteTextType::Given)
-        KeyboardUtilities::WriteText(cmd[WriteTextCmdWidget::TextIdx].toStdString());
+    {
+        text = CmdWidget::FromHex(cmd[WriteTextCmdWidget::TextIdx]);
+    }
     else
     {
-        QString possibleChars = cmd[WriteTextCmdWidget::CharsIdx];
+        QString possibleChars = CmdWidget::FromHex(cmd[WriteTextCmdWidget::CharsIdx]);
         int high = possibleChars.count();
 
-        QString text = "";
         for(int i = 0, total = cmd[WriteTextCmdWidget::AmountIdx].toInt(); i < total; ++i)
         {
             int randIndex = qrand() % high;
             text.append(possibleChars.at(randIndex));
         }
-        KeyboardUtilities::WriteText(text.toStdString());
+    }
+
+    if(cmd[WriteTextCmdWidget::PasteIdx].toInt())
+    {
+        QClipboard *clipboard = QApplication::clipboard();
+
+        for(int i = 0, total = text.length(); i < total; ++i)
+        {
+            clipboard->setText(QString(text[i]));
+
+            //Hit Ctrl+V to paste the character from the clipboard
+            ExecuteCmd(PressKeyCmdWidget::GetPasteCmd());
+
+            qApp->processEvents();
+            Sleep(INTERNAL_DELAY);
+        }
+
+    }
+    else
+    {
+        int partLength = 20;
+        int parts = text.length() / partLength;
+        int rest = text.length() % partLength;
+
+        for (int i = 0; i < parts; i++)
+        {
+            KeyboardUtilities::WriteText(text.mid(i * partLength, partLength).toStdString());
+            qApp->processEvents();
+        }
+        KeyboardUtilities::WriteText(text.right(rest).toStdString());
     }
 }
 
 void Commands::RunExe(QStringList cmd)
 {
-    WinExec(cmd[RunExeCmdWidget::PathIdx].toUtf8(), SW_NORMAL);
+    QString path = CmdWidget::FromHex(cmd[RunExeCmdWidget::PathIdx]);
+    WinExec(path.toUtf8(), SW_NORMAL);
+}
+
+void Commands::ApplyRegex(QStringList cmd)
+{
+    QString regex = CmdWidget::FromHex(cmd[ApplyRegexCmdWidget::RegexIdx]);
+    QRegularExpression re(regex);
+
+    //Hit Ctrl+C to copy the currently selected text to the clipboard
+    ExecuteCmd(PressKeyCmdWidget::GetCopyCmd());
+
+    qApp->processEvents();
+
+    QClipboard *clipboard = QApplication::clipboard();
+    QString text = clipboard->text();
+
+    QRegularExpressionMatch match = re.match(text);
+    if(!match.hasMatch())
+        return;
+
+    QString result = match.captured(0);
+    clipboard->clear();
+    clipboard->setText(result);
+
+    //Hit Ctrl+V to paste the result, if the user chose to
+    if(cmd[ApplyRegexCmdWidget::PasteIdx].toInt())
+        ExecuteCmd(PressKeyCmdWidget::GetPasteCmd());
 }

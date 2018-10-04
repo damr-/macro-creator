@@ -5,6 +5,7 @@
 
 #include <QList>
 #include <QString>
+#include <QLineEdit>
 
 namespace Ui {
 class WriteTextCmdWidget;
@@ -32,22 +33,31 @@ class WriteTextCmdWidget : public CmdWidget
         bool IsValidCmd() override;
 
         int GetIsRandom();
-        QString GetPossibleChars();
+        QString GetPossibleCharsHex();
         int GetRandomAmount();
-        QString GetText();
-        void SetCmdSettings(bool isRandom, QString possibleChars, int randomAmount, QString text);
+        QString GetTextHex();
+        bool GetUsePaste();
+        void SetCmdSettings(bool isRandom, QString possibleChars, int randomAmount, QString text, bool usePaste);
 
         static const int TypeIdx = 3;
         static const int CharsIdx = 4;
         static const int AmountIdx = 5;
         static const int TextIdx = 6;
+        static const int PasteIdx = 7;
+
+        const QRegExp WriteRegExp = QRegExp("[A-Za-z0-9,. ]+");
+        const QRegExp NotWriteRegExp = QRegExp("[^A-Za-z0-9,. ]");
 
     private slots:
         void updateVisibility();
+        void updateAllowedChars();
         void applyPreset(int presetIndex);
 
     private:
         Ui::WriteTextCmdWidget *ui;
+
+        void cleanseLineEdit(QLineEdit *lineEdit);
+        QString cleanseText(QString text);
 
         int randomCBDefaultX = 240;
         int randomCBRandomX = 300;

@@ -24,7 +24,8 @@ HEADERS  += mainwindow.h \
     CmdWidgets/presskeycmdwidget.h \
     CmdWidgets/gotocmdwidget.h \
     poshint.h \
-    version.h
+    version.h \
+    CmdWidgets/applyregexcmdwidget.h
 
 SOURCES += main.cpp \
     mainwindow.cpp \
@@ -41,7 +42,8 @@ SOURCES += main.cpp \
     CmdWidgets/runexecmdwidget.cpp \
     CmdWidgets/presskeycmdwidget.cpp \
     CmdWidgets/gotocmdwidget.cpp \
-    poshint.cpp
+    poshint.cpp \
+    CmdWidgets/applyregexcmdwidget.cpp
 
 FORMS    += mainwindow.ui \
     defaultdelaywidget.ui \
@@ -55,7 +57,8 @@ FORMS    += mainwindow.ui \
     CmdWidgets/runexecmdwidget.ui \
     CmdWidgets/presskeycmdwidget.ui \
     CmdWidgets/gotocmdwidget.ui \
-    poshint.ui
+    poshint.ui \
+    CmdWidgets/applyregexcmdwidget.ui
 
 RESOURCES += \
     resources.qrc

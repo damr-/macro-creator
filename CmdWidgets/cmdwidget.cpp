@@ -11,6 +11,7 @@
 #include "writetextcmdwidget.h"
 #include "presskeycmdwidget.h"
 #include "runexecmdwidget.h"
+#include "applyregexcmdwidget.h"
 
 CmdWidget* CmdWidget::GetNewCmdWidget(CmdType cmdType)
 {
@@ -31,8 +32,10 @@ CmdWidget* CmdWidget::GetNewCmdWidget(CmdType cmdType)
             return new WriteTextCmdWidget();
         case CmdType::PRESSKEY:
             return new PressKeyCmdWidget();
-        default:
+        case CmdType::RUNEXE:
             return new RunExeCmdWidget();
+        default:
+            return new ApplyRegexCmdWidget();
     }    
 }
 

@@ -28,9 +28,9 @@
   <widget class="QLineEdit" name="textLineEdit">
    <property name="geometry">
     <rect>
-     <x>190</x>
+     <x>185</x>
      <y>5</y>
-     <width>150</width>
+     <width>201</width>
      <height>20</height>
     </rect>
    </property>
@@ -52,7 +52,7 @@
     <rect>
      <x>0</x>
      <y>2</y>
-     <width>152</width>
+     <width>151</width>
      <height>27</height>
     </rect>
    </property>
@@ -80,14 +80,14 @@
      <widget class="QLabel" name="writeLabel">
       <property name="minimumSize">
        <size>
-        <width>40</width>
-        <height>25</height>
+        <width>35</width>
+        <height>20</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>40</width>
-        <height>25</height>
+        <width>35</width>
+        <height>20</height>
        </size>
       </property>
       <property name="font">
@@ -140,7 +140,7 @@
   <widget class="QWidget" name="layoutWidget2">
    <property name="geometry">
     <rect>
-     <x>160</x>
+     <x>155</x>
      <y>5</y>
      <width>321</width>
      <height>22</height>
@@ -296,6 +296,27 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QCheckBox" name="pasteCheckBox">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>5</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Paste the characters one by one instead of simulating keypresses. This increases the number of possible characters greatly.</string>
+   </property>
+   <property name="text">
+    <string>paste</string>
+   </property>
   </widget>
  </widget>
  <tabstops>

@@ -37,6 +37,8 @@ class CmdWidget : public QWidget
         static const int LockedStateIdx = 1;
         static const int DisabledStateIdx = 2;
 
+        static const QString FromHex(QString string) {return QByteArray::fromHex(string.toUtf8()); }
+
     protected:
         CmdType cmdType;
         bool isLocked;

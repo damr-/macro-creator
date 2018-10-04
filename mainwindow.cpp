@@ -63,58 +63,29 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionEToggleDisabled, &QAction::triggered, [=](){ toggleSelectionState(StateType::DISABLED); });
 
     //Menu->Add Actions
-    QSignalMapper *addActionsMapper = new QSignalMapper(this);
-    connect(ui->action1Delay, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action2Goto, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action3Click, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action4CursorPos, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action5Drag, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action6Scroll, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action7PressKey, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action8Write, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
-    connect(ui->action9RunExe, SIGNAL(triggered()), addActionsMapper, SLOT(map()));
+    QList<QMenu*> menuList = ui->menuBar->findChildren<QMenu*>();
+    QMenu *addMenu = menuList[2];
+    int cmdIdx = 0;
 
-    addActionsMapper->setMapping(ui->action1Delay, 0);
-    addActionsMapper->setMapping(ui->action2Goto, 1);
-    addActionsMapper->setMapping(ui->action3Click, 2);
-    addActionsMapper->setMapping(ui->action4CursorPos, 3);
-    addActionsMapper->setMapping(ui->action5Drag, 4);
-    addActionsMapper->setMapping(ui->action6Scroll, 5);
-    addActionsMapper->setMapping(ui->action7PressKey, 6);
-    addActionsMapper->setMapping(ui->action8Write, 7);
-    addActionsMapper->setMapping(ui->action9RunExe, 8);
-    connect(addActionsMapper, SIGNAL(mapped(int)), this, SLOT(addNewCmd(int)));
+    for(int i = 0, total = addMenu->actions().length(); i < total; ++i)
+    {
+        QAction *action = addMenu->actions()[i];
+        if(!action->isSeparator())
+        {
+            connect(action, &QAction::triggered, [=]{ addNewCmd(cmdIdx); });
+            cmdIdx++;
+        }
+    }
 
     //Menu->Run Actions
     connect(ui->actionRStart, SIGNAL(triggered(bool)), this, SLOT(tryRunMacro()));
 
-    //TODO: Different Context menu depending on clicked QWidget
-    //https://stackoverflow.com/questions/12937812/how-to-create-different-popup-context-menus-for-each-type-of-qtreewidgetitem#
-    //TODO: Search bar in context menu when right clicking on command list widget:
-    // http://blog.qt.io/blog/2012/12/07/qt-support-28-creating-a-toolbar-widget-that-is-displayed-with-the-context-menu/
+    //Setup context Menu
     ui->cmdList->setContextMenuPolicy(Qt::CustomContextMenu);
-
-    //Context Menu
-    QList<QAction *> editActions;
-    QList<QAction *> addActions;
-    QList<QMenu*> menuList = ui->menuBar->findChildren<QMenu*>();
-    foreach(QMenu* menu, menuList)
-    {
-        if(menu->title() == "Edit")
-        {
-            foreach (QAction* a, menu->actions())
-                editActions.append(a);
-        }
-        else if(menu->title() == "Add")
-        {
-            foreach (QAction* a, menu->actions())
-                addActions.append(a);
-        }
-    }
-    contextMenu.addMenu("Add")->addActions(addActions);
-    contextMenu.addActions(editActions);
+    QMenu *editMenu = menuList[1];
+    contextMenu.addMenu("Add")->addActions(addMenu->actions());
+    contextMenu.addActions(editMenu->actions());
     connect(ui->cmdList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
-    //
 
     //React to selection of commands
     connect(ui->cmdList, SIGNAL(itemSelectionChanged()), this, SLOT(handleSelectionChanged()));
@@ -337,6 +308,7 @@ void MainWindow::saveMacro()
     }
 
     QTextStream output(&file);
+    output.setCodec("UTF-8");
     QString out;
 
     //Write window properties
@@ -425,6 +397,7 @@ bool MainWindow::tryLoadCmdsFromFile(QString filename)
         return false;
 
     QTextStream input(&file);
+    input.setCodec("UTF-8");
 
     //Read and apply window size
     QStringList options = input.readLine().split("|");
@@ -702,8 +675,7 @@ void MainWindow::copySelected()
     {
         QListWidgetItem *item = selectedItems.at(i);
         CmdWidget *selectedItemWidget = qobject_cast<CmdWidget*>(ui->cmdList->itemWidget(item));
-        QString cmdStr = selectedItemWidget->GetCmdString();
-        clipBoardText.append(cmdStr + ";");
+        clipBoardText.append(selectedItemWidget->GetCmdString() + ";");
     }
 
     //Remove trailing ';'
@@ -915,8 +887,7 @@ void MainWindow::handleSelectionChanged()
     ui->actionECopy->setEnabled(itemSelected);
     ui->actionECut->setEnabled(itemSelected);
 
-    QClipboard *clipboard = QApplication::clipboard();
-    ui->actionEPaste->setEnabled(!clipboard->text().isEmpty());
+    ui->actionEPaste->setEnabled(!QApplication::clipboard()->text().isEmpty());
 
     ui->actionEToggleDisabled->setEnabled(itemSelected);
     ui->actionEToggleLocked->setEnabled(itemSelected);

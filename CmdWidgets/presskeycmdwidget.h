@@ -71,6 +71,9 @@ class PressKeyCmdWidget : public CmdWidget
         static const int SeqLetterIdx = 7;
         static const int SpcKeyIndexIdx = 8;
 
+        static const QString GetCopyCmd() { return "4|0|0|1|0|0|0|C|0"; }
+        static const QString GetPasteCmd() { return "4|0|0|1|0|0|0|V|0"; }
+
     private slots:
         void truncateKeySequence();
         void clearKeySequence();

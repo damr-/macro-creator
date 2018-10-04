@@ -22,7 +22,7 @@ class RunExeCmdWidget : public CmdWidget
 
         bool IsValidCmd() override;
 
-        QString GetFilePath();
+        QString GetFilePathHex();
         void SetCmdSettings(QString filePath);
 
         static const int PathIdx = 3;

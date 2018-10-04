@@ -109,12 +109,14 @@ void KeyboardUtilities::PARKey(char key)
 {
     BYTE kscan = BYTE(VkKeyScan(WCHAR(key)));
     keybd_event(kscan, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
+    Sleep(10);
     keybd_event(kscan, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
 }
 
 void KeyboardUtilities::PARSpecialKey(string vk)
 {
     PressSpecialKey(vk);
+    Sleep(10);
     ReleaseSpecialKey(vk);
 }
 

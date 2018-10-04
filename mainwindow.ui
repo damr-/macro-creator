@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>450</width>
     <height>425</height>
    </rect>
   </property>
@@ -141,13 +141,16 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>450</width>
      <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
     </property>
     <addaction name="actionFNew"/>
     <addaction name="actionFOpen"/>
@@ -158,6 +161,9 @@
    <widget class="QMenu" name="menuEdit">
     <property name="title">
      <string>Edit</string>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
     </property>
     <addaction name="separator"/>
     <addaction name="actionECopy"/>
@@ -173,16 +179,20 @@
     <property name="title">
      <string>Add</string>
     </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
+    </property>
     <addaction name="action1Delay"/>
     <addaction name="action2Goto"/>
     <addaction name="separator"/>
-    <addaction name="action3Click"/>
-    <addaction name="action4CursorPos"/>
-    <addaction name="action5Drag"/>
-    <addaction name="action6Scroll"/>
-    <addaction name="action7PressKey"/>
-    <addaction name="action8Write"/>
+    <addaction name="action3CursorPos"/>
+    <addaction name="action4Click"/>
+    <addaction name="action5PressKey"/>
+    <addaction name="action6Write"/>
+    <addaction name="action7Drag"/>
+    <addaction name="action8Scroll"/>
     <addaction name="action9RunExe"/>
+    <addaction name="action10ApplyRegex"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -348,26 +358,12 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="action3Click">
+  <action name="action4Click">
    <property name="text">
     <string>Click</string>
    </property>
    <property name="toolTip">
     <string>Add a 'Mouse click' command</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+3</string>
-   </property>
-   <property name="shortcutVisibleInContextMenu">
-    <bool>true</bool>
-   </property>
-  </action>
-  <action name="action4CursorPos">
-   <property name="text">
-    <string>Cursor position</string>
-   </property>
-   <property name="toolTip">
-    <string>Add a command to set the curor position</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+4</string>
@@ -376,57 +372,59 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="action5Drag">
+  <action name="action3CursorPos">
+   <property name="text">
+    <string>Cursor position</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a command to set the curor position</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+3</string>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="action7Drag">
    <property name="text">
     <string>Drag</string>
    </property>
    <property name="toolTip">
     <string>Add a command to drag the mouse cursor</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+5</string>
-   </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>true</bool>
    </property>
   </action>
-  <action name="action6Scroll">
+  <action name="action8Scroll">
    <property name="text">
     <string>Scroll</string>
    </property>
    <property name="toolTip">
     <string>Add a command to scroll the mouse wheel</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+6</string>
-   </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>true</bool>
    </property>
   </action>
-  <action name="action8Write">
+  <action name="action6Write">
    <property name="text">
     <string>Write text</string>
    </property>
    <property name="toolTip">
     <string>Add a command to write a text</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+8</string>
-   </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>true</bool>
    </property>
   </action>
-  <action name="action7PressKey">
+  <action name="action5PressKey">
    <property name="text">
     <string>Press key</string>
    </property>
    <property name="toolTip">
     <string>Add a command to press a key</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+7</string>
    </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>true</bool>
@@ -438,9 +436,6 @@
    </property>
    <property name="toolTip">
     <string>Add a command to run an '.exe'</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+9</string>
    </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>true</bool>
@@ -505,7 +500,7 @@
     <string>Toggle Locked</string>
    </property>
    <property name="toolTip">
-    <string>Toggle the lock on the selected command(s).</string>
+    <string>Toggle the lock on the selected command(s)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
@@ -519,10 +514,24 @@
     <string>Toggle Disabled</string>
    </property>
    <property name="toolTip">
-    <string>Toggle the disabled state of the selected command(s).</string>
+    <string>Toggle the disabled state of the selected command(s)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+D</string>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="action10ApplyRegex">
+   <property name="text">
+    <string>Apply Regex</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add a command to apply the given regex to the selected text.&lt;/p&gt;&lt;p&gt;By default, the first result will be stored in the clipboard.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="statusTip">
+    <string/>
    </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>true</bool>

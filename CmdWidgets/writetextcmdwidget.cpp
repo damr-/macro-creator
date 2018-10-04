@@ -19,8 +19,11 @@ WriteTextCmdWidget::WriteTextCmdWidget(QWidget *parent) :
     connect(ui->textTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCmdChangedSignal()));
     connect(ui->randomAmountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
     connect(ui->possibleCharsLineEdit, SIGNAL(textChanged(QString)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->pasteCheckBox, SIGNAL(toggled(bool)), this, SLOT(emitCmdChangedSignal()));
 
     connect(ui->textTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateVisibility()));
+
+    connect(ui->pasteCheckBox, SIGNAL(toggled(bool)), this, SLOT(updateAllowedChars()));
 
     //
     QMenu *menu = new QMenu("Menu");
@@ -61,7 +64,7 @@ WriteTextCmdWidget::WriteTextCmdWidget(QWidget *parent) :
     ui->toolButton->setMenu(menu);
     //
 
-    ui->textLineEdit->setValidator(new QRegExpValidator(QRegExp("[A-Za-z0-9,. ]+"), this));
+    ui->textLineEdit->setValidator(new QRegExpValidator(WriteRegExp, this));
 
     updateVisibility();
 }
@@ -74,13 +77,18 @@ WriteTextCmdWidget::~WriteTextCmdWidget()
 void WriteTextCmdWidget::CopyTo(CmdWidget *other)
 {
     WriteTextCmdWidget *widget = qobject_cast<WriteTextCmdWidget*>(other);
-    widget->SetCmdSettings(GetIsRandom(), GetPossibleChars(), GetRandomAmount(), GetText());
+    widget->SetCmdSettings(GetIsRandom(), GetPossibleCharsHex(), GetRandomAmount(), GetTextHex(), GetUsePaste());
     CmdWidget::CopyTo(widget);
 }
 
 QString WriteTextCmdWidget::GetCmdString()
 {
-    return CmdWidget::GetCmdString() + "|" + QString::number(GetIsRandom()) + "|" + GetPossibleChars() + "|" + QString::number(GetRandomAmount()) + "|" +  GetText();
+    return CmdWidget::GetCmdString() + "|" +
+            QString::number(GetIsRandom()) + "|" +
+            GetPossibleCharsHex() + "|" +
+            QString::number(GetRandomAmount()) + "|" +
+            GetTextHex() + "|" +
+            QString::number(GetUsePaste());
 }
 
 void WriteTextCmdWidget::ToggleLocked()
@@ -91,16 +99,21 @@ void WriteTextCmdWidget::ToggleLocked()
     ui->randomAmountSpinBox->setEnabled(!isLocked);
     ui->textLineEdit->setEnabled(!isLocked);
     ui->toolButton->setEnabled(!isLocked);
+    ui->pasteCheckBox->setEnabled(!isLocked);
 }
 
 void WriteTextCmdWidget::SetSettings(QStringList settings)
 {
-    SetCmdSettings(settings[TypeIdx].toInt(), settings[CharsIdx], settings[AmountIdx].toInt(), settings[TextIdx]);
+    SetCmdSettings(settings[TypeIdx].toInt(),
+                   settings[CharsIdx],
+                   settings[AmountIdx].toInt(),
+                   settings[TextIdx],
+                   settings[PasteIdx].toInt());
 }
 
 bool WriteTextCmdWidget::IsValidCmd()
 {
-    return (!GetIsRandom() && !GetText().isEmpty()) || (GetIsRandom() && !GetPossibleChars().isEmpty());
+    return (!GetIsRandom() && !GetTextHex().isEmpty()) || (GetIsRandom() && !GetPossibleCharsHex().isEmpty());
 }
 
 int WriteTextCmdWidget::GetIsRandom()
@@ -108,9 +121,9 @@ int WriteTextCmdWidget::GetIsRandom()
     return ui->textTypeComboBox->currentIndex() == WriteTextType::Random;
 }
 
-QString WriteTextCmdWidget::GetPossibleChars()
+QString WriteTextCmdWidget::GetPossibleCharsHex()
 {
-    return ui->possibleCharsLineEdit->text();
+    return ui->possibleCharsLineEdit->text().toUtf8().toHex();
 }
 
 int WriteTextCmdWidget::GetRandomAmount()
@@ -118,17 +131,23 @@ int WriteTextCmdWidget::GetRandomAmount()
     return ui->randomAmountSpinBox->value();
 }
 
-QString WriteTextCmdWidget::GetText()
+QString WriteTextCmdWidget::GetTextHex()
 {
-    return ui->textLineEdit->text();
+    return ui->textLineEdit->text().toUtf8().toHex();
 }
 
-void WriteTextCmdWidget::SetCmdSettings(bool isRandom, QString possibleChars, int randomAmount, QString text)
+bool WriteTextCmdWidget::GetUsePaste()
+{
+    return ui->pasteCheckBox->isChecked();
+}
+
+void WriteTextCmdWidget::SetCmdSettings(bool isRandom, QString possibleChars, int randomAmount, QString text, bool usePaste)
 {
     ui->textTypeComboBox->setCurrentIndex(isRandom);
-    ui->possibleCharsLineEdit->setText(possibleChars);
+    ui->possibleCharsLineEdit->setText(CmdWidget::FromHex(possibleChars));
     ui->randomAmountSpinBox->setValue(randomAmount);
-    ui->textLineEdit->setText(text);
+    ui->textLineEdit->setText(CmdWidget::FromHex(text));
+    ui->pasteCheckBox->setChecked(usePaste);
 }
 
 void WriteTextCmdWidget::updateVisibility()
@@ -147,8 +166,42 @@ void WriteTextCmdWidget::updateVisibility()
     ui->textLabel->setText(QString("text") + (GetIsRandom() ? " of length" : ":"));
 }
 
+void WriteTextCmdWidget::updateAllowedChars()
+{
+    if(GetIsRandom())
+        cleanseLineEdit(ui->possibleCharsLineEdit);
+    else
+        cleanseLineEdit(ui->textLineEdit);
+}
+
 void WriteTextCmdWidget::applyPreset(int presetIndex)
 {
     ui->possibleCharsLineEdit->setText(Presets.at(presetIndex));
     ui->toolButton->menu()->close();
+}
+
+void WriteTextCmdWidget::cleanseLineEdit(QLineEdit *lineEdit)
+{
+    if(GetUsePaste())
+    {
+        lineEdit->setValidator(nullptr);
+        return;
+    }
+
+    QString text = cleanseText(lineEdit->text());
+    lineEdit->setText(text);
+    lineEdit->setValidator(new QRegExpValidator(WriteRegExp, this));
+
+}
+
+QString WriteTextCmdWidget::cleanseText(QString text)
+{
+    QString cleansedText = text;
+
+    //Remove all characters from the text which are not allowed when simulating keystrokes
+    int pos = 0;
+    while((pos = NotWriteRegExp.indexIn(cleansedText)) != -1)
+        cleansedText = cleansedText.remove(pos, 1);
+
+    return cleansedText;
 }

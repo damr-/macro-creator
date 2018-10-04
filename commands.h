@@ -9,13 +9,14 @@ enum CmdType
 {
     DELAY = 0,
     GOTO = 1,
-    CLICK = 2,
-    SETCURSORPOS = 3,
-    DRAG = 4,
-    SCROLL = 5,
-    PRESSKEY = 6,
-    WRITETEXT = 7,
-    RUNEXE = 8
+    SETCURSORPOS = 2,
+    CLICK = 3,
+    PRESSKEY = 4,
+    WRITETEXT = 5,
+    DRAG = 6,
+    SCROLL = 7,
+    RUNEXE = 8,
+    REGEX = 9,
 };
 
 enum StateType
@@ -39,8 +40,9 @@ class Commands
         static void PressKey(QStringList cmd);
         static void WriteText(QStringList cmd);
         static void RunExe(QStringList cmd);
+        static void ApplyRegex(QStringList cmd);
 
-        static const int INTERNAL_DELAY = 50;
+        static const int INTERNAL_DELAY = 20;
 };
 
 #endif // COMMANDS_H

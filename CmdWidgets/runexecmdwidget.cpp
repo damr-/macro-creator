@@ -12,7 +12,6 @@ RunExeCmdWidget::RunExeCmdWidget(QWidget *parent) :
     cmdType = CmdType::RUNEXE;
 
     connect(ui->selectFileButton, SIGNAL(clicked()), this, SLOT(chooseExe()));
-
     connect(ui->exeName, SIGNAL(textChanged(QString)), this, SLOT(emitCmdChangedSignal()));
 }
 
@@ -24,13 +23,13 @@ RunExeCmdWidget::~RunExeCmdWidget()
 void RunExeCmdWidget::CopyTo(CmdWidget *other)
 {
     RunExeCmdWidget *widget = qobject_cast<RunExeCmdWidget*>(other);
-    widget->SetCmdSettings(GetFilePath());
+    widget->SetCmdSettings(GetFilePathHex());
     CmdWidget::CopyTo(widget);
 }
 
 QString RunExeCmdWidget::GetCmdString()
 {
-    return CmdWidget::GetCmdString() + "|" + GetFilePath();
+    return CmdWidget::GetCmdString() + "|" + GetFilePathHex();
 }
 
 void RunExeCmdWidget::ToggleLocked()
@@ -53,14 +52,14 @@ bool RunExeCmdWidget::IsValidCmd()
     return !currentFilePath.isEmpty() && currentFilePath != "";
 }
 
-QString RunExeCmdWidget::GetFilePath()
+QString RunExeCmdWidget::GetFilePathHex()
 {
-    return currentFilePath;
+    return currentFilePath.toUtf8().toHex();
 }
 
 void RunExeCmdWidget::SetCmdSettings(QString filePath)
 {
-    currentFilePath = filePath;
+    currentFilePath = CmdWidget::FromHex(filePath);
     ui->exeName->setText(currentFilePath);
 }
 
