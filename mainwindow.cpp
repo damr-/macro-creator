@@ -384,7 +384,7 @@ void MainWindow::openMacro()
         msgbox->close();
     }
 
-    openMacro(fileName, QFileInfo(fullFilePath).absolutePath());
+    openMacro(fileName, fullFilePath);
 }
 
 bool MainWindow::tryLoadCmdsFromFile(QString filename)
