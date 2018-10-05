@@ -31,7 +31,7 @@ class PressKeyCmdWidget : public CmdWidget
         void CopyTo(CmdWidget *other) override;
         QString GetCmdString() override;
         void ToggleLocked() override;
-        void SetSettings(QStringList settings) override;
+        void SetSettings(QStringList settings) override;        
 
         bool IsValidCmd() override;
 
@@ -61,15 +61,15 @@ class PressKeyCmdWidget : public CmdWidget
         Modifiers GetModifiers();
         KeyType GetKeyType();
         QString GetKeySequenceLetter();
-        int GetSpecialKeyIndex();
-        void SetCmdSettings(Modifiers modifiers, KeyType keyType, QString keySequenceLetter, int specialKeyIndex);
+        QString GetSpecialKey();
+        void SetCmdSettings(Modifiers modifiers, KeyType keyType, QString keySequenceLetter, QString specialKey);
 
         static const int ModCTRLIdx = 3;
         static const int ModSHIFTIdx = 4;
         static const int ModALTIdx = 5;
         static const int KeyTypeIdx = 6;
         static const int SeqLetterIdx = 7;
-        static const int SpcKeyIndexIdx = 8;
+        static const int SpcKeyIdx = 8;
 
         static const QString GetCopyCmd() { return "4|0|0|1|0|0|0|C|0"; }
         static const QString GetPasteCmd() { return "4|0|0|1|0|0|0|V|0"; }

@@ -1,4 +1,5 @@
 #include "gotocmdwidget.h"
+#include "gotocmdwidget.h"
 #include "ui_gotocmdwidget.h"
 
 #include <QDebug>
@@ -11,10 +12,13 @@ GotoCmdWidget::GotoCmdWidget(QWidget *parent) :
 
     cmdType = CmdType::GOTO;
 
-    connect(ui->amountBox, SIGNAL(valueChanged(int)), this, SLOT(amountChanged(int)));
+    connect(ui->amountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(amountChanged(int)));
 
-    connect(ui->rowBox, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
-    connect(ui->amountBox, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->rowSpinBox, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
+    connect(ui->amountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
+
+    WheelEventWidgets = QList<QWidget*>{ui->rowSpinBox, ui->amountSpinBox};
+    InstallWheelEventFilters();
 }
 
 GotoCmdWidget::~GotoCmdWidget()
@@ -37,8 +41,8 @@ QString GotoCmdWidget::GetCmdString()
 void GotoCmdWidget::ToggleLocked()
 {
     CmdWidget::ToggleLocked();
-    ui->rowBox->setEnabled(!isLocked);
-    ui->amountBox->setEnabled(!isLocked);
+    ui->rowSpinBox->setEnabled(!isLocked);
+    ui->amountSpinBox->setEnabled(!isLocked);
 }
 
 void GotoCmdWidget::SetSettings(QStringList settings)
@@ -53,18 +57,18 @@ bool GotoCmdWidget::IsValidCmd()
 
 int GotoCmdWidget::GetTargetRow()
 {
-    return ui->rowBox->value();
+    return ui->rowSpinBox->value();
 }
 
 int GotoCmdWidget::GetAmount()
 {
-    return ui->amountBox->value();
+    return ui->amountSpinBox->value();
 }
 
 void GotoCmdWidget::SetCmdSettings(int targetRow, int amount)
 {
-    ui->rowBox->setValue(targetRow);
-    ui->amountBox->setValue(amount);
+    ui->rowSpinBox->setValue(targetRow);
+    ui->amountSpinBox->setValue(amount);
 }
 
 void GotoCmdWidget::ValidateRowNumber(int cmdListRowCount)
@@ -76,7 +80,7 @@ void GotoCmdWidget::ValidateRowNumber(int cmdListRowCount)
     if(newTargetRow > GetRowNumber())
         newTargetRow = GetRowNumber();
 
-    ui->rowBox->setValue(newTargetRow);
+    ui->rowSpinBox->setValue(newTargetRow);
 }
 
 void GotoCmdWidget::amountChanged(int amount)

@@ -1,6 +1,8 @@
 #include "presskeycmdwidget.h"
 #include "ui_presskeycmdwidget.h"
 
+#include <QDebug>
+
 PressKeyCmdWidget::PressKeyCmdWidget(QWidget *parent) :
     CmdWidget(parent),
     ui(new Ui::PressKeyCmdWidget)
@@ -21,6 +23,9 @@ PressKeyCmdWidget::PressKeyCmdWidget(QWidget *parent) :
     connect(ui->keySequenceClearButton, SIGNAL(clicked(bool)), this, SLOT(clearKeySequence()));
 
     updateVisibility();
+
+    WheelEventWidgets = QList<QWidget*>{ui->keyTypeComboBox, ui->specialKeyComboBox};
+    InstallWheelEventFilters();
 }
 
 PressKeyCmdWidget::~PressKeyCmdWidget()
@@ -31,7 +36,7 @@ PressKeyCmdWidget::~PressKeyCmdWidget()
 void PressKeyCmdWidget::CopyTo(CmdWidget *other)
 {
     PressKeyCmdWidget *widget = qobject_cast<PressKeyCmdWidget*>(other);
-    widget->SetCmdSettings(GetModifiers(), GetKeyType(), GetKeySequenceLetter(), GetSpecialKeyIndex());
+    widget->SetCmdSettings(GetModifiers(), GetKeyType(), GetKeySequenceLetter(), GetSpecialKey());
     CmdWidget::CopyTo(widget);
 }
 
@@ -45,7 +50,7 @@ QString PressKeyCmdWidget::GetCmdString()
             QString::number(mod.ALT) + "|" +
             QString::number(GetKeyType()) + "|" +
             GetKeySequenceLetter() + "|" +
-            QString::number(GetSpecialKeyIndex());
+            GetSpecialKey();
 }
 
 void PressKeyCmdWidget::ToggleLocked()
@@ -60,13 +65,14 @@ void PressKeyCmdWidget::ToggleLocked()
 
 void PressKeyCmdWidget::SetSettings(QStringList settings)
 {
-    PressKeyCmdWidget::Modifiers mod =
-            PressKeyCmdWidget::Modifiers(settings[ModCTRLIdx].toInt(), settings[ModSHIFTIdx].toInt(), settings[ModALTIdx].toInt());
+    PressKeyCmdWidget::Modifiers mod = PressKeyCmdWidget::Modifiers( settings[ModCTRLIdx].toInt(),
+                                                                     settings[ModSHIFTIdx].toInt(),
+                                                                     settings[ModALTIdx].toInt());
 
     SetCmdSettings(mod,
                    KeyType(settings[KeyTypeIdx].toInt()),
                    settings[SeqLetterIdx],
-                   settings[SpcKeyIndexIdx].toInt());
+                   settings[SpcKeyIdx]);
 }
 
 bool PressKeyCmdWidget::IsValidCmd()
@@ -104,12 +110,12 @@ QString PressKeyCmdWidget::GetKeySequenceLetter()
     return ui->keySequenceEdit->keySequence().toString();
 }
 
-int PressKeyCmdWidget::GetSpecialKeyIndex()
+QString PressKeyCmdWidget::GetSpecialKey()
 {
-    return ui->specialKeyComboBox->currentIndex();
+    return ui->specialKeyComboBox->currentText();
 }
 
-void PressKeyCmdWidget::SetCmdSettings(Modifiers modifiers, KeyType keyType, QString keySequenceLetter, int specialKeyIndex)
+void PressKeyCmdWidget::SetCmdSettings(Modifiers modifiers, KeyType keyType, QString keySequenceLetter, QString specialKey)
 {
     if(modifiers.CTRL)
         ui->modifierListWidget->item(0)->setCheckState(Qt::CheckState::Checked);
@@ -120,6 +126,16 @@ void PressKeyCmdWidget::SetCmdSettings(Modifiers modifiers, KeyType keyType, QSt
 
     ui->keyTypeComboBox->setCurrentIndex(int(keyType));
     ui->keySequenceEdit->setKeySequence(QKeySequence::fromString(keySequenceLetter));
+
+    int specialKeyIndex = 0;
+    for(int i = 0, total = ui->specialKeyComboBox->count(); i < total; i++)
+    {
+        if(ui->specialKeyComboBox->itemText(i) == specialKey)
+        {
+            specialKeyIndex = i;
+            break;
+        }
+    }
     ui->specialKeyComboBox->setCurrentIndex(specialKeyIndex);
 }
 
@@ -134,7 +150,7 @@ void PressKeyCmdWidget::truncateKeySequence()
 
     QString letter = seq.split('+').last();
 
-    if(letter == "|" || letter == "F7")
+    if(letter == "|" || letter == "F8" || letter == "F9")
     {
         ui->keySequenceEdit->clear();
         return;

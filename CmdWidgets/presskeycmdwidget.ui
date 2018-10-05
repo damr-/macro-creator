@@ -37,6 +37,9 @@
      <height>25</height>
     </rect>
    </property>
+   <property name="focusPolicy">
+    <enum>Qt::StrongFocus</enum>
+   </property>
    <property name="currentText">
     <string>Tab</string>
    </property>
@@ -60,6 +63,16 @@
    <item>
     <property name="text">
      <string>Print</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>F6</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>F7</string>
     </property>
    </item>
   </widget>
@@ -321,6 +334,9 @@
         <width>16777215</width>
         <height>16777215</height>
        </size>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::StrongFocus</enum>
       </property>
       <property name="currentIndex">
        <number>0</number>

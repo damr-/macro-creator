@@ -97,6 +97,9 @@
         <pointsize>8</pointsize>
        </font>
       </property>
+      <property name="focusPolicy">
+       <enum>Qt::StrongFocus</enum>
+      </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
@@ -135,6 +138,9 @@
        <font>
         <pointsize>8</pointsize>
        </font>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::StrongFocus</enum>
       </property>
       <property name="maxCount">
        <number>10</number>

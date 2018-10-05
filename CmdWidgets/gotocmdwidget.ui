@@ -87,7 +87,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QSpinBox" name="rowBox">
+     <widget class="QSpinBox" name="rowSpinBox">
       <property name="minimumSize">
        <size>
         <width>40</width>
@@ -104,6 +104,9 @@
        <font>
         <pointsize>8</pointsize>
        </font>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::StrongFocus</enum>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -150,7 +153,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QSpinBox" name="amountBox">
+     <widget class="QSpinBox" name="amountSpinBox">
       <property name="minimumSize">
        <size>
         <width>40</width>
@@ -167,6 +170,9 @@
        <font>
         <pointsize>8</pointsize>
        </font>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::StrongFocus</enum>
       </property>
       <property name="toolTip">
        <string>Input -1 for infinite times.</string>

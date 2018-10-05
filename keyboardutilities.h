@@ -12,12 +12,11 @@ class KeyboardUtilities
     public:
         static void WriteText(string text);
 
-        //PAR ... Press And Release
-        static void PARKey(char key);
-        static void PARSpecialKey(string vk);
+        static void PressAndReleaseScannedKey(char key);
+        static void PressAndReleaseKey(string vk);
 
-        static void PressSpecialKey(string vk);
-        static void ReleaseSpecialKey(string vk);
+        static void PressKey(string vk);
+        static void ReleaseKey(string vk);
 
     private:
         static map<string, BYTE> byteCodes;

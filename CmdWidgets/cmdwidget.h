@@ -15,7 +15,7 @@ class CmdWidget : public QWidget
 
 	public:
         explicit CmdWidget(QWidget *parent = nullptr);
-        ~CmdWidget();
+        ~CmdWidget() override;
 
         virtual void CopyTo(CmdWidget *other) = 0;        
         virtual QString GetCmdString() = 0;
@@ -42,6 +42,9 @@ class CmdWidget : public QWidget
     protected:
         CmdType cmdType;
         bool isLocked;
+        QList<QWidget*>WheelEventWidgets = QList<QWidget*>{};
+        bool eventFilter(QObject *object, QEvent *event) override;
+        void InstallWheelEventFilters();
 
     protected slots:
         void emitCmdChangedSignal();

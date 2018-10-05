@@ -185,7 +185,6 @@ void MainWindow::showMessage(QString title, QString message, QMessageBox::Icon t
 
 void MainWindow::checkUserKeyInput()
 {
-
     if(GetAsyncKeyState(VK_F7))
     {
         tryRunMacro();
@@ -788,12 +787,12 @@ void MainWindow::toggleSelectionState(StateType type)
 
         switch(type)
         {
-            case StateType::LOCKED:
-                selectedItemWidget->ToggleLocked();
-                break;
-            case StateType::DISABLED:
-                selectedItemWidget->ToggleEnabled();
-                break;
+        case StateType::LOCKED:
+            selectedItemWidget->ToggleLocked();
+            break;
+        case StateType::DISABLED:
+            selectedItemWidget->ToggleEnabled();
+            break;
         }
     }
 }

@@ -65,8 +65,12 @@ WriteTextCmdWidget::WriteTextCmdWidget(QWidget *parent) :
     //
 
     ui->textLineEdit->setValidator(new QRegExpValidator(WriteRegExp, this));
+    ui->possibleCharsLineEdit->setValidator(new QRegExpValidator(WriteRegExp, this));
 
     updateVisibility();
+
+    WheelEventWidgets = QList<QWidget*>{ui->textTypeComboBox, ui->randomAmountSpinBox};
+    InstallWheelEventFilters();
 }
 
 WriteTextCmdWidget::~WriteTextCmdWidget()
@@ -164,6 +168,9 @@ void WriteTextCmdWidget::updateVisibility()
     ui->randomL2->setVisible(GetIsRandom());
     ui->toolButton->setVisible(GetIsRandom());
     ui->textLabel->setText(QString("text") + (GetIsRandom() ? " of length" : ":"));
+
+    QRect rect = ui->pasteCheckBox->geometry();
+    ui->pasteCheckBox->setGeometry(GetIsRandom() ? 490 : 400, rect.y(), rect.width(), rect.height());
 }
 
 void WriteTextCmdWidget::updateAllowedChars()
@@ -191,7 +198,6 @@ void WriteTextCmdWidget::cleanseLineEdit(QLineEdit *lineEdit)
     QString text = cleanseText(lineEdit->text());
     lineEdit->setText(text);
     lineEdit->setValidator(new QRegExpValidator(WriteRegExp, this));
-
 }
 
 QString WriteTextCmdWidget::cleanseText(QString text)

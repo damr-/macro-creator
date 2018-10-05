@@ -13,6 +13,9 @@ ScrollCmdWidget::ScrollCmdWidget(QWidget *parent) :
 
     connect(ui->amountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
     connect(ui->directionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCmdChangedSignal()));
+
+    WheelEventWidgets = QList<QWidget*>{ui->directionComboBox, ui->amountSpinBox};
+    InstallWheelEventFilters();
 }
 
 ScrollCmdWidget::~ScrollCmdWidget()

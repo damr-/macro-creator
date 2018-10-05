@@ -77,7 +77,7 @@ class MainWindow : public QMainWindow
         int defX, defY, defW, defH;
 
         //Running Macro
-        bool isMacroRunning = false;
+        bool isMacroRunning;
         bool isMacroExecutionPaused;
         int AllCmdsValid();
         void ExecuteCmds();

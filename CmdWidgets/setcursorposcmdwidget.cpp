@@ -16,6 +16,9 @@ SetCursorPosCmdWidget::SetCursorPosCmdWidget(QWidget *parent) :
     connect(ui->clickCheckBox, SIGNAL(toggled(bool)), this, SLOT(emitCmdChangedSignal()));
 
     ui->coordGroupBox->installEventFilter(this);
+
+    WheelEventWidgets = QList<QWidget*>{ui->xCoord, ui->yCoord};
+    InstallWheelEventFilters();
 }
 
 SetCursorPosCmdWidget::~SetCursorPosCmdWidget()
@@ -74,6 +77,9 @@ void SetCursorPosCmdWidget::SetCmdSettings(int x, int y, bool addClick)
 
 bool SetCursorPosCmdWidget::eventFilter(QObject *object, QEvent *event)
 {
+    if(CmdWidget::eventFilter(object, event))
+        return true;
+
     if(object != ui->coordGroupBox)
         return false;
 

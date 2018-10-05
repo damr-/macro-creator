@@ -27,25 +27,25 @@ void Commands::ExecuteCmd(QString cmd)
 
     switch(type)
     {
-        case CmdType::DELAY:
-            Delay(cmdParts); break;
-        case CmdType::GOTO: break;
-        case CmdType::CLICK:
-            Click(cmdParts); break;
-        case CmdType::SETCURSORPOS:
-            CursorPos(cmdParts); break;
-        case CmdType::DRAG:
-            Drag(cmdParts); break;
-        case CmdType::SCROLL:
-            Scroll(cmdParts); break;
-        case CmdType::PRESSKEY:
-            PressKey(cmdParts); break;
-        case CmdType::WRITETEXT:
-            WriteText(cmdParts); break;
-        case CmdType::RUNEXE:
-            RunExe(cmdParts); break;
-        case CmdType::REGEX:
-            ApplyRegex(cmdParts); break;
+    case CmdType::DELAY:
+        Delay(cmdParts); break;
+    case CmdType::GOTO: break;
+    case CmdType::CLICK:
+        Click(cmdParts); break;
+    case CmdType::SETCURSORPOS:
+        CursorPos(cmdParts); break;
+    case CmdType::DRAG:
+        Drag(cmdParts); break;
+    case CmdType::SCROLL:
+        Scroll(cmdParts); break;
+    case CmdType::PRESSKEY:
+        PressKey(cmdParts); break;
+    case CmdType::WRITETEXT:
+        WriteText(cmdParts); break;
+    case CmdType::RUNEXE:
+        RunExe(cmdParts); break;
+    case CmdType::REGEX:
+        ApplyRegex(cmdParts); break;
     }
 }
 
@@ -75,20 +75,20 @@ void Commands::Click(QStringList cmd)
     {
         switch(clickType)
         {
-            case(ClickType::Left):
-                Click(MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
-                break;
-            case(ClickType::Right):
-                Click(MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP);
-                break;
-            case(ClickType::Middle):
-                Click(MOUSEEVENTF_MIDDLEDOWN, MOUSEEVENTF_MIDDLEUP);
-                break;
-            case(ClickType::DoubleLeft):
-                Click(MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
-                Sleep(INTERNAL_DELAY);
-                Click(MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
-                break;
+        case(ClickType::Left):
+            Click(MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
+            break;
+        case(ClickType::Right):
+            Click(MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP);
+            break;
+        case(ClickType::Middle):
+            Click(MOUSEEVENTF_MIDDLEDOWN, MOUSEEVENTF_MIDDLEUP);
+            break;
+        case(ClickType::DoubleLeft):
+            Click(MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
+            Sleep(INTERNAL_DELAY);
+            Click(MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
+            break;
         }
 
         if(i % 50 == 0)
@@ -144,36 +144,30 @@ void Commands::PressKey(QStringList cmd)
     bool alt = cmd[PressKeyCmdWidget::ModALTIdx].toInt();
     KeyType keyType = KeyType(cmd[PressKeyCmdWidget::KeyTypeIdx].toInt());
     QString keySequLetter = cmd[PressKeyCmdWidget::SeqLetterIdx];
-    int specialKeyIndex = cmd[PressKeyCmdWidget::SpcKeyIndexIdx].toInt();
-
+    QString specialKey = cmd[PressKeyCmdWidget::SpcKeyIdx];
 
     if(ctrl)
-        KeyboardUtilities::PressSpecialKey("Ctrl");
+        KeyboardUtilities::PressKey("Ctrl");
     if(shift)
-        KeyboardUtilities::PressSpecialKey("Shift");
+        KeyboardUtilities::PressKey("Shift");
     if(alt)
-        KeyboardUtilities::PressSpecialKey("Alt");
+        KeyboardUtilities::PressKey("Alt");
 
     Sleep(INTERNAL_DELAY);
 
     if(keyType == KeyType::KEY)
-    {
-        KeyboardUtilities::PARSpecialKey(keySequLetter.toStdString());
-    }
+        KeyboardUtilities::PressAndReleaseKey(keySequLetter.toStdString());
     else if(keyType == KeyType::SPECIAL)
-    {
-        QString key = (specialKeyIndex == SpecialKeyType::Tab) ? "Tab" : "Print";
-        KeyboardUtilities::PARSpecialKey(key.toStdString());
-    }
+        KeyboardUtilities::PressAndReleaseKey(specialKey.toStdString());
 
     Sleep(INTERNAL_DELAY);
 
     if(ctrl)
-        KeyboardUtilities::ReleaseSpecialKey("Ctrl");
+        KeyboardUtilities::ReleaseKey("Ctrl");
     if(shift)
-        KeyboardUtilities::ReleaseSpecialKey("Shift");
+        KeyboardUtilities::ReleaseKey("Shift");
     if(alt)
-        KeyboardUtilities::ReleaseSpecialKey("Alt");
+        KeyboardUtilities::ReleaseKey("Alt");
 }
 
 void Commands::WriteText(QStringList cmd)
@@ -209,7 +203,6 @@ void Commands::WriteText(QStringList cmd)
             qApp->processEvents();
             Sleep(INTERNAL_DELAY);
         }
-
     }
     else
     {
@@ -235,19 +228,24 @@ void Commands::RunExe(QStringList cmd)
 void Commands::ApplyRegex(QStringList cmd)
 {
     QString regex = CmdWidget::FromHex(cmd[ApplyRegexCmdWidget::RegexIdx]);
-    QRegularExpression re(regex);
-
-    //Hit Ctrl+C to copy the currently selected text to the clipboard
-    ExecuteCmd(PressKeyCmdWidget::GetCopyCmd());
-
-    qApp->processEvents();
-
+    QRegularExpression re(regex);    
     QClipboard *clipboard = QApplication::clipboard();
-    QString text = clipboard->text();
+
+    QString text = "";
+    while(text == "")
+    {
+        //Hit Ctrl+C to copy the currently selected text to the clipboard
+        ExecuteCmd(PressKeyCmdWidget::GetCopyCmd());
+        qApp->processEvents();
+        text = clipboard->text();
+    }
 
     QRegularExpressionMatch match = re.match(text);
     if(!match.hasMatch())
+    {
+        qDebug() << "NO match found for '" + text + "'";
         return;
+    }
 
     QString result = match.captured(0);
     clipboard->clear();

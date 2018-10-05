@@ -37,7 +37,7 @@ map<string, BYTE> KeyboardUtilities::byteCodes =
     pair<string, BYTE>("7", 0x37),
     pair<string, BYTE>("8", 0x38),
     pair<string, BYTE>("9", 0x39),
-
+    pair<string, BYTE>("@", 0x40),
     pair<string, BYTE>("A", 0x41),
     pair<string, BYTE>("B", 0x42),
     pair<string, BYTE>("C", 0x43),
@@ -67,11 +67,13 @@ map<string, BYTE> KeyboardUtilities::byteCodes =
 
     pair<string, BYTE>("Window", 0x5B),
 
+    //NUMPAD Keys
     pair<string, BYTE>("*", 0x6A),
     pair<string, BYTE>("+", 0x6A),
     pair<string, BYTE>("-", 0x6D),
     pair<string, BYTE>(".", 0x6E),
     pair<string, BYTE>("/", 0x6F),
+    //
 
     pair<string, BYTE>("F1", 0x70),
     pair<string, BYTE>("F2", 0x71),
@@ -79,17 +81,61 @@ map<string, BYTE> KeyboardUtilities::byteCodes =
     pair<string, BYTE>("F4", 0x73),
     pair<string, BYTE>("F5", 0x74),
     pair<string, BYTE>("F6", 0x75),
-//    pair<string, BYTE>("F7", 0x76),
-//    pair<string, BYTE>("F8", 0x77),
-//    pair<string, BYTE>("F9", 0x78),
+    pair<string, BYTE>("F7", 0x76),
     pair<string, BYTE>("F10", 0x79),
     pair<string, BYTE>("F11", 0x7A),
     pair<string, BYTE>("F12", 0x7B),
-
+    pair<string, BYTE>("F13", 0x7C),
+    pair<string, BYTE>("F14", 0x7D),
+    pair<string, BYTE>("F15", 0x7E),
+    pair<string, BYTE>("F16", 0x7F),
+    pair<string, BYTE>("F17", 0x80),
+    pair<string, BYTE>("F18", 0x81),
+    pair<string, BYTE>("F19", 0x82),
+    pair<string, BYTE>("F20", 0x83),
+    pair<string, BYTE>("F21", 0x84),
+    pair<string, BYTE>("F22", 0x85),
+    pair<string, BYTE>("F23", 0x86),
+    pair<string, BYTE>("F24", 0x87),
     pair<string, BYTE>("NumLock", 0x90),
     pair<string, BYTE>("Scroll Lock", 0x91),
 
-    pair<string, BYTE>("Alt", 0xA4),
+    pair<string, BYTE>("^", 0xA0),
+    pair<string, BYTE>("!", 0xA1),
+    pair<string, BYTE>("\"", 0xA2),
+    pair<string, BYTE>("#", 0xA3),
+    pair<string, BYTE>("$", 0xA4),
+    pair<string, BYTE>("%", 0xA5),
+    pair<string, BYTE>("&", 0xA6),
+    pair<string, BYTE>("_", 0xA7),
+    pair<string, BYTE>("(", 0xA8),
+    pair<string, BYTE>(")", 0xA9),
+    pair<string, BYTE>("*", 0xAA),
+    pair<string, BYTE>("+", 0xAB),
+    pair<string, BYTE>("|", 0xAC),
+    pair<string, BYTE>("-", 0xAD),
+    pair<string, BYTE>("{", 0xAE),
+    pair<string, BYTE>("}", 0xAF),
+    pair<string, BYTE>("~", 0xB0),
+
+    pair<string, BYTE>(",", 0xBC),
+    pair<string, BYTE>(".", 0xBE),
+    pair<string, BYTE>("/", 0xBF),
+
+    pair<string, BYTE>("`", 0xC0),
+
+    pair<string, BYTE>("[", 0xDB),
+    pair<string, BYTE>("\\", 0xDC),
+    pair<string, BYTE>("]", 0xDD),
+    pair<string, BYTE>("'", 0xDE),
+
+    pair<string, BYTE>(":", 0x3A),
+    pair<string, BYTE>(";", 0x3B),
+    pair<string, BYTE>("<", 0x3C),
+    pair<string, BYTE>("=", 0x3D),
+    pair<string, BYTE>(">", 0x3E),
+    pair<string, BYTE>("?", 0x3E),
+
 };
 
 void KeyboardUtilities::WriteText(string text)
@@ -98,14 +144,14 @@ void KeyboardUtilities::WriteText(string text)
     {
         if(isupper(text[i]))
             keybd_event(VK_SHIFT, 0xAA, 0, 0);
-        PARKey(text[i]);
+        PressAndReleaseScannedKey(text[i]);
         if(isupper(text[i]))
             keybd_event(VK_SHIFT, 0xAA, KEYEVENTF_KEYUP, 0);
         Sleep(10);
     }
 }
 
-void KeyboardUtilities::PARKey(char key)
+void KeyboardUtilities::PressAndReleaseScannedKey(char key)
 {
     BYTE kscan = BYTE(VkKeyScan(WCHAR(key)));
     keybd_event(kscan, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
@@ -113,20 +159,20 @@ void KeyboardUtilities::PARKey(char key)
     keybd_event(kscan, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
 }
 
-void KeyboardUtilities::PARSpecialKey(string vk)
+void KeyboardUtilities::PressAndReleaseKey(string vk)
 {
-    PressSpecialKey(vk);
+    PressKey(vk);
     Sleep(10);
-    ReleaseSpecialKey(vk);
+    ReleaseKey(vk);
 }
 
-void KeyboardUtilities::PressSpecialKey(string vk)
+void KeyboardUtilities::PressKey(string vk)
 {
     BYTE key = byteCodes.find(vk)->second;
     keybd_event(key, 0, KEYEVENTF_EXTENDEDKEY | 0, 0);
 }
 
-void KeyboardUtilities::ReleaseSpecialKey(string vk)
+void KeyboardUtilities::ReleaseKey(string vk)
 {
     BYTE key = byteCodes.find(vk)->second;
     keybd_event(key, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);

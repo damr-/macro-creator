@@ -3,6 +3,8 @@
 
 #include "commands.h"
 
+#include <QDebug>
+
 ClickCmdWidget::ClickCmdWidget(QWidget *parent) :
     CmdWidget(parent),
     ui(new Ui::ClickCmdWidget)
@@ -18,6 +20,9 @@ ClickCmdWidget::ClickCmdWidget(QWidget *parent) :
 
     connect(ui->clickAmountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
     connect(ui->clickTypeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCmdChangedSignal()));
+
+    WheelEventWidgets = QList<QWidget*>{ui->clickAmountSpinBox, ui->clickTypeBox};
+    InstallWheelEventFilters();
 }
 
 ClickCmdWidget::~ClickCmdWidget()

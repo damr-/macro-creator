@@ -28,7 +28,7 @@ class DragCmdWidget : public CmdWidget
         static const int YIdx = 4;
 
     protected:
-        bool eventFilter(QObject *object, QEvent *event);
+        bool eventFilter(QObject *object, QEvent *event) override;
 
     signals:
         void showPosHint(bool, int, int);

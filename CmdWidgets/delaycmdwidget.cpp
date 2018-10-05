@@ -15,6 +15,9 @@ DelayCmdWidget::DelayCmdWidget(QWidget *parent) :
 
     connect(ui->delayAmount, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
     connect(ui->delayTimeType, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCmdChangedSignal()));
+
+    WheelEventWidgets = QList<QWidget*>{ui->delayAmount, ui->delayTimeType};
+    InstallWheelEventFilters();
 }
 
 DelayCmdWidget::~DelayCmdWidget()

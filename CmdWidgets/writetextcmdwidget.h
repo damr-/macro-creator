@@ -64,7 +64,7 @@ class WriteTextCmdWidget : public CmdWidget
 
         QString alphabet = "abcdefghijklmnopqrstuvwxyz ";
         QString numbers = "0123456789";
-        QString punctuation = "!?.,";
+        QString punctuation = ".,";
 
         QList<QString> Presets = QList<QString>{
             alphabet,

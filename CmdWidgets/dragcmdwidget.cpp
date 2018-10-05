@@ -15,6 +15,9 @@ DragCmdWidget::DragCmdWidget(QWidget *parent) :
     connect(ui->yCoord, SIGNAL(valueChanged(int)), this, SLOT(emitCmdChangedSignal()));
 
     ui->coordGroupBox->installEventFilter(this);
+
+    WheelEventWidgets = QList<QWidget*>{ui->xCoord, ui->yCoord};
+    InstallWheelEventFilters();
 }
 
 DragCmdWidget::~DragCmdWidget()
@@ -64,6 +67,9 @@ void DragCmdWidget::SetCmdSettings(int x, int y)
 
 bool DragCmdWidget::eventFilter(QObject *object, QEvent *event)
 {
+    if(CmdWidget::eventFilter(object, event))
+        return true;
+
     if(object != ui->coordGroupBox)
         return false;
 

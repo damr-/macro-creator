@@ -13,31 +13,7 @@
 #include "runexecmdwidget.h"
 #include "applyregexcmdwidget.h"
 
-CmdWidget* CmdWidget::GetNewCmdWidget(CmdType cmdType)
-{
-    switch(cmdType){
-        case CmdType::DELAY:
-            return new DelayCmdWidget();
-        case CmdType::GOTO:
-            return new GotoCmdWidget();
-        case CmdType::CLICK:
-            return new ClickCmdWidget();
-        case CmdType::SETCURSORPOS:
-            return new SetCursorPosCmdWidget();
-        case CmdType::DRAG:
-            return new DragCmdWidget();
-        case CmdType::SCROLL:
-            return new ScrollCmdWidget();
-        case CmdType::WRITETEXT:
-            return new WriteTextCmdWidget();
-        case CmdType::PRESSKEY:
-            return new PressKeyCmdWidget();
-        case CmdType::RUNEXE:
-            return new RunExeCmdWidget();
-        default:
-            return new ApplyRegexCmdWidget();
-    }    
-}
+#include <QDebug>
 
 CmdWidget::CmdWidget(QWidget *parent) :
 	QWidget(parent),
@@ -117,6 +93,47 @@ void CmdWidget::SetStates(bool isLocked, bool isDisabled)
         ToggleLocked();
     if((isDisabled && this->isEnabled()) || (!isDisabled && !this->isEnabled()))
         ToggleEnabled();
+}
+
+CmdWidget* CmdWidget::GetNewCmdWidget(CmdType cmdType)
+{
+    switch(cmdType){
+        case CmdType::DELAY:
+            return new DelayCmdWidget();
+        case CmdType::GOTO:
+            return new GotoCmdWidget();
+        case CmdType::CLICK:
+            return new ClickCmdWidget();
+        case CmdType::SETCURSORPOS:
+            return new SetCursorPosCmdWidget();
+        case CmdType::DRAG:
+            return new DragCmdWidget();
+        case CmdType::SCROLL:
+            return new ScrollCmdWidget();
+        case CmdType::WRITETEXT:
+            return new WriteTextCmdWidget();
+        case CmdType::PRESSKEY:
+            return new PressKeyCmdWidget();
+        case CmdType::RUNEXE:
+            return new RunExeCmdWidget();
+        default:
+            return new ApplyRegexCmdWidget();
+    }
+}
+
+bool CmdWidget::eventFilter(QObject *object, QEvent *event)
+{
+    QWidget *w = qobject_cast<QWidget*>(object);
+    if(w && event->type() == QEvent::Wheel && WheelEventWidgets.contains(w))
+        return !w->hasFocus();
+    return false;
+}
+
+void CmdWidget::InstallWheelEventFilters()
+{
+    QWidget *w;
+    foreach(w, WheelEventWidgets)
+        w->installEventFilter(this);
 }
 
 void CmdWidget::emitCmdChangedSignal()

@@ -42,7 +42,7 @@ class Commands
         static void RunExe(QStringList cmd);
         static void ApplyRegex(QStringList cmd);
 
-        static const int INTERNAL_DELAY = 20;
+        static const int INTERNAL_DELAY = 25;
 };
 
 #endif // COMMANDS_H
