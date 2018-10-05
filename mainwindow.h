@@ -76,6 +76,8 @@ class MainWindow : public QMainWindow
         QMenu contextMenu;
         int defX, defY, defW, defH;
 
+        void openMacro(QString fileName, QString fullFilePath);
+
         //Running Macro
         bool isMacroRunning;
         bool isMacroExecutionPaused;

@@ -9,11 +9,11 @@
 
 #define VER_COMPANYNAME_STR         "David Weichselbaum"
 #define VER_FILEDESCRIPTION_STR     "Macro Creator"
-#define VER_INTERNALNAME_STR        "MacroCreator"
+#define VER_INTERNALNAME_STR        "Macro Creator"
 #define VER_LEGALCOPYRIGHT_STR      "Copyright 2018 David Weichselbaum"
 #define VER_LEGALTRADEMARKS1_STR    "All Rights Reserved"
 #define VER_LEGALTRADEMARKS2_STR    VER_LEGALTRADEMARKS1_STR
-#define VER_ORIGINALFILENAME_STR    "macrocreator.exe"
+#define VER_ORIGINALFILENAME_STR    "Macro Creator.exe"
 #define VER_PRODUCTNAME_STR         "Macro Creator"
 
 #define VER_COMPANYDOMAIN_STR       "https://www.david-weichselbaum.com"

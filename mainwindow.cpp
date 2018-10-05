@@ -4,6 +4,8 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QCloseEvent>
+#include <QCoreApplication>
+#include <QCommandLineParser>
 #include <QDir>
 #include <QDebug>
 #include <QFile>
@@ -113,6 +115,18 @@ MainWindow::MainWindow(QWidget *parent) :
     defY = y();
     defW = width();
     defH = height();
+
+    //Open macro if passed as argument
+    QCommandLineParser parser;
+    parser.parse(QCoreApplication::arguments());
+    const QStringList args = parser.positionalArguments();
+
+    if(args.count() > 0)
+    {
+        QString fullFilePath = args[0];
+        QString fileName = QFileInfo(fullFilePath).baseName();
+        openMacro(fileName, fullFilePath);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -370,20 +384,7 @@ void MainWindow::openMacro()
         msgbox->close();
     }
 
-    macroName = fileName;
-    macroPath = QFileInfo(fullFilePath).absolutePath();
-
-    if(!tryLoadCmdsFromFile(fullFilePath))
-    {
-        newMacro();
-        setUnsavedChanges(false);
-        return;
-    }
-
-    ui->statusBar->showMessage("Opened " + fullFilePath, 3000);
-    hasNoSafeFile = false;
-    ui->actionFSaveAs->setEnabled(true);
-    setUnsavedChanges(false);
+    openMacro(fileName, QFileInfo(fullFilePath).absolutePath());
 }
 
 bool MainWindow::tryLoadCmdsFromFile(QString filename)
@@ -875,6 +876,24 @@ void MainWindow::showPosHint(bool visible, int x, int y)
         posHint->show();
         activateWindow();
     }
+}
+
+void MainWindow::openMacro(QString fileName, QString fullFilePath)
+{
+    macroName = fileName;
+    macroPath = QFileInfo(fullFilePath).absolutePath();
+
+    if(!tryLoadCmdsFromFile(fullFilePath))
+    {
+        newMacro();
+        setUnsavedChanges(false);
+        return;
+    }
+
+    ui->statusBar->showMessage("Opened " + fullFilePath, 3000);
+    hasNoSafeFile = false;
+    ui->actionFSaveAs->setEnabled(true);
+    setUnsavedChanges(false);
 }
 
 void MainWindow::handleSelectionChanged()
