@@ -17,7 +17,6 @@ class GotoCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other) override;
         QString GetCmdString() override;
-        void ToggleLocked() override;
         void SetSettings(QStringList settings) override;
 
         bool IsValidCmd() override;
@@ -30,8 +29,8 @@ class GotoCmdWidget : public CmdWidget
 
         int TotalAmount;
 
-        static const int TargetRowIdx = 3;
-        static const int AmountIdx = 4;
+        static const int TargetRowIdx = ChildIdxStart;
+        static const int AmountIdx = ChildIdxStart + 1;
 
     private slots:
         void amountChanged(int amount);

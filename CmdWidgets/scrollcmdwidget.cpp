@@ -35,13 +35,6 @@ QString ScrollCmdWidget::GetCmdString()
     return CmdWidget::GetCmdString() + "|" + QString::number(GetAmount()) + "|" + QString::number(GetDirection());
 }
 
-void ScrollCmdWidget::ToggleLocked()
-{
-    CmdWidget::ToggleLocked();
-    ui->directionComboBox->setEnabled(!isLocked);
-    ui->amountSpinBox->setEnabled(!isLocked);
-}
-
 void ScrollCmdWidget::SetSettings(QStringList settings)
 {
     SetCmdSettings(settings[AmountIdx].toInt(), settings[DirIdx].toInt());

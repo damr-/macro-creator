@@ -36,7 +36,7 @@ class MainWindow : public QMainWindow
         //File Actions
         void setupBlankMacro();
         void newMacro();
-        void saveMacro();
+        bool saveMacro();
         void saveMacroAs();
         void openMacro();
 
@@ -58,7 +58,7 @@ class MainWindow : public QMainWindow
         void deleteSelected();
         void duplicateSelected();
 
-        void toggleSelectionState(StateType type);
+        void toggleSelectedItemsDisabled();
 
         void updateRowNumbers();
 
@@ -79,8 +79,8 @@ class MainWindow : public QMainWindow
         void openMacro(QString fileName, QString fullFilePath);
 
         //Running Macro
-        bool isMacroRunning;
-        bool isMacroExecutionPaused;
+        bool isMacroRunning = false;
+        bool isMacroExecutionPaused = false;
         int AllCmdsValid();
         void ExecuteCmds();
         void SaveOrRestoreGotoTotalAmounts(bool save);

@@ -27,7 +27,6 @@ class WriteTextCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other) override;
         QString GetCmdString() override;
-        void ToggleLocked() override;
         void SetSettings(QStringList settings) override;
 
         bool IsValidCmd() override;
@@ -39,11 +38,11 @@ class WriteTextCmdWidget : public CmdWidget
         bool GetUsePaste();
         void SetCmdSettings(bool isRandom, QString possibleChars, int randomAmount, QString text, bool usePaste);
 
-        static const int TypeIdx = 3;
-        static const int CharsIdx = 4;
-        static const int AmountIdx = 5;
-        static const int TextIdx = 6;
-        static const int PasteIdx = 7;
+        static const int TypeIdx = ChildIdxStart;
+        static const int CharsIdx = ChildIdxStart + 1;
+        static const int AmountIdx = ChildIdxStart + 2;
+        static const int TextIdx = ChildIdxStart + 3;
+        static const int PasteIdx = ChildIdxStart + 4;
 
         const QRegExp WriteRegExp = QRegExp("[A-Za-z0-9,. ]+");
         const QRegExp NotWriteRegExp = QRegExp("[^A-Za-z0-9,. ]");

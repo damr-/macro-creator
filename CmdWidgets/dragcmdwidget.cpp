@@ -37,13 +37,6 @@ QString DragCmdWidget::GetCmdString()
     return CmdWidget::GetCmdString() + "|" + QString::number(GetX()) + "|" + QString::number(GetY());
 }
 
-void DragCmdWidget::ToggleLocked()
-{
-    CmdWidget::ToggleLocked();
-    ui->xCoord->setEnabled(!isLocked);
-    ui->yCoord->setEnabled(!isLocked);
-}
-
 void DragCmdWidget::SetSettings(QStringList settings)
 {
     SetCmdSettings(settings[XIdx].toInt(), settings[YIdx].toInt());

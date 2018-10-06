@@ -32,12 +32,6 @@ QString ApplyRegexCmdWidget::GetCmdString()
     return CmdWidget::GetCmdString() + "|" + GetRegexHex() + "|" + QString::number(GetUsePaste());
 }
 
-void ApplyRegexCmdWidget::ToggleLocked()
-{
-    ui->regexLineEdit->setEnabled(!isLocked);
-    ui->pasteCheckBox->setEnabled(!isLocked);
-}
-
 void ApplyRegexCmdWidget::SetSettings(QStringList settings)
 {
     SetCmdSettings(settings[ApplyRegexCmdWidget::RegexIdx], settings[ApplyRegexCmdWidget::PasteIdx].toInt());

@@ -20,10 +20,7 @@ CmdWidget::CmdWidget(QWidget *parent) :
     ui(new Ui::CmdWidget)
 {
     ui->setupUi(this);
-    ui->lockIcon->setVisible(false);
-    isLocked = false;
 
-    connect(ui->lockIcon, SIGNAL(clicked(bool)), this, SLOT(unlock()));
 }
 
 CmdWidget::~CmdWidget()
@@ -38,14 +35,7 @@ void CmdWidget::SetSettings(QStringList settings)
 
 QString CmdWidget::GetCmdString()
 {
-    return QString::number(int(cmdType)) + "|" + QString::number(isLocked) + "|" + QString::number(!isEnabled());
-}
-
-void CmdWidget::ToggleLocked()
-{
-    isLocked = !isLocked;
-    ui->lockIcon->setVisible(isLocked);
-    emitCmdChangedSignal();
+    return QString::number(int(cmdType)) + "|" + QString::number(!isEnabled());
 }
 
 bool CmdWidget::IsValidCmd()
@@ -55,8 +45,6 @@ bool CmdWidget::IsValidCmd()
 
 void CmdWidget::CopyTo(CmdWidget *other)
 {
-    if(isLocked)
-        other->ToggleLocked();
     if(!isEnabled())
         other->ToggleEnabled();
 }
@@ -87,10 +75,8 @@ void CmdWidget::ToggleEnabled()
     emitCmdChangedSignal();
 }
 
-void CmdWidget::SetStates(bool isLocked, bool isDisabled)
+void CmdWidget::SetDisabled(bool isDisabled)
 {
-    if((isLocked && !this->isLocked) || (!isLocked && this->isLocked))
-        ToggleLocked();
     if((isDisabled && this->isEnabled()) || (!isDisabled && !this->isEnabled()))
         ToggleEnabled();
 }
@@ -139,9 +125,4 @@ void CmdWidget::InstallWheelEventFilters()
 void CmdWidget::emitCmdChangedSignal()
 {
     emit cmdChanged(this);
-}
-
-void CmdWidget::unlock()
-{
-    ToggleLocked();
 }

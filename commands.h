@@ -19,12 +19,6 @@ enum CmdType
     REGEX = 9,
 };
 
-enum StateType
-{
-    LOCKED = 0,
-    DISABLED = 1
-};
-
 class Commands
 {
     public:

@@ -53,16 +53,6 @@ QString PressKeyCmdWidget::GetCmdString()
             GetSpecialKey();
 }
 
-void PressKeyCmdWidget::ToggleLocked()
-{
-    CmdWidget::ToggleLocked();
-    ui->modifierListWidget->setEnabled(!isLocked);
-    ui->keyTypeComboBox->setEnabled(!isLocked);
-    ui->keySequenceEdit->setEnabled(!isLocked);
-    ui->keySequenceClearButton->setEnabled(!isLocked);
-    ui->specialKeyComboBox->setEnabled(!isLocked);
-}
-
 void PressKeyCmdWidget::SetSettings(QStringList settings)
 {
     PressKeyCmdWidget::Modifiers mod = PressKeyCmdWidget::Modifiers( settings[ModCTRLIdx].toInt(),

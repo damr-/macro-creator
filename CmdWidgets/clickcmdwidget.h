@@ -32,15 +32,14 @@ class ClickCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other) override;
         QString GetCmdString() override;
-        void ToggleLocked() override;
         void SetSettings(QStringList settings) override;
 
         int GetClickAmount();
         ClickType GetClickType();
         void SetCmdSettings(int amount, ClickType clickType);
 
-        static const int AmountIdx = 3;
-        static const int TypeIdx = 4;
+        static const int AmountIdx = ChildIdxStart;
+        static const int TypeIdx = ChildIdxStart + 1;
 
     private slots:
         void clickAmountChanged(int amount);

@@ -17,15 +17,14 @@ class DragCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other) override;
         QString GetCmdString() override;
-        void ToggleLocked() override;
         void SetSettings(QStringList settings) override;
 
         int GetX();
         int GetY();
         void SetCmdSettings(int x, int y);
 
-        static const int XIdx = 3;
-        static const int YIdx = 4;
+        static const int XIdx = ChildIdxStart;
+        static const int YIdx = ChildIdxStart + 1;
 
     protected:
         bool eventFilter(QObject *object, QEvent *event) override;

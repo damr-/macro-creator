@@ -42,13 +42,6 @@ QString ClickCmdWidget::GetCmdString()
     return CmdWidget::GetCmdString() + "|" + QString::number(GetClickAmount()) + "|" + QString::number(int(GetClickType()));
 }
 
-void ClickCmdWidget::ToggleLocked()
-{
-    CmdWidget::ToggleLocked();
-    ui->clickAmountSpinBox->setEnabled(!isLocked);
-    ui->clickTypeBox->setEnabled(!isLocked);
-}
-
 void ClickCmdWidget::SetSettings(QStringList settings)
 {
     SetCmdSettings(settings[AmountIdx].toInt(), static_cast<ClickType>(settings[TypeIdx].toInt()));

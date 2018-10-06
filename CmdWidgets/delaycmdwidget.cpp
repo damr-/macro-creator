@@ -37,13 +37,6 @@ QString DelayCmdWidget::GetCmdString()
     return CmdWidget::GetCmdString() + "|" + QString::number(GetAmount()) + "|" + QString::number(GetTimeScale());
 }
 
-void DelayCmdWidget::ToggleLocked()
-{
-    CmdWidget::ToggleLocked();
-    ui->delayAmount->setEnabled(!isLocked);
-    ui->delayTimeType->setEnabled(!isLocked);
-}
-
 void DelayCmdWidget::SetSettings(QStringList settings)
 {
     SetCmdSettings(settings[AmountIdx].toInt(), settings[ScaleIdx].toInt());

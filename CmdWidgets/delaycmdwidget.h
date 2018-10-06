@@ -17,15 +17,14 @@ class DelayCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other) override;
         QString GetCmdString() override;
-        void ToggleLocked() override;
         void SetSettings(QStringList settings) override;
 
         int GetAmount();
         int GetTimeScale();
         void SetCmdSettings(int amount, int timeScale);
 
-        static const int AmountIdx = 3;
-        static const int ScaleIdx = 4;
+        static const int AmountIdx = ChildIdxStart;
+        static const int ScaleIdx = ChildIdxStart + 1;
 
     private:
         Ui::DelayCmdWidget *ui;

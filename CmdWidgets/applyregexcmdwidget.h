@@ -17,7 +17,6 @@ class ApplyRegexCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other) override;
         QString GetCmdString() override;
-        void ToggleLocked() override;
         void SetSettings(QStringList settings) override;
 
         bool IsValidCmd() override;
@@ -26,8 +25,8 @@ class ApplyRegexCmdWidget : public CmdWidget
         bool GetUsePaste();
         void SetCmdSettings(QString regex, bool usePaste);
 
-        static const int RegexIdx = 3;
-        static const int PasteIdx = 4;
+        static const int RegexIdx = ChildIdxStart;
+        static const int PasteIdx = ChildIdxStart + 1;
 
     private:
         Ui::ApplyRegexCmdWidget *ui;

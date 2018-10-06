@@ -19,7 +19,6 @@ class CmdWidget : public QWidget
 
         virtual void CopyTo(CmdWidget *other) = 0;        
         virtual QString GetCmdString() = 0;
-        virtual void ToggleLocked() = 0;
         virtual void SetSettings(QStringList settings) = 0;
 
         virtual bool IsValidCmd();
@@ -29,26 +28,25 @@ class CmdWidget : public QWidget
         int GetRowNumber();
         int GetCmdStringLen();
         void ToggleEnabled();
-        void SetStates(bool isLocked, bool isDisabled);
+        void SetDisabled(bool isDisabled);
 
         static CmdWidget* GetNewCmdWidget(CmdType cmdType);
 
         static const int CmdTypeIdx = 0;
-        static const int LockedStateIdx = 1;
-        static const int DisabledStateIdx = 2;
+        static const int DisabledStateIdx = 1;
+
+        static const int ChildIdxStart = 2;
 
         static const QString FromHex(QString string) {return QByteArray::fromHex(string.toUtf8()); }
 
     protected:
         CmdType cmdType;
-        bool isLocked;
         QList<QWidget*>WheelEventWidgets = QList<QWidget*>{};
         bool eventFilter(QObject *object, QEvent *event) override;
         void InstallWheelEventFilters();
 
     protected slots:
         void emitCmdChangedSignal();
-        void unlock();
 
     signals:
         void cmdChanged(CmdWidget*);

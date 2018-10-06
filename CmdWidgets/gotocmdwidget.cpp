@@ -38,13 +38,6 @@ QString GotoCmdWidget::GetCmdString()
     return CmdWidget::GetCmdString() + "|" + QString::number(GetTargetRow()) + "|" + QString::number(int(GetAmount()));
 }
 
-void GotoCmdWidget::ToggleLocked()
-{
-    CmdWidget::ToggleLocked();
-    ui->rowSpinBox->setEnabled(!isLocked);
-    ui->amountSpinBox->setEnabled(!isLocked);
-}
-
 void GotoCmdWidget::SetSettings(QStringList settings)
 {
     SetCmdSettings(settings[TargetRowIdx].toInt(), settings[AmountIdx].toInt());

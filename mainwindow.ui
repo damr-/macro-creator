@@ -172,7 +172,6 @@
     <addaction name="actionEDuplicate"/>
     <addaction name="actionEDelete"/>
     <addaction name="separator"/>
-    <addaction name="actionEToggleLocked"/>
     <addaction name="actionEToggleDisabled"/>
    </widget>
    <widget class="QMenu" name="menuAdd">
@@ -490,20 +489,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+2</string>
-   </property>
-   <property name="shortcutVisibleInContextMenu">
-    <bool>true</bool>
-   </property>
-  </action>
-  <action name="actionEToggleLocked">
-   <property name="text">
-    <string>Toggle Locked</string>
-   </property>
-   <property name="toolTip">
-    <string>Toggle the lock on the selected command(s)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+L</string>
    </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>true</bool>

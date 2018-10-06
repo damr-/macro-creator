@@ -30,18 +30,18 @@ void Commands::ExecuteCmd(QString cmd)
     case CmdType::DELAY:
         Delay(cmdParts); break;
     case CmdType::GOTO: break;
-    case CmdType::CLICK:
-        Click(cmdParts); break;
     case CmdType::SETCURSORPOS:
         CursorPos(cmdParts); break;
-    case CmdType::DRAG:
-        Drag(cmdParts); break;
-    case CmdType::SCROLL:
-        Scroll(cmdParts); break;
+    case CmdType::CLICK:
+        Click(cmdParts); break;
     case CmdType::PRESSKEY:
         PressKey(cmdParts); break;
     case CmdType::WRITETEXT:
         WriteText(cmdParts); break;
+    case CmdType::DRAG:
+        Drag(cmdParts); break;
+    case CmdType::SCROLL:
+        Scroll(cmdParts); break;
     case CmdType::RUNEXE:
         RunExe(cmdParts); break;
     case CmdType::REGEX:
@@ -228,13 +228,16 @@ void Commands::RunExe(QStringList cmd)
 void Commands::ApplyRegex(QStringList cmd)
 {
     QString regex = CmdWidget::FromHex(cmd[ApplyRegexCmdWidget::RegexIdx]);
-    QRegularExpression re(regex);    
+    QRegularExpression re(regex);
     QClipboard *clipboard = QApplication::clipboard();
 
     QString text = "";
-    while(text == "")
+    int counter = 0;
+
+    //Sometimes Ctrl+C doesn't register, so we try until it does.
+    //The counter is for the rare case that the clipboard is empty and nothing is actually selected.
+    while(text == "" && counter++ < 100)
     {
-        //Hit Ctrl+C to copy the currently selected text to the clipboard
         ExecuteCmd(PressKeyCmdWidget::GetCopyCmd());
         qApp->processEvents();
         text = clipboard->text();
@@ -243,7 +246,7 @@ void Commands::ApplyRegex(QStringList cmd)
     QRegularExpressionMatch match = re.match(text);
     if(!match.hasMatch())
     {
-        qDebug() << "NO match found for '" + text + "'";
+        qDebug() << "No Regex match for '" + text + "'";
         return;
     }
 

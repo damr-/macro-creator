@@ -32,13 +32,6 @@ QString RunExeCmdWidget::GetCmdString()
     return CmdWidget::GetCmdString() + "|" + GetFilePathHex();
 }
 
-void RunExeCmdWidget::ToggleLocked()
-{
-    CmdWidget::ToggleLocked();
-    ui->exeName->setEnabled(!isLocked);
-    ui->selectFileButton->setEnabled(!isLocked);
-}
-
 void RunExeCmdWidget::SetSettings(QStringList settings)
 {
     QString path = settings[PathIdx];

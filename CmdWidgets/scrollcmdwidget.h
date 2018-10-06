@@ -17,15 +17,14 @@ class ScrollCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other) override;
         QString GetCmdString() override;
-        void ToggleLocked() override;
         void SetSettings(QStringList settings) override;
 
         int GetAmount();
         int GetDirection();
         void SetCmdSettings(int amount, int direction);
 
-        static const int AmountIdx = 3;
-        static const int DirIdx = 4;
+        static const int AmountIdx = ChildIdxStart;
+        static const int DirIdx = ChildIdxStart + 1;
 
     private:
         Ui::ScrollCmdWidget *ui;

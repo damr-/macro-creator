@@ -17,7 +17,6 @@ class RunExeCmdWidget : public CmdWidget
 
         void CopyTo(CmdWidget *other) override;
         QString GetCmdString() override;
-        void ToggleLocked() override;
         void SetSettings(QStringList settings) override;
 
         bool IsValidCmd() override;
@@ -25,7 +24,7 @@ class RunExeCmdWidget : public CmdWidget
         QString GetFilePathHex();
         void SetCmdSettings(QString filePath);
 
-        static const int PathIdx = 3;
+        static const int PathIdx = ChildIdxStart;
 
     private slots:
         void chooseExe();

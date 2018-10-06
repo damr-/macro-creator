@@ -2,7 +2,6 @@
     <qresource prefix="/resources/icons">
         <file>resources/icons/new.png</file>
         <file>resources/icons/save.png</file>
-        <file>resources/icons/lock.png</file>
         <file>resources/icons/crosshair.png</file>
         <file>resources/icons/start.png</file>
         <file>resources/icons/delete.png</file>

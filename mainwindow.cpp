@@ -37,6 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
+    QApplication::clipboard()->setText("");
+
     //Figure out and set maximum possible size for the window
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect rect = screen->geometry();
@@ -61,8 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionEPaste, SIGNAL(triggered()), this, SLOT(pasteClipboard()));
     connect(ui->actionEDelete, SIGNAL(triggered()), this, SLOT(deleteSelected()));
     connect(ui->actionEDuplicate, SIGNAL(triggered()), this, SLOT(duplicateSelected()));
-    connect(ui->actionEToggleLocked, &QAction::triggered, [=](){ toggleSelectionState(StateType::LOCKED); });
-    connect(ui->actionEToggleDisabled, &QAction::triggered, [=](){ toggleSelectionState(StateType::DISABLED); });
+    connect(ui->actionEToggleDisabled, &QAction::triggered, [=](){ toggleSelectedItemsDisabled(); });
 
     //Menu->Add Actions
     QList<QMenu*> menuList = ui->menuBar->findChildren<QMenu*>();
@@ -296,7 +297,7 @@ void MainWindow::newMacro()
     resize(defW, defH);
 }
 
-void MainWindow::saveMacro()
+bool MainWindow::saveMacro()
 {
     QString pathPlusFileName = getFullFilePath(macroPath, macroName);
 
@@ -307,7 +308,7 @@ void MainWindow::saveMacro()
         if(fileName.length() == 0)
         {
             ui->statusBar->showMessage("Saving aborted", 3000);
-            return;
+            return false;
         }
         macroName = fileName;
         hasNoSafeFile = false;
@@ -317,7 +318,7 @@ void MainWindow::saveMacro()
     if(!file.open(QFile::WriteOnly | QFile::Text))
     {
         showMessage("Error", "Unable to open the file!", QMessageBox::Icon::Critical);
-        return;
+        return false;
     }
 
     QTextStream output(&file);
@@ -351,12 +352,14 @@ void MainWindow::saveMacro()
 
     setUnsavedChanges(false);
     ui->statusBar->showMessage("Saved macro to " + pathPlusFileName, 3000);
+    return true;
 }
 
 void MainWindow::saveMacroAs()
 {
     hasNoSafeFile = true;
-    saveMacro();
+    if(!saveMacro())
+        hasNoSafeFile = false;
 }
 
 void MainWindow::openMacro()
@@ -474,7 +477,7 @@ QList<QListWidgetItem *> MainWindow::fillCmdListWidget(QStringList cmdListString
             return newItems;
         }
 
-        newWidget->SetStates(cmdStr[CmdWidget::LockedStateIdx].toInt(), cmdStr[CmdWidget::DisabledStateIdx].toInt());
+        newWidget->SetDisabled(cmdStr[CmdWidget::DisabledStateIdx].toInt());
         newWidget->SetSettings(cmdStr);
 
         QListWidgetItem *newItem = new QListWidgetItem();
@@ -778,23 +781,14 @@ void MainWindow::duplicateSelected()
     setUnsavedChanges(true);
 }
 
-void MainWindow::toggleSelectionState(StateType type)
+void MainWindow::toggleSelectedItemsDisabled()
 {
     QList<QListWidgetItem *> selectedItems = GetSortedSelectedItems();
     for (int i = 0, total = selectedItems.size(); i < total; i++)
     {
         QListWidgetItem *item = selectedItems.at(i);
         CmdWidget *selectedItemWidget = qobject_cast<CmdWidget*>(ui->cmdList->itemWidget(item));
-
-        switch(type)
-        {
-        case StateType::LOCKED:
-            selectedItemWidget->ToggleLocked();
-            break;
-        case StateType::DISABLED:
-            selectedItemWidget->ToggleEnabled();
-            break;
-        }
+        selectedItemWidget->ToggleEnabled();
     }
 }
 
@@ -885,8 +879,8 @@ void MainWindow::openMacro(QString fileName, QString fullFilePath)
 
     if(!tryLoadCmdsFromFile(fullFilePath))
     {
-        newMacro();
         setUnsavedChanges(false);
+        newMacro();
         return;
     }
 
@@ -904,11 +898,8 @@ void MainWindow::handleSelectionChanged()
     ui->actionEDelete->setEnabled(itemSelected);
     ui->actionECopy->setEnabled(itemSelected);
     ui->actionECut->setEnabled(itemSelected);
-
     ui->actionEPaste->setEnabled(!QApplication::clipboard()->text().isEmpty());
-
     ui->actionEToggleDisabled->setEnabled(itemSelected);
-    ui->actionEToggleLocked->setEnabled(itemSelected);
 }
 
 void MainWindow::selectRow(int row)

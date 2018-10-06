@@ -38,14 +38,6 @@ QString SetCursorPosCmdWidget::GetCmdString()
     return CmdWidget::GetCmdString() + "|" + QString::number(GetX()) + "|" + QString::number(GetY()) + "|" + QString::number(GetAddClick());
 }
 
-void SetCursorPosCmdWidget::ToggleLocked()
-{
-    CmdWidget::ToggleLocked();
-    ui->xCoord->setEnabled(!isLocked);
-    ui->yCoord->setEnabled(!isLocked);
-    ui->clickCheckBox->setEnabled(!isLocked);
-}
-
 void SetCursorPosCmdWidget::SetSettings(QStringList settings)
 {
     SetCmdSettings(settings[XIdx].toInt(),

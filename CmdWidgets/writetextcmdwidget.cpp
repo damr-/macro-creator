@@ -95,17 +95,6 @@ QString WriteTextCmdWidget::GetCmdString()
             QString::number(GetUsePaste());
 }
 
-void WriteTextCmdWidget::ToggleLocked()
-{
-    CmdWidget::ToggleLocked();
-    ui->textTypeComboBox->setEnabled(!isLocked);
-    ui->possibleCharsLineEdit->setEnabled(!isLocked);
-    ui->randomAmountSpinBox->setEnabled(!isLocked);
-    ui->textLineEdit->setEnabled(!isLocked);
-    ui->toolButton->setEnabled(!isLocked);
-    ui->pasteCheckBox->setEnabled(!isLocked);
-}
-
 void WriteTextCmdWidget::SetSettings(QStringList settings)
 {
     SetCmdSettings(settings[TypeIdx].toInt(),
