@@ -11,7 +11,7 @@ Contributions are always welcome.
 
 ## 1.1
 
-- Added new command: "Apply Regex". Applies the given Regex to the currently selected text. The (first) result will be stored in the clipboard or automatically pasted if the user wants to.
+- Added new command: "Apply Regex". Applies the given Regex to the currently selected text. The (first) result will be stored in the clipboard or automatically pasted.
 - Added a "paste" option to the "Write Text" command. This method doesn't simulate keystrokes, but pastes each individual character. Using that approach, many more characters can be used.
 - Changed the save file format for texts from raw to hexadecimal to allow more characters.
 - Added the functionality to open '.mccr' files directly via right-click->"Open with..."->"Macro Creator"
