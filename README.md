@@ -19,6 +19,3 @@ Contributions are always welcome.
 - Removed the "lock" feature since the issues with scrolling the mouse wheel have been resolved.
 - Added the "add click" option to "Cursor Position" command
 - Removed the "letter" option from the "Press Key" command, since it's already covered by "key".
-
-## 1.0
-initial release
