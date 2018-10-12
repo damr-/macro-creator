@@ -1,5 +1,5 @@
 # Macro Creator
-A windows application used to create macros which are executed automatically.
+A Windows application which allows users to create automatically executed macros.
 
 [Download for Windows](https://www.david-weichselbaum.com/user/downloads/Macro%20Creator.exe)
 
