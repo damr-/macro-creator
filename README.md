@@ -1,9 +1,11 @@
 # Macro Creator
 A Windows application which allows users to create automatically executed macros.
 
-[Download for Windows](https://www.david-weichselbaum.com/user/downloads/Macro%20Creator.exe)
+[Download for Windows](https://github.com/damr-/macro-creator/raw/master/Macro%20Creator.exe)
 
-Questions, suggestions or found a bug? Create a new [Issue](https://github.com/damr-/macro-creator/issues), pull request or contact me.
+![Macro Creator Screenshot](https://raw.githubusercontent.com/damr-/macro-creator/master/macro_creator.png)
+
+Questions, suggestions or found a bug? Create a new [Issue](https://github.com/damr-/macro-creator/issues) or contact me.
 
 Contributions are always welcome.
 
